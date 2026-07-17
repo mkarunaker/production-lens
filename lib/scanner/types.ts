@@ -7,7 +7,8 @@ export type Category =
   | "Evaluations"
   | "Reliability"
   | "Human oversight"
-  | "Prompt management";
+  | "Prompt management"
+  | "Prompt injection";
 
 export type RepositoryFile = {
   path: string;

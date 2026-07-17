@@ -1,5 +1,5 @@
 {
-  "minimumFindingCount": 8,
+  "minimumFindingCount": 9,
   "expectedRuleIds": [
     "AUTH_SHARED_SERVICE_ACCOUNT",
     "AUTH_MISSING_USER_AUTHORIZATION",
@@ -8,6 +8,7 @@
     "REL_MISSING_NETWORK_GUARDS",
     "GOV_EMBEDDED_PROMPT",
     "DATA_SENSITIVE_LOGGING",
-    "GOV_MISSING_HUMAN_REVIEW"
+    "GOV_MISSING_HUMAN_REVIEW",
+    "SEC_INDIRECT_PROMPT_INJECTION"
   ]
 }

@@ -9,6 +9,8 @@ Production Lens statically scans an AI application repository and explains evide
 - File and line evidence with suspected-secret redaction
 - Prioritized result cards and a detailed severity/evidence/impact/remediation view
 - Approved extension, safe path, file count, and byte-limit controls
+- Indirect prompt-injection detection while keeping repository text inert
+- Security headers, a maintained threat model, and dependency audit automation
 - Automated expected-finding, snapshot-parity, redaction, and limit tests
 
 Scanned code is treated as untrusted text and is never imported or executed.
@@ -29,6 +31,7 @@ Open `http://localhost:3000`, select **Scan sample project**, and select finding
 ```bash
 npm test
 npm run build
+npm run security:check
 ```
 
 ## Repository map
@@ -40,6 +43,8 @@ npm run build
 - `PROJECT.md` — stable product scope
 - `AGENTS.md` — repository working instructions
 - `docs/implementation-plan.md` — milestone plan and risks
+- `docs/threat-model.md` — trust boundaries, threats, controls, and residual risks
+- `SECURITY.md` — security posture and future LLM boundary requirements
 
 ## Intentionally not implemented yet
 

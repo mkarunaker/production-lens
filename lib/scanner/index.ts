@@ -14,13 +14,37 @@ function extension(path: string) {
 }
 
 function isSafePath(path: string) {
-  return !path.startsWith("/") && !path.split(/[\\/]/).includes("..") && !path.includes("\0");
+  return (
+    path.length > 0 &&
+    path.length <= 240 &&
+    !path.startsWith("/") &&
+    !path.includes("\\") &&
+    !path.includes("\0") &&
+    !path.split("/").some((segment) => segment === "" || segment === "..") &&
+    /^[a-zA-Z0-9._/@+-]+$/.test(path)
+  );
 }
 
 export function redactSecrets(code: string) {
   return code
     .replace(/((?:password|secret|token|api[_-]?key)\s*[:=]\s*["'])[^"']+(["'])/gi, "$1[REDACTED]$2")
-    .replace(/\b(sk-[a-z0-9_-]{8,})\b/gi, "[REDACTED]");
+    .replace(/\b(sk-[a-z0-9_-]{8,}|AKIA[A-Z0-9]{16})\b/gi, "[REDACTED]")
+    .replace(/\b(Bearer\s+)[a-z0-9._~+/-]+=*\b/gi, "$1[REDACTED]")
+    .replace(/-----BEGIN [A-Z ]+PRIVATE KEY-----[\s\S]*?-----END [A-Z ]+PRIVATE KEY-----/g, "[REDACTED PRIVATE KEY]");
+}
+
+const PROMPT_INJECTION_PATTERNS = [
+  /ignore\s+(?:all\s+)?previous\s+instructions?/i,
+  /(?:reveal|repeat|print|show)\s+(?:the\s+)?(?:system\s+)?prompt/i,
+  /you\s+are\s+now\s+(?:in\s+)?developer\s+mode/i,
+  /system\s+(?:message|prompt|override)/i,
+  /(?:bypass|disable|override)\s+(?:the\s+)?(?:safety|security|policy|guardrails?)/i,
+];
+
+export function detectPromptInjection(content: string) {
+  const lines = content.split("\n");
+  const index = lines.findIndex((line) => PROMPT_INJECTION_PATTERNS.some((pattern) => pattern.test(line)));
+  return index < 0 ? undefined : { line: index + 1, code: redactSecrets(lines[index].trim()) };
 }
 
 function evidence(files: RepositoryFile[], path: string, pattern: RegExp) {
@@ -53,6 +77,21 @@ export function scanRepository(repository: string, inputFiles: RepositoryFile[])
   const files = sanitizeFiles(inputFiles);
   const allSource = files.map((file) => file.content).join("\n");
   const findings: Finding[] = [];
+
+  const injectionFile = files.find((file) => detectPromptInjection(file.content));
+  if (injectionFile) {
+    const match = detectPromptInjection(injectionFile.content)!;
+    findings.push(finding({
+      ruleId: "SEC_INDIRECT_PROMPT_INJECTION",
+      title: "Repository content contains an indirect prompt-injection pattern",
+      severity: "high",
+      category: "Prompt injection",
+      explanation: "A source file contains language that attempts to instruct an AI reviewer to ignore higher-priority instructions.",
+      impact: "If repository text is later passed to an LLM without strict isolation, an attacker could manipulate findings, suppress risks, or induce unauthorized actions.",
+      remediation: "Keep repository content in a clearly delimited untrusted-data channel, never grant the analysis model tool authority, validate structured outputs, and require deterministic policy checks before acting.",
+      evidence: { path: injectionFile.path, line: match.line, code: match.code },
+    }));
+  }
 
   if (/SERVICE_ACCOUNT/.test(allSource) && /password\s*:/.test(allSource)) {
     findings.push(finding({

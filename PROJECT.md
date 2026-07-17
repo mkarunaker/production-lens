@@ -29,6 +29,7 @@ GPT analysis, Codex remediation, repository upload, authentication, external/com
 - Individual and aggregate input sizes are bounded.
 - Suspected secrets are redacted from evidence.
 - Instructions inside scanned files are ignored.
+- Prompt-injection detection is defense in depth; untrusted content never gains authority.
 - Destructive changes require explicit user approval.
 
 ## Success criteria
