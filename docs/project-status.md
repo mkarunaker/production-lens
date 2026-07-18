@@ -18,9 +18,9 @@ At the start of a new session:
 
 - Private deployment: https://production-lens.karunaker-molugu.chatgpt.site
 - Current checkpoint commit: use the latest `git log -1` entry.
-- Working tree was clean when this checkpoint was prepared.
+- Local ZIP test checkpoint: the latest `feat: add localhost zip scan demo` entry in `git log`.
 - Deterministic sample findings: 11
-- Automated tests: 43 passing
+- Automated tests: 47 passing
 - Principles-based approval review: implemented for the bundled sensitive-logging remediation
 - Principle mapping: implemented for all 11 deterministic findings
 - Known dependency vulnerabilities at last verification: 0
@@ -124,9 +124,10 @@ In progress.
 - Initial archive and file limits: approved
 - Metadata-only ZIP inspector: complete for the first evaluated fixture set
 - Bounded in-memory content materialization: complete for the evaluated stored/deflate, decoding, CRC, NUL, and disguised-archive fixture set
+- Localhost-only ZIP upload and scan harness: complete for manual demo testing; deliberately not part of the hosted application
 - Owner-scoped quarantine/security-scanner lifecycle interface: complete for evaluated success, rejection, outage, timeout, cancellation, and cleanup paths
 - R2 quarantine adapter: implemented and contract-tested; binding and bucket are not provisioned
-- Deployment-backed quarantine, real malware/secret scanner, and upload UI: not enabled
+- Deployment-backed quarantine, real malware/secret scanner, and hosted upload UI: not enabled
 - Private quarantine storage
 - Archive entry inspection before extraction
 - ZIP-bomb, traversal, symlink, hard-link, device-file, duplicate-path, and nested-archive defenses
@@ -212,11 +213,12 @@ Complete except for the final deployed-browser rehearsal.
 For the fastest safe hackathon path:
 
 1. Freeze broad feature development and preserve the complete bundled scan/remediate/rescan workflow.
-2. Commit and deploy the validated submission checkpoint.
-3. Run the final signed-in deployed-browser rehearsal using the under-three-minute path in `docs/demo-script.md`.
-4. Publish or share the repository, record the narrated public YouTube demo against that exact deployment, and collect the `/feedback` Session ID.
-5. Complete and submit the Devpost draft before July 21, 2026 at 5:00 PM Pacific.
-6. Do not expose arbitrary uploads or runtime GPT analysis for the hackathon demo.
+2. Manually test one or two small AI-agent ZIPs through `npm run demo:zip`; use it as an optional local demo segment, not as a hosted feature.
+3. Commit the validated local-only increment without redeploying it.
+4. Run the final signed-in deployed-browser rehearsal using the under-three-minute path in `docs/demo-script.md`.
+5. Publish or share the repository, record the narrated public YouTube demo, and collect the `/feedback` Session ID.
+6. Complete and submit the Devpost draft before July 21, 2026 at 5:00 PM Pacific.
+7. Do not expose hosted arbitrary uploads or runtime GPT analysis for the hackathon demo.
 
 ## Hackathon submission readiness
 
@@ -238,9 +240,18 @@ For the fastest safe hackathon path:
 - Functional: passed for stored and raw-deflate approved UTF-8 text, safe Unicode paths, and ignored unsupported ordinary binary files.
 - Security and adversarial: passed for bounded inflate, exact expanded-size and CRC-32 verification, disguised archive signatures, invalid UTF-8, embedded NULs, unsafe paths, collisions, unsupported ZIP features, and metadata-declared bombs.
 - Negative behavior: tests use inert source text; materialization remains in memory and adds no upload route, disk extraction, repository execution, dependency installation, network access, or model access.
-- Regression: `npm test` passes with 26 tests; deterministic sample findings remain 11; `npm run build` passes; `npm audit --omit=dev --audit-level=high` reports 0 vulnerabilities.
+- Regression: the complete 47-test suite, dependency audit, production build, and production-server golden-path E2E pass.
+- Intentionally not evaluated for hosted enablement: real quarantine infrastructure, malware and secret scanning, full archive corpus, and independent security validation.
+
+## Latest validation — localhost ZIP test harness
+
+- Functional: passed for the local page and an inert AI-agent ZIP producing deterministic scanner output.
+- Security and adversarial: passed for production-mode refusal, strict localhost binding, 10 MiB request bounding, malformed archive rejection, no-store and browser isolation headers, and text-only result rendering.
+- Negative behavior: no disk extraction, persistence, repository execution, dependency installation, model access, or outbound network access was added.
+- Operational limitation: the harness has no authentication, quarantine, malware scanning, or distributed controls and is therefore intentionally excluded from the hosted application and deployment.
+- Regression: `npm run security:check` passes with 47 tests, 0 known dependency vulnerabilities, a production build, and the production-server golden-path E2E.
 - Lint: `npm run lint` remains blocked by two pre-existing `@next/next/no-assign-module-variable` findings in `tests/scanner.test.mjs` at lines 262 and 273.
-- Intentionally not evaluated: quarantine lifecycle and cleanup, malware and secret scanning, timeouts and cancellation, hard-link representation, full archive corpus, authentication, ownership authorization, rate controls, and any upload UI.
+- Intentionally not evaluated: visual browser rehearsal because no browser was connected; hosted upload enablement remains out of scope.
 - Residual risk: this evaluated in-memory parser is not a complete hosted-upload boundary and must remain unreachable from public input.
 - Exact next evaluation gate: complete the remaining repository-upload adversarial fixtures and operational lifecycle controls, then pass authentication, object authorization, quota, concurrency, cleanup, and security-scanner fail-closed tests before exposing uploads.
 

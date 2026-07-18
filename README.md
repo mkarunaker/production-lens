@@ -42,13 +42,13 @@ The Enterprise Analytics Agent demonstrates an **11 → 10** remediation. The Se
 - Deterministic remediation proposals for every bundled finding
 - Explicit approval, disposable-copy mutation, rescan, comparison, and reset
 - Mandatory self-scan of Production Lens application source
-- ZIP metadata inspection and bounded in-memory materialization with path, collision, special-entry, compression-bomb, CRC, UTF-8, NUL, and disguised-archive defenses
+- ZIP metadata inspection, bounded in-memory materialization, and a localhost-only ZIP test harness with path, collision, special-entry, compression-bomb, CRC, UTF-8, NUL, and disguised-archive defenses
 - Owner/tenant authorization and rate, quota, concurrency, and replay policy boundaries
 - Source-free audit and operational-alert contracts
 - A formal release-blocking adversarial corpus with stable fixture IDs
 - Security headers, threat model, evaluation gates, and dependency auditing
 
-Arbitrary uploads and runtime GPT analysis are deliberately disabled until their isolation, authorization, operational, and adversarial gates are complete.
+Hosted arbitrary uploads and runtime GPT analysis are deliberately disabled until their isolation, authorization, operational, and adversarial gates are complete.
 
 ## Try it without rebuilding
 
@@ -84,6 +84,14 @@ npm run dev
 
 Open `http://localhost:3000`.
 
+### Test a local AI-agent ZIP
+
+```bash
+npm run demo:zip
+```
+
+Open `http://127.0.0.1:4317`, choose a `.zip`, and select **Validate and scan ZIP**. This standalone development harness accepts at most 10 MiB, materializes approved text in memory, and never extracts, imports, installs, builds, or executes repository code. It binds only to localhost, refuses `NODE_ENV=production`, makes no model or external network calls, and stores no archive or result. It is intentionally absent from the hosted demo.
+
 ### Production-like verification
 
 ```bash
@@ -108,7 +116,7 @@ Tests assert that bundled snapshots match their canonical source and expected fi
 - Browser UI: current desktop and mobile browsers supported by the deployed Next.js/Vinext application
 - Local development: Node.js 22.13+ on macOS, Linux, and Windows
 - Evaluated scanner languages: declared high-signal JavaScript/TypeScript, React/browser, SQL, configuration, and Markdown patterns
-- Archive input contract: ZIP only; hosted arbitrary upload remains disabled
+- Archive input contract: ZIP only; local ZIP testing is available and hosted arbitrary upload remains disabled
 
 Production Lens does not claim universal language coverage or perfect security.
 

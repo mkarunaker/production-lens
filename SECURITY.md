@@ -2,7 +2,7 @@
 
 ## Security posture
 
-Production Lens treats every scanned repository as hostile input. The current milestone scans only a bundled sample and does not execute repository code, call a model, accept uploads, or mutate scanned projects.
+Production Lens treats every scanned repository as hostile input. The hosted application scans only bundled samples and does not execute repository code, call a model, accept uploads, or mutate scanned projects. A separate localhost-only development harness can scan a bounded ZIP in memory.
 
 Security is a maintained risk-management process, not a claim of perfect protection. Controls must be tested continuously and reassessed whenever uploads, LLM analysis, remediation, authentication, persistence, or external integrations are introduced.
 
@@ -32,6 +32,8 @@ Before any model analysis is enabled:
 ## Repository upload boundary
 
 The hosted upload design is ZIP-only and governed by `docs/secure-ingestion-contract.md`. No upload interface may be enabled until archive inspection, bomb and path defenses, private quarantine, authentication, object authorization, malware scanning, rate controls, cleanup, and adversarial tests are implemented and passing.
+
+A standalone local test harness is available through `npm run demo:zip`. It binds to `127.0.0.1`, refuses production mode, accepts a length-declared ZIP body of at most 10 MiB, uses the bounded in-memory materializer, and neither persists nor executes repository content. It has no authentication, quarantine, malware scanner, distributed admission control, or production authorization; those omissions are why it must not be exposed as a hosted route or network service.
 
 A browser or API client must never submit a server filesystem path. Local directory scanning is reserved for a future separately distributed local CLI with its own containment contract.
 

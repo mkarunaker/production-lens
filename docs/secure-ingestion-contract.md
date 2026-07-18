@@ -1,6 +1,6 @@
 # Secure ZIP ingestion contract
 
-Status: approved contract; metadata inspection, bounded in-memory content materialization, and the quarantine/security-scan lifecycle boundary are implemented for the evaluated fixture set. Deployment-backed quarantine, a real malware/secret scanner, authentication, and the upload UI are not implemented.
+Status: approved hosted-ingestion contract; metadata inspection, bounded in-memory content materialization, and the quarantine/security-scan lifecycle boundary are implemented for the evaluated fixture set. A separate localhost-only development UI exercises bounded materialization but is not a hosted upload implementation. Deployment-backed quarantine, a real malware/secret scanner, hosted-route authentication, and a hosted upload UI are not implemented.
 
 ## Scope
 
@@ -140,6 +140,8 @@ Raw archive bytes and repository content are not returned in logs or error respo
 The lifecycle accepts a validated `Principal` and derives quarantine tenant and owner scope from it; callers cannot provide an independent owner identifier. Framework-independent authorization policy covers create, read, update, and delete, while the current process-local admission controller evaluates per-tenant/per-user rate, quota, concurrency, and replay behavior. These policy primitives are not substitutes for shared deployment state.
 
 The lifecycle also requires audit and operational-alert sinks. Exactly one content-free completion event is attempted for each authenticated ingestion run. Scanner outage and cleanup failure require dedicated alerts. Audit or required-alert delivery failure blocks a successful result; production retry, ordering, retention, and emergency-disable behavior remain unevaluated.
+
+`scripts/zip-demo-server.mjs` is a development-only exception to the hosted lifecycle. It binds only to `127.0.0.1`, refuses `NODE_ENV=production`, accepts one raw ZIP request body up to the compressed-size limit, materializes approved text in memory, and passes it directly to the deterministic scanner. It performs no disk extraction, persistence, repository execution, dependency installation, model call, or outbound request. Because it intentionally lacks hosted authentication, quarantine, malware scanning, and distributed controls, it must remain absent from the deployed application.
 
 Current evaluated coverage includes valid stored and deflated text; safe Unicode paths; ignored unsupported ordinary binary files; signature, size, CRC, and header mismatch; unsafe paths; case, Unicode, and platform-normalized collisions; declared Unix symlinks and special types; ambiguous Unix entry types; nested archive filenames and disguised ZIP, gzip, 7z, RAR, and tar signatures; encryption; unsupported methods; metadata-declared compression bombs; invalid UTF-8; embedded NUL content; path, depth, file-size, and entry-count limits; scanner rejection and outage; timeout; cancellation; cleanup success; and cleanup failure.
 
