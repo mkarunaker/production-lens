@@ -104,6 +104,11 @@ function Results({
           <div className="summary-box"><strong>{counts.medium}</strong><span>Medium</span></div>
           <div className="summary-box"><strong>{result.findings.filter((finding) => finding.evidence).length}</strong><span>With line evidence</span></div>
         </div>
+        <div className="state-summary state-summary-visible" aria-label="Evaluation state counts">
+          {(Object.keys(stateLabels) as (keyof typeof stateLabels)[]).map((state) => (
+            <div key={state}><strong>{stateCounts[state]}</strong><span>{stateLabels[state]}</span></div>
+          ))}
+        </div>
         <details className="applicability-panel">
           <summary className="applicability-heading" id="applicability-title">
             <div>
@@ -117,14 +122,6 @@ function Results({
                 : <span>No supported technology detected</span>}
             </div>
           </summary>
-          <div className="state-summary">
-            {(Object.keys(stateLabels) as (keyof typeof stateLabels)[]).map((state) => (
-              <div key={state}>
-                <strong>{stateCounts[state]}</strong>
-                <span>{stateLabels[state]}</span>
-              </div>
-            ))}
-          </div>
           <div className="assessment-grid">
             {result.checks.map((check) => (
               <article className={`assessment assessment-${check.state}`} key={check.ruleId}>
