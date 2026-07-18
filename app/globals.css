@@ -255,8 +255,10 @@ button { font: inherit; }
 .diff-line span { opacity: .8; }
 .diff-removed { background: rgba(194, 65, 56, .18); color: #ffd2cf; }
 .diff-added { background: rgba(164, 207, 105, .16); color: #dff4bc; }
-.proposal-card .diff-removed, .verification-diff .diff-removed { color: #8f2b25; }
-.proposal-card .diff-added, .verification-diff .diff-added { color: #2d642b; }
+.proposal-card .diff-removed { color: #ffd2cf; }
+.proposal-card .diff-added { color: #dff4bc; }
+.verification-diff .diff-removed { color: #8f2b25; }
+.verification-diff .diff-added { color: #2d642b; }
 .proposal-card .diff-line code, .verification-diff code { color: inherit !important; -webkit-text-fill-color: currentColor; font-weight: 700; }
 .approval-card { margin-top: 16px; display: grid; grid-template-columns: 1fr 310px; gap: 36px; }
 .principles-card { margin-top: 16px; padding: 24px; background: #17251f; color: white; border-radius: 14px; }
