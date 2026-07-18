@@ -77,6 +77,10 @@ function Results({
     ...result.inventory.dataStores,
     ...result.inventory.capabilities,
   ];
+  const severityGroups = (["critical", "high", "medium"] as const).map((severity) => ({
+    severity,
+    findings: result.findings.filter((finding) => finding.severity === severity),
+  })).filter((group) => group.findings.length > 0);
 
   return (
     <main>
@@ -111,11 +115,6 @@ function Results({
           <div className="summary-box"><strong>{counts.medium}</strong><span>Medium</span></div>
           <div className="summary-box"><strong>{result.findings.filter((finding) => finding.evidence).length}</strong><span>With line evidence</span></div>
         </div>
-        <div className="state-summary state-summary-visible" aria-label="Evaluation state counts">
-          {(Object.keys(stateLabels) as (keyof typeof stateLabels)[]).map((state) => (
-            <div key={state}><strong>{stateCounts[state]}</strong><span>{stateLabels[state]}</span></div>
-          ))}
-        </div>
         <details className="applicability-panel">
           <summary className="applicability-heading" id="applicability-title">
             <div>
@@ -127,6 +126,11 @@ function Results({
               {inventoryItems.length
                 ? inventoryItems.map((item) => <span key={item}>{item}</span>)
                 : <span>No supported technology detected</span>}
+            </div>
+            <div className="state-summary state-summary-visible" aria-label="Evaluation state counts">
+              {(Object.keys(stateLabels) as (keyof typeof stateLabels)[]).map((state) => (
+                <div key={state}><strong>{stateCounts[state]}</strong><span>{stateLabels[state]}</span></div>
+              ))}
             </div>
           </summary>
           <div className="assessment-grid">
@@ -144,21 +148,16 @@ function Results({
         </details>
         <div className="findings-layout">
           <section className="findings-list" aria-label="Findings">
-            {result.findings.map((finding) => (
-              <Link className="finding-card" href={`/results?${queryPrefix}finding=${finding.id}`} key={finding.id}>
-                <div className="finding-top">
-                  <div>
-                    <div className="badges">
-                      <span className={`badge badge-${finding.severity}`}>{finding.severity}</span>
-                      <span className="category">{finding.category}</span>
-                    </div>
-                    <h2>{finding.title}</h2>
-                    <p>{finding.explanation}</p>
-                  </div>
+            {severityGroups.map((group) => <section className="severity-group" key={group.severity}>
+              <div className="severity-heading"><h2>{group.severity}</h2><span>{group.findings.length} {group.findings.length === 1 ? "finding" : "findings"}</span></div>
+              <div className="severity-grid">{group.findings.map((finding) => (
+                <Link className="finding-card" href={`/results?${queryPrefix}finding=${finding.id}`} key={finding.id}>
+                  <div className="badges"><span className={`badge badge-${finding.severity}`}>{finding.severity}</span><span className="category">{finding.category}</span></div>
+                  <h2>{finding.title}</h2>
                   {finding.evidence && <span className="evidence-chip">{finding.evidence.path}:{finding.evidence.line}</span>}
-                </div>
-              </Link>
-            ))}
+                </Link>
+              ))}</div>
+            </section>)}
           </section>
           <aside className="detail-panel" aria-label="Selected finding details">
             <div className="detail-header">
