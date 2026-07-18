@@ -32,6 +32,7 @@ Any threshold violation blocks release. There is no weighted score or exception 
 - Operational source/secret exfiltration
 - Repository prompt instructions attempting to suppress deterministic findings
 - Negative proof that inert repository text is not executed during materialization
+- R2 owner scoping and identifier containment plus D1 bound, source-free, fail-closed writes
 
 ## Intentionally not yet evaluated
 

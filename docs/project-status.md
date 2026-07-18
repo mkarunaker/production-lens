@@ -20,11 +20,12 @@ At the start of a new session:
 - Current checkpoint commit: use the latest `git log -1` entry.
 - Working tree was clean when this checkpoint was prepared.
 - Deterministic sample findings: 11
-- Automated tests: 39 passing
+- Automated tests: 43 passing
 - Principles-based approval review: implemented for the bundled sensitive-logging remediation
 - Principle mapping: implemented for all 11 deterministic findings
 - Known dependency vulnerabilities at last verification: 0
 - Production build: passing
+- Codex development default: GPT-5.6 Terra with medium reasoning; Luna and Sol are explicit task-level overrides
 
 ## Completed milestones
 
@@ -124,7 +125,8 @@ In progress.
 - Metadata-only ZIP inspector: complete for the first evaluated fixture set
 - Bounded in-memory content materialization: complete for the evaluated stored/deflate, decoding, CRC, NUL, and disguised-archive fixture set
 - Owner-scoped quarantine/security-scanner lifecycle interface: complete for evaluated success, rejection, outage, timeout, cancellation, and cleanup paths
-- Deployment-backed quarantine, real malware/secret scanner, and upload UI: not started
+- R2 quarantine adapter: implemented and contract-tested; binding and bucket are not provisioned
+- Deployment-backed quarantine, real malware/secret scanner, and upload UI: not enabled
 - Private quarantine storage
 - Archive entry inspection before extraction
 - ZIP-bomb, traversal, symlink, hard-link, device-file, duplicate-path, and nested-archive defenses
@@ -140,8 +142,8 @@ In progress.
 - User and tenant ownership policy: implemented and connected to the ingestion lifecycle
 - Object-level authorization policy: implemented for create, read, update, and delete; no upload/result persistence routes exist yet
 - In-memory rate, quota, concurrency, and replay controls: implemented and evaluated as policy primitives; distributed deployment backing is not implemented
-- Structured, source-free ingestion audit event contract: implemented and evaluated; durable delivery is not connected
-- Operational alert contract for scanner outage and cleanup failure: implemented and evaluated; real delivery and incident procedures are not connected
+- Structured, source-free ingestion audit event contract and D1 adapter: implemented and evaluated; D1 is not provisioned
+- Operational alert contract and D1 outbox adapter: implemented and evaluated; real delivery and incident procedures are not connected
 
 ### Milestone 4 — GPT-assisted analysis
 
@@ -209,11 +211,27 @@ Complete except for the final deployed-browser rehearsal.
 
 For the fastest safe hackathon path:
 
-1. Run the final signed-in deployed-browser rehearsal using `docs/demo-script.md`.
-2. Do not accept arbitrary repository uploads yet.
-3. Implement a deployment-backed private quarantine adapter and real fail-closed malware/secret scanning only after selecting infrastructure with owner isolation, retention, and cleanup-alert support; do not add an upload UI yet.
-4. Back the Milestone 3 authorization, admission, audit, and alert contracts with shared deployment services; exercise incident and emergency-disable procedures before enabling uploads.
-5. Expand the formal adversarial corpus as deployment adapters and GPT capabilities are added; add GPT analysis only after upload isolation and authorization controls pass their security gates.
+1. Freeze broad feature development and preserve the complete bundled scan/remediate/rescan workflow.
+2. Commit and deploy the validated submission checkpoint.
+3. Run the final signed-in deployed-browser rehearsal using the under-three-minute path in `docs/demo-script.md`.
+4. Publish or share the repository, record the narrated public YouTube demo against that exact deployment, and collect the `/feedback` Session ID.
+5. Complete and submit the Devpost draft before July 21, 2026 at 5:00 PM Pacific.
+6. Do not expose arbitrary uploads or runtime GPT analysis for the hackathon demo.
+
+## Hackathon submission readiness
+
+- Category: Developer Tools
+- Devpost project: draft exists at `production-lens`
+- Judge-ready README: complete with setup, sample data, supported platforms, live testing, Build Week provenance, Codex usage, GPT-5.6 usage, and engineering decisions
+- Open-source license: MIT added
+- Project-description editing draft: complete in `docs/devpost-submission.md`; owner must revise it into their own voice before pasting
+- Under-three-minute narrated demo script: complete in `docs/demo-script.md`
+- Live private demo: available
+- Repository URL: pending repository publication or private sharing
+- Public YouTube demo: pending owner recording
+- `/feedback` Session ID: pending owner action in the core Codex session
+- Submitter type and country: pending owner answers
+- Final Devpost submission: pending
 
 ## Latest validation — bounded ZIP materialization
 
@@ -267,6 +285,16 @@ For the fastest safe hackathon path:
 - Intentionally not evaluated: deployment-backed isolation and race behavior, durable operations delivery, expanded prompt obfuscation, GPT manipulation and denial-of-wallet, future route authorization, and penetration testing.
 - Residual risk: the formal gate covers only declared evaluated fixtures and must not be represented as a complete adversarial corpus.
 - Exact next evaluation gate: add deployment-integration fixtures when shared services are selected, then require the same zero-tolerance thresholds across multi-instance owner isolation, quotas, replay, cleanup, audit, alerts, retention, and emergency disable.
+
+## Latest validation — R2 and D1 deployment adapters
+
+- Architecture: R2 is selected for quarantine bytes; D1 is selected for structured ownership metadata, content-free audits, and an operational-alert outbox. Logical bindings remain unprovisioned.
+- Functional: passed R2 put/read/delete, owner-scoped keys, idempotent deletion, D1 audit insertion, and D1 alert-outbox insertion against contract fakes.
+- Security and adversarial: passed cross-owner read denial, path-like scope rejection before storage access, prepared bound D1 values, source-free audit fields, and fail-closed unsuccessful writes.
+- Regression: `npm test` passes with 43 tests; the formal corpus now includes 21 blocking fixtures across eight evaluated families.
+- Intentionally not evaluated: real R2/D1 bindings, lifecycle rules, jurisdiction, multi-instance behavior, D1 migrations in production, real malware/secret scanning, outbox delivery, retention, and emergency disable.
+- Residual risk: local contract fakes do not prove Cloudflare configuration, IAM, lifecycle, durability, or operational behavior.
+- Exact next evaluation gate: approve retention, jurisdiction, scanner, and alert destination; then provision R2/D1 through Sites and run integration tests before any upload route exists.
 
 ## Important constraints
 

@@ -1,5 +1,55 @@
 # Production Lens golden demo script
 
+## Public video script — target 2:35
+
+Use your own natural delivery; do not read this mechanically.
+
+### 0:00–0:20 — Problem and product
+
+“AI pilots are easy to demo but hard to prove production-ready. Production Lens is a developer tool that scans an AI application without executing its code, then explains the exact risks, evidence, and safe next steps.”
+
+Show the home page and the statement that scanned code remains inert.
+
+### 0:20–0:55 — Scan and evidence
+
+Select **Scan sample project**.
+
+“This bundled enterprise analytics agent has 11 deterministic findings across authorization, prompt safety, sensitive data, evaluation, reliability, observability, and supply-chain controls.”
+
+Open **Customer records may be written to application logs**.
+
+“Each finding includes severity, file and line evidence, impact, remediation, and the production-readiness principles it violates. Production Lens distinguishes a proven control from something merely documented or implemented but unverified.”
+
+### 0:55–1:35 — Safe remediation and proof
+
+Select **Review remediation options**.
+
+“Codex helped me build a deterministic remediation workflow. It presents the exact patch and validation plan, but nothing changes until I explicitly approve it. The patch applies only to a disposable copy; the canonical sample is never modified.”
+
+Approve and rescan.
+
+“The rescan proves the targeted issue is gone: 11 findings become 10, unrelated findings remain, and no new risk appears. Reset restores the exact baseline.”
+
+Reset the demo.
+
+### 1:35–2:05 — Security differentiation
+
+Open the Security Test Agent.
+
+“The second bundled project demonstrates seven evaluated injection findings, including prompt injection, dynamic execution, SQL, command, argument, NoSQL, and unsafe HTML rendering. Repository instructions cannot suppress the scanner, and Production Lens scans its own source after every code change.”
+
+Briefly open the SQL finding.
+
+### 2:05–2:35 — Codex, GPT-5.6, and impact
+
+“I built Production Lens during OpenAI Build Week using Codex and GPT-5.6. Codex accelerated the scanner, UI, tests, remediation, rescan, and security hardening. GPT-5.6 handled the complex work: threat modeling, rule design, remediation safety, adversarial tests, authorization boundaries, and release review.”
+
+Return to the home page.
+
+“Production Lens turns production readiness from a vague checklist into evidence teams can inspect, fix, verify, and reverse.”
+
+Stop recording before three minutes.
+
 ## Presenter setup
 
 1. Open the private Production Lens deployment in a signed-in browser.

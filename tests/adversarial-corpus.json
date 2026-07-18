@@ -126,6 +126,34 @@
       "expected": "not_executed",
       "testName": "materializes stored and deflated approved text without writing or executing it",
       "blocking": true
+    },
+    {
+      "id": "ADV-STORAGE-OWNER-001",
+      "family": "storage",
+      "expected": "cross_owner_missing",
+      "testName": "R2 quarantine keys are owner scoped and deletion is idempotent",
+      "blocking": true
+    },
+    {
+      "id": "ADV-STORAGE-SCOPE-001",
+      "family": "storage",
+      "expected": "QUARANTINE_SCOPE_INVALID",
+      "testName": "R2 quarantine rejects path-like scope identifiers before storage access",
+      "blocking": true
+    },
+    {
+      "id": "ADV-STORAGE-AUDIT-001",
+      "family": "storage",
+      "expected": "bound_source_free_write",
+      "testName": "D1 audit writes use bound values and contain no repository source fields",
+      "blocking": true
+    },
+    {
+      "id": "ADV-STORAGE-ALERT-001",
+      "family": "storage",
+      "expected": "D1_WRITE_FAILED",
+      "testName": "D1 alert outbox uses bound values and fails closed on unsuccessful writes",
+      "blocking": true
     }
   ]
 }

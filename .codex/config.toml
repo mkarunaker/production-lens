@@ -1,0 +1,4 @@
+# Production Lens development default.
+# Use explicit task-level overrides for Luna or Sol when appropriate.
+model = "gpt-5.6-terra"
+model_reasoning_effort = "medium"

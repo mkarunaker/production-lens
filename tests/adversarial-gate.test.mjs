@@ -28,6 +28,7 @@ test("every evaluated adversarial family maps to an executable regression test",
   const testSources = (
     await Promise.all([
       readFile(new URL("./scanner.test.mjs", import.meta.url), "utf8"),
+      readFile(new URL("./platform-adapters.test.mjs", import.meta.url), "utf8"),
       readFile(new URL("./security-controls.test.mjs", import.meta.url), "utf8"),
       readFile(new URL("./zip-inspector.test.mjs", import.meta.url), "utf8"),
     ])
@@ -41,6 +42,7 @@ test("every evaluated adversarial family maps to an executable regression test",
     "exfiltration",
     "prompt_injection",
     "execution",
+    "storage",
   ]) {
     assert.ok(families.has(required), required);
   }

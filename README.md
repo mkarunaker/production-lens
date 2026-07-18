@@ -1,44 +1,90 @@
 # Production Lens
 
-Production Lens statically scans an AI application repository and explains evidence-backed production-readiness gaps. This hackathon milestone includes one reliable end-to-end demo using an intentionally incomplete enterprise analytics agent.
+Production Lens is a developer tool that statically inspects an AI application repository and explains why it is not ready for production. It turns vague launch concerns into prioritized, evidence-backed findings with concrete remediation and verification steps.
 
-## What works
+**Hackathon category:** Developer Tools
 
-- One-click scan of the bundled sample
-- Eleven deterministic findings across authorization, sensitive data, observability, evaluations, reliability, prompts, code security, and supply-chain hygiene
-- File and line evidence with suspected-secret redaction
-- Prioritized result cards and a detailed severity/evidence/impact/remediation view
-- Approved extension, safe path, file count, and byte-limit controls
-- Indirect prompt-injection detection while keeping repository text inert
-- Submitted-code checks for dangerous dynamic execution and missing dependency lockfiles
-- Evaluated high-signal JavaScript/TypeScript checks for SQL/ORM, OS command, argument, NoSQL, and XSS/unsafe HTML injection
-- Mandatory Production Lens self-scan against every implemented injection rule as part of the test gate
-- A separate visible Security Test Agent with seven intentional, line-evidenced injection findings
-- Reviewable remediation steps and deterministic recommended patches for every finding in both bundled projects
-- Code-first technology inventory and applicability states for every catalog check
-- Explicit separation of findings, passed checks, unverified controls, documentation-only claims, review needs, and non-applicable checks
-- Metadata-only ZIP structure inspection with fail-closed path, collision, entry-type, feature, and archive-bomb defenses
-- Explicitly approved remediation of the sensitive-logging finding in a disposable copy
-- Deterministic rescan and before/after verification without executing sample code
-- Remediation verification and change-safety evidence as a production-readiness criterion
-- Principle mappings and release-readiness explanations on every finding
-- Security headers, a maintained threat model, and dependency audit automation
-- Automated expected-finding, snapshot-parity, redaction, and limit tests
+**Live demo:** https://production-lens.karunaker-molugu.chatgpt.site
 
-Scanned code is treated as untrusted text and is never imported or executed.
+## The problem
 
-## Run locally
+Teams can build impressive AI pilots quickly, but production readiness is harder to prove. Authorization, prompt injection, unsafe interpreters, sensitive logging, missing evaluations, reliability gaps, and weak human oversight often live across code and configuration. Generic checklists do not show where the problem is or how to verify a safe fix.
 
-Requirements: Node.js 22.13 or newer.
+Production Lens treats repository code as hostile data, scans it without executing it, and connects every finding to deterministic evidence and five release-readiness principles:
+
+1. Own it
+2. Prove it
+3. Contain it
+4. Trace and reverse it
+5. Break the lethal trifecta
+
+## The complete demo workflow
+
+1. Select one of two bundled AI-agent repositories.
+2. Run a deterministic static scan without importing, installing, building, or executing repository code.
+3. Review prioritized findings with severity, category, file, line, evidence, impact, readiness principles, and remediation.
+4. Inspect the technology inventory and the evidence state of every catalog check.
+5. Select a finding and review one exact deterministic patch.
+6. Explicitly approve or defer the change.
+7. Apply an approved patch only to a disposable in-memory copy.
+8. Rescan and compare resolved, remaining, and newly introduced findings.
+9. Reset to the exact canonical baseline.
+
+The Enterprise Analytics Agent demonstrates an **11 → 10** remediation. The Security Test Agent demonstrates a **7 → 6** injection remediation.
+
+## What is implemented
+
+- Eleven deterministic production-readiness findings for the enterprise sample
+- Seven evaluated injection findings for the security sample
+- Line-level evidence with suspected-secret redaction
+- Technology inventory and explicit applicability/evidence states
+- Prompt-injection, dynamic-execution, lockfile, SQL/ORM, OS-command, argument, NoSQL, and unsafe-HTML checks for declared evaluated patterns
+- Deterministic remediation proposals for every bundled finding
+- Explicit approval, disposable-copy mutation, rescan, comparison, and reset
+- Mandatory self-scan of Production Lens application source
+- ZIP metadata inspection and bounded in-memory materialization with path, collision, special-entry, compression-bomb, CRC, UTF-8, NUL, and disguised-archive defenses
+- Owner/tenant authorization and rate, quota, concurrency, and replay policy boundaries
+- Source-free audit and operational-alert contracts
+- A formal release-blocking adversarial corpus with stable fixture IDs
+- Security headers, threat model, evaluation gates, and dependency auditing
+
+Arbitrary uploads and runtime GPT analysis are deliberately disabled until their isolation, authorization, operational, and adversarial gates are complete.
+
+## Try it without rebuilding
+
+Open the [private live demo](https://production-lens.karunaker-molugu.chatgpt.site) and sign in with ChatGPT if prompted.
+
+1. Choose **Scan sample project**.
+2. Confirm the Enterprise baseline contains 11 findings.
+3. Open **Customer records may be written to application logs**.
+4. Choose **Review remediation options**.
+5. Review the exact patch, check the approval box, and apply it.
+6. Confirm the comparison shows 11 → 10, one resolved finding, and no new findings.
+7. Reset and confirm the baseline returns to 11.
+8. Repeat with **Scan security test project** to inspect seven injection findings.
+
+No credentials beyond the hosting platform’s normal ChatGPT sign-in are required.
+
+## Installation
+
+### Requirements
+
+- Node.js 22.13 or newer
+- npm
+- macOS, Linux, or Windows with a Node.js-compatible shell
+
+The hosted build targets a Cloudflare Worker through Vinext. Local scanning and tests do not require Cloudflare credentials.
+
+### Run locally
 
 ```bash
 npm install
 npm run dev
 ```
 
-Open `http://localhost:3000`. Use **Scan sample project** for the stable 11→10 golden remediation demo, or **Scan security test project** to review the evaluated injection findings.
+Open `http://localhost:3000`.
 
-## Verify
+### Production-like verification
 
 ```bash
 npm test
@@ -46,25 +92,83 @@ npm run build
 npm run security:check
 ```
 
-`npm run security:check` also starts the production build locally and verifies both bundled scan and remediation paths end to end.
+`npm run security:check` runs the complete automated suite, dependency audit, production build, and production-server golden-path test.
+
+## Sample data
+
+Both samples are bundled and inert:
+
+- `samples/enterprise-analytics-agent/` — intentionally incomplete analytics agent
+- `lib/scanner/security-sample-bundle.ts` — intentionally vulnerable injection test agent
+
+Tests assert that bundled snapshots match their canonical source and expected finding manifests.
+
+## Supported platforms and scope
+
+- Browser UI: current desktop and mobile browsers supported by the deployed Next.js/Vinext application
+- Local development: Node.js 22.13+ on macOS, Linux, and Windows
+- Evaluated scanner languages: declared high-signal JavaScript/TypeScript, React/browser, SQL, configuration, and Markdown patterns
+- Archive input contract: ZIP only; hosted arbitrary upload remains disabled
+
+Production Lens does not claim universal language coverage or perfect security.
+
+## How Codex accelerated development
+
+Codex was the primary engineering collaborator throughout Build Week. It:
+
+- Translated the product idea into milestones, trust boundaries, and evaluation gates
+- Built the scanner, UI, deterministic sample snapshots, and expected-finding tests
+- Added evidence redaction, file/path limits, security headers, and self-scan invariants
+- Expanded injection coverage using paired vulnerable and secure-equivalent fixtures
+- Built explicit remediation approval, disposable-copy patching, rescan, comparison, and reset
+- Implemented secure ZIP inspection and bounded materialization without executing repository code
+- Developed authorization, admission, audit, alert, and adversarial-evaluation boundaries
+- Repeatedly ran tests, production builds, dependency audits, and end-to-end checks
+
+The repository’s dated commits show the Build Week progression from the first scanner through the complete remediation workflow and security boundaries.
+
+## How GPT-5.6 contributed
+
+GPT-5.6 was used through Codex for the complex work: security architecture, threat modeling, deterministic rule design, remediation safety, adversarial fixtures, authorization boundaries, operational failure handling, and release-readiness review.
+
+The project uses the GPT-5.6 family deliberately:
+
+- **Terra** is the project’s everyday development default.
+- **Luna** is reserved for bounded, repeatable tasks such as documentation and mechanical fixtures.
+- **Sol** is used for ambiguous, security-critical design and final review.
+
+GPT-5.6 is not treated as a production security boundary. The demo’s scan results and remediation verification remain deterministic, testable, and reproducible.
+
+## Key product and engineering decisions
+
+- **Evidence over checklists:** every finding must point to deterministic evidence and actionable verification.
+- **Never execute scanned code:** repository content is data, including comments and embedded instructions.
+- **Code outranks claims:** Markdown cannot suppress application-code findings.
+- **Explicit evidence states:** implemented-but-unverified and documented-only controls are not silently marked safe.
+- **Human approval before mutation:** remediation requires an exact patch and explicit approval.
+- **Disposable changes:** the canonical sample never changes during the demo.
+- **Prove the fix:** success requires rescan, no new findings, preserved unrelated behavior, and reset.
+- **Bound capability:** uploads and runtime model analysis remain disabled until their security gates pass.
+
+## Built during OpenAI Build Week
+
+Production Lens was created during the submission period beginning July 13, 2026. The first repository commit is dated July 17, 2026. The complete scanner, UI, remediation, rescan, security hardening, ingestion boundaries, authorization policies, operational contracts, and adversarial gate were developed during Build Week using Codex and GPT-5.6.
 
 ## Repository map
 
-- `app/` — Production Lens pages
-- `lib/scanner/` — deterministic scanner and bundled text snapshot
-- `samples/enterprise-analytics-agent/` — intentionally incomplete sample repository
-- `tests/` — scanner and security-boundary tests
-- `PROJECT.md` — stable product scope
-- `AGENTS.md` — repository working instructions
-- `docs/implementation-plan.md` — milestone plan and risks
-- `docs/threat-model.md` — trust boundaries, threats, controls, and residual risks
-- `docs/evaluation-gates.md` — mandatory evaluations for every milestone and release
-- `docs/production-readiness-principles.md` — principles-based release readiness: Own it, Prove it, Contain it, Trace and reverse it, and Break the lethal trifecta
-- `docs/injection-rule-pack.md` — incremental injection and interpreter-safety coverage backlog
-- `docs/demo-script.md` — presenter walkthrough, release checklist, and failure-recovery runbook
-- `docs/secure-ingestion-contract.md` — ZIP-only hosted ingestion limits, rejection policy, isolation guarantees, and acceptance tests
-- `SECURITY.md` — security posture and future LLM boundary requirements
+- `app/` — product UI and routes
+- `lib/scanner/` — deterministic scanner behavior
+- `lib/remediation/` — deterministic disposable-copy remediation
+- `lib/ingestion/` — secure ZIP inspection and ingestion boundaries
+- `lib/security/` — headers, authorization, admission, audit, and alert policies
+- `samples/` — inert bundled sample repository
+- `tests/` — functional, security, adversarial, self-scan, and E2E tests
+- `docs/demo-script.md` — narrated demo and recovery runbook
+- `docs/evaluation-gates.md` — mandatory release evaluations
+- `docs/production-readiness-principles.md` — governing doctrine
+- `docs/threat-model.md` — trust boundaries and residual risks
+- `docs/project-status.md` — current milestone checkpoint
 
-## Intentionally not implemented yet
+## License
 
-GPT analysis, Codex remediation, repository upload, authentication, external integrations, dashboards, and before/after rescanning are later milestones.
+Licensed under the MIT License. See `LICENSE`.
