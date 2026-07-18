@@ -151,7 +151,7 @@ function Results({
             {severityGroups.map((group) => <section className="severity-group" key={group.severity}>
               <div className="severity-heading"><h2>{group.severity}</h2><span>{group.findings.length} {group.findings.length === 1 ? "finding" : "findings"}</span></div>
               <div className="severity-grid">{group.findings.map((finding) => (
-                <Link className="finding-card" href={`/results?${queryPrefix}finding=${finding.id}`} key={finding.id}>
+                <Link className="finding-card" href={`/results?${queryPrefix}finding=${finding.id}#selected-finding`} key={finding.id}>
                   <div className="badges"><span className={`badge badge-${finding.severity}`}>{finding.severity}</span><span className="category">{finding.category}</span></div>
                   <h2>{finding.title}</h2>
                   {finding.evidence && <span className="evidence-chip">{finding.evidence.path}:{finding.evidence.line}</span>}
@@ -159,7 +159,7 @@ function Results({
               ))}</div>
             </section>)}
           </section>
-          <aside className="detail-panel" aria-label="Selected finding details">
+          <aside id="selected-finding" className="detail-panel" aria-label="Selected finding details">
             <div className="detail-header">
               <span className={`badge badge-${selected.severity}`}>{selected.severity}</span>
               <h2>{selected.title}</h2>
