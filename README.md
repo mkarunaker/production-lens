@@ -76,6 +76,8 @@ No credentials beyond the hosting platform’s normal ChatGPT sign-in are requir
 
 The hosted build targets a Cloudflare Worker through Vinext. Local scanning and tests do not require Cloudflare credentials.
 
+The hosted demo provides three sanitized ZIP downloads under `public/demo-archives/`. Judges may download one, select it in the upload control, and click **Run Lens**. The hosted control accepts only those provided demo filenames; use `npm run demo:zip` for custom local ZIPs.
+
 ### Run locally
 
 ```bash
