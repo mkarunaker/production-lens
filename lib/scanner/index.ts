@@ -56,6 +56,17 @@ function evidence(files: RepositoryFile[], path: string, pattern: RegExp) {
   return { path, line: index + 1, code: redactSecrets(lines[index].trim()) };
 }
 
+function firstPatternEvidence(files: RepositoryFile[], patterns: RegExp[]) {
+  for (const file of files) {
+    const lines = file.content.split("\n");
+    const line = lines.findIndex((candidate) => patterns.some((pattern) => pattern.test(candidate)));
+    if (line >= 0) {
+      return { path: file.path, line: line + 1, code: redactSecrets(lines[line].trim()) };
+    }
+  }
+  return undefined;
+}
+
 const PRINCIPLES_BY_RULE: Record<string, { name: ReadinessPrinciple; reason: string }[]> = {
   SEC_INDIRECT_PROMPT_INJECTION: [
     { name: "Prove it", reason: "Adversarial evaluation must show that hostile repository instructions cannot change system behavior." },
@@ -65,6 +76,21 @@ const PRINCIPLES_BY_RULE: Record<string, { name: ReadinessPrinciple; reason: str
   SEC_DANGEROUS_DYNAMIC_EXECUTION: [
     { name: "Contain it", reason: "Dynamic execution dramatically expands the blast radius of attacker-controlled input." },
     { name: "Break the lethal trifecta", reason: "Untrusted input can cross directly into a consequential execution capability." },
+  ],
+  INJ_SQL_OR_ORM: [
+    { name: "Prove it", reason: "Adversarial and secure-equivalent evaluations must demonstrate that query structure cannot be changed by input." },
+    { name: "Contain it", reason: "A compromised query must not inherit broad access to customer or tenant data." },
+    { name: "Break the lethal trifecta", reason: "Untrusted input can reach a private-data interpreter and may enable disclosure or consequential writes." },
+  ],
+  INJ_OS_COMMAND: [
+    { name: "Prove it", reason: "Tests must demonstrate that hostile metacharacters and arguments cannot alter the executed operation." },
+    { name: "Contain it", reason: "Process execution must use minimal operating-system privileges and a tightly scoped environment." },
+    { name: "Break the lethal trifecta", reason: "Untrusted input can cross into a consequential operating-system capability." },
+  ],
+  INJ_ARGUMENT: [
+    { name: "Prove it", reason: "Tests must show that user-controlled values cannot become flags or change command semantics." },
+    { name: "Contain it", reason: "Allowlisted arguments and least-privilege processes limit the impact of argument manipulation." },
+    { name: "Break the lethal trifecta", reason: "Untrusted input can influence a consequential external process even when no shell is used." },
   ],
   SUPPLY_CHAIN_MISSING_LOCKFILE: [
     { name: "Prove it", reason: "Reproducible builds are necessary for meaningful security and regression evidence." },
@@ -148,7 +174,6 @@ export function scanRepository(repository: string, inputFiles: RepositoryFile[])
   const dynamicExecutionPatterns = [
     /\beval\s*\(/,
     /\bnew\s+Function\s*\(/,
-    /\b(?:exec|execSync)\s*\(/,
   ];
   const dynamicExecutionFile = files.find((file) =>
     dynamicExecutionPatterns.some((pattern) => pattern.test(file.content)),
@@ -171,6 +196,57 @@ export function scanRepository(repository: string, inputFiles: RepositoryFile[])
         line: lineIndex + 1,
         code: redactSecrets(lines[lineIndex].trim()),
       },
+    }));
+  }
+
+  const sqlInjectionEvidence = firstPatternEvidence(files, [
+    /\b(?:query|execute|prepare|raw)\s*\(\s*`[^`]*\$\{[^}]+\}[^`]*`/,
+    /\b(?:query|execute|prepare|raw)\s*\(\s*["'][^"']*["']\s*\+/,
+    /\$(?:queryRawUnsafe|executeRawUnsafe)\s*\(\s*(?!["'`][^"'`]*["'`]\s*\))/,
+  ]);
+  if (sqlInjectionEvidence) {
+    findings.push(finding({
+      ruleId: "INJ_SQL_OR_ORM",
+      title: "Input may alter a SQL or ORM query",
+      severity: "critical",
+      category: "Injection",
+      explanation: "A SQL or raw ORM sink receives a query assembled with interpolation, concatenation, or an explicitly unsafe raw-query API.",
+      impact: "An attacker may change query structure to read or modify data outside the intended user, tenant, or operation scope.",
+      remediation: "Use parameterized queries or the ORM's safe tagged-template/query builder, allowlist identifiers that cannot be parameterized, and authorize the resulting operation within the requesting user's tenant scope.",
+      evidence: sqlInjectionEvidence,
+    }));
+  }
+
+  const osCommandEvidence = firstPatternEvidence(files, [
+    /\b(?:exec|execSync)\s*\(\s*`[^`]*\$\{[^}]+\}[^`]*`/,
+    /\b(?:exec|execSync)\s*\(\s*["'][^"']*["']\s*\+/,
+  ]);
+  if (osCommandEvidence) {
+    findings.push(finding({
+      ruleId: "INJ_OS_COMMAND",
+      title: "Input may alter an operating-system command",
+      severity: "critical",
+      category: "Injection",
+      explanation: "A shell command is assembled with interpolated or concatenated values before execution.",
+      impact: "Shell metacharacters in an attacker-controlled value may execute additional commands with the application's privileges.",
+      remediation: "Avoid the shell. Invoke a fixed executable with an argument array, validate each value against a strict allowlist, use absolute executable paths, and run the process with minimal privileges and resource limits.",
+      evidence: osCommandEvidence,
+    }));
+  }
+
+  const argumentInjectionEvidence = firstPatternEvidence(files, [
+    /\b(?:spawn|execFile|execFileSync)\s*\(\s*["'][^"']+["']\s*,\s*\[\s*(?:["'][^"']*["']\s*,\s*)*(?:user|input|arg|option|url|path|query|filename)[a-zA-Z0-9_$]*/i,
+  ]);
+  if (argumentInjectionEvidence) {
+    findings.push(finding({
+      ruleId: "INJ_ARGUMENT",
+      title: "User-controlled value may become a process argument",
+      severity: "high",
+      category: "Injection",
+      explanation: "An externally influenced value is passed into a process argument array without an evident allowlist or option boundary.",
+      impact: "A leading flag or specially formed value may change the invoked program's behavior even though no shell is used.",
+      remediation: "Map user choices to server-owned arguments, reject leading-option syntax, insert a supported end-of-options marker where appropriate, validate value shape, and test malicious flag inputs.",
+      evidence: argumentInjectionEvidence,
     }));
   }
 

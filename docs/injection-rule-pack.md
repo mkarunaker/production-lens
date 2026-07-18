@@ -30,9 +30,9 @@ Finding a function name alone is not sufficient for a critical finding. When dat
 | --- | --- | --- |
 | Prompt injection | Partial | Direct, indirect, encoded, obfuscated, tool-output, and persistent patterns |
 | Dynamic code execution | Partial | `eval`, dynamic functions, reflection, runtime compilation, and unsafe deserialization |
-| SQL and ORM injection | Planned | JavaScript/TypeScript first; string-built queries and unsafe raw-query APIs |
-| OS command injection | Partial | Shell and process invocation with concatenated or interpolated untrusted input |
-| Argument injection | Planned | User-controlled flags and argument-position manipulation even without a shell |
+| SQL and ORM injection | Partial | JavaScript/TypeScript string-built query calls and unsafe Prisma raw-query APIs |
+| OS command injection | Partial | JavaScript/TypeScript `exec` and `execSync` with concatenated or interpolated input |
+| Argument injection | Partial | JavaScript/TypeScript `spawn` and `execFile` argument arrays with visibly user-controlled values |
 | NoSQL injection | Planned | Mongo-style operators, dynamic query objects, and unsafe filter construction |
 | Server-side template injection | Planned | Common template engines and untrusted template compilation/rendering |
 | XSS and unsafe HTML rendering | Planned | Unsafe HTML sinks, scriptable URLs, and untrusted Markdown/HTML rendering |
@@ -49,6 +49,8 @@ Finding a function name alone is not sufficient for a critical finding. When dat
 | Unsafe deserialization | Planned | Executable or polymorphic deserialization of untrusted input |
 
 ## Implementation waves
+
+Current Wave 1 increment: SQL/ORM, OS command, and argument injection have vulnerable and secure-equivalent fixtures. Their detection is intentionally high-signal and does not yet perform interprocedural taint analysis.
 
 ### Wave 1 — Common application sinks
 

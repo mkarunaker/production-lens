@@ -16,6 +16,7 @@ export type Category =
   | "Human oversight"
   | "Prompt management"
   | "Prompt injection"
+  | "Injection"
   | "Code security"
   | "Supply chain";
 

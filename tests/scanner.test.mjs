@@ -100,6 +100,53 @@ test("hostile submission instructions cannot suppress code-security findings", a
   assert.ok(ruleIds.has("SUPPLY_CHAIN_MISSING_LOCKFILE"));
 });
 
+test("detects high-signal SQL, command, and argument injection while ignoring secure equivalents", async () => {
+  const { scanRepository } = await loadScanner();
+  const vulnerable = scanRepository("injection-fixtures", [
+    {
+      path: "src/sql.ts",
+      content: "export const findUser = (userEmail) => db.query(`SELECT * FROM users WHERE email = '${userEmail}'`);",
+    },
+    {
+      path: "src/command.ts",
+      content: "export const convert = (userPath) => exec(`convert ${userPath} output.png`);",
+    },
+    {
+      path: "src/arguments.ts",
+      content: 'export const download = (userUrl) => spawn("/usr/bin/curl", [userUrl]);',
+    },
+  ]);
+  const vulnerableIds = new Set(vulnerable.findings.map((finding) => finding.ruleId));
+  assert.ok(vulnerableIds.has("INJ_SQL_OR_ORM"));
+  assert.ok(vulnerableIds.has("INJ_OS_COMMAND"));
+  assert.ok(vulnerableIds.has("INJ_ARGUMENT"));
+  for (const ruleId of ["INJ_SQL_OR_ORM", "INJ_OS_COMMAND", "INJ_ARGUMENT"]) {
+    const finding = vulnerable.findings.find((candidate) => candidate.ruleId === ruleId);
+    assert.ok(finding.evidence.path.startsWith("src/"));
+    assert.equal(finding.evidence.line, 1);
+    assert.ok(finding.principles.length >= 3);
+  }
+
+  const secure = scanRepository("secure-injection-fixtures", [
+    {
+      path: "src/sql.ts",
+      content: 'export const findUser = (userEmail) => db.query("SELECT * FROM users WHERE email = ?", [userEmail]);',
+    },
+    {
+      path: "src/command.ts",
+      content: 'export const convert = () => execFile("/usr/bin/convert", ["fixed-input.png", "output.png"]);',
+    },
+    {
+      path: "src/arguments.ts",
+      content: 'export const download = () => spawn("/usr/bin/curl", ["--", "https://example.com/report"]);',
+    },
+  ]);
+  const secureIds = new Set(secure.findings.map((finding) => finding.ruleId));
+  assert.equal(secureIds.has("INJ_SQL_OR_ORM"), false);
+  assert.equal(secureIds.has("INJ_OS_COMMAND"), false);
+  assert.equal(secureIds.has("INJ_ARGUMENT"), false);
+});
+
 test("security headers deny framing, sniffing, and broad browser capabilities", async () => {
   const { outputText } = await transpile("lib/security/headers.ts");
   const module = await import(`data:text/javascript;base64,${Buffer.from(outputText).toString("base64")}`);

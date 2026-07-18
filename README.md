@@ -11,6 +11,7 @@ Production Lens statically scans an AI application repository and explains evide
 - Approved extension, safe path, file count, and byte-limit controls
 - Indirect prompt-injection detection while keeping repository text inert
 - Submitted-code checks for dangerous dynamic execution and missing dependency lockfiles
+- Evaluated high-signal JavaScript/TypeScript checks for SQL/ORM, OS command, and argument injection
 - Explicitly approved remediation of the sensitive-logging finding in a disposable copy
 - Deterministic rescan and before/after verification without executing sample code
 - Remediation verification and change-safety evidence as a production-readiness criterion
