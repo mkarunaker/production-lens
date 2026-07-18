@@ -1,0 +1,131 @@
+{
+  "version": 1,
+  "releaseThresholds": {
+    "blockingFixturePassRate": 1,
+    "authorizationBypasses": 0,
+    "sourceLeakageEvents": 0,
+    "cleanupResidueEvents": 0,
+    "scannedCodeExecutions": 0
+  },
+  "fixtures": [
+    {
+      "id": "ADV-ARCHIVE-PATH-001",
+      "family": "archive",
+      "expected": "ZIP_PATH_REJECTED",
+      "testName": "rejects traversal, absolute, drive, backslash, and ambiguous paths",
+      "blocking": true
+    },
+    {
+      "id": "ADV-ARCHIVE-COLLISION-001",
+      "family": "archive",
+      "expected": "ZIP_COLLISION_REJECTED",
+      "testName": "rejects case, Unicode, and platform-normalized collisions",
+      "blocking": true
+    },
+    {
+      "id": "ADV-ARCHIVE-TYPE-001",
+      "family": "archive",
+      "expected": "ZIP_ENTRY_TYPE_REJECTED",
+      "testName": "rejects symlinks, nested archives, encryption, and unsupported methods",
+      "blocking": true
+    },
+    {
+      "id": "ADV-ARCHIVE-BOMB-001",
+      "family": "archive",
+      "expected": "ZIP_LIMIT_EXCEEDED",
+      "testName": "rejects per-entry and overall compression bombs from metadata",
+      "blocking": true
+    },
+    {
+      "id": "ADV-ARCHIVE-LIMIT-001",
+      "family": "archive",
+      "expected": "ZIP_LIMIT_EXCEEDED",
+      "testName": "rejects excessive path length, depth, file size, and entry count",
+      "blocking": true
+    },
+    {
+      "id": "ADV-ARCHIVE-DISGUISE-001",
+      "family": "archive",
+      "expected": "ZIP_NESTED_ARCHIVE_REJECTED",
+      "testName": "rejects disguised archives, invalid UTF-8, embedded NUL, and corrupt expanded data",
+      "blocking": true
+    },
+    {
+      "id": "ADV-AUTH-CROSS-OWNER-001",
+      "family": "authorization",
+      "expected": "ACCESS_DENIED",
+      "testName": "object authorization permits only the owning user and tenant for every action",
+      "blocking": true
+    },
+    {
+      "id": "ADV-AUTH-PRINCIPAL-001",
+      "family": "authorization",
+      "expected": "ACCESS_DENIED",
+      "testName": "invalid principals and object identifiers fail closed",
+      "blocking": true
+    },
+    {
+      "id": "ADV-AUTH-INGESTION-001",
+      "family": "authorization",
+      "expected": "ACCESS_DENIED",
+      "testName": "ingestion rejects an invalid principal before writing quarantine data",
+      "blocking": true
+    },
+    {
+      "id": "ADV-ADMISSION-REPLAY-001",
+      "family": "admission",
+      "expected": "REPLAY_REJECTED",
+      "testName": "admission control enforces concurrency, replay, rate, and quota per subject",
+      "blocking": true
+    },
+    {
+      "id": "ADV-ADMISSION-ISOLATION-001",
+      "family": "admission",
+      "expected": "isolated",
+      "testName": "limits are isolated by tenant and user and reset only after their periods",
+      "blocking": true
+    },
+    {
+      "id": "ADV-OPS-SCANNER-001",
+      "family": "operations",
+      "expected": "ZIP_SECURITY_SCAN_UNAVAILABLE",
+      "testName": "ingestion fails closed and cleans up after rejection, scanner failure, cancellation, and timeout",
+      "blocking": true
+    },
+    {
+      "id": "ADV-OPS-CLEANUP-001",
+      "family": "operations",
+      "expected": "ZIP_CLEANUP_FAILED",
+      "testName": "cleanup failure blocks a successful ingestion result",
+      "blocking": true
+    },
+    {
+      "id": "ADV-OPS-LEAKAGE-001",
+      "family": "exfiltration",
+      "expected": "no_source_or_secret",
+      "testName": "operational records never contain archive content or suspected secrets",
+      "blocking": true
+    },
+    {
+      "id": "ADV-OPS-DELIVERY-001",
+      "family": "operations",
+      "expected": "fail_closed",
+      "testName": "audit and required operational alert delivery fail closed",
+      "blocking": true
+    },
+    {
+      "id": "ADV-PROMPT-SUPPRESSION-001",
+      "family": "prompt_injection",
+      "expected": "findings_preserved",
+      "testName": "hostile submission instructions cannot suppress code-security findings",
+      "blocking": true
+    },
+    {
+      "id": "ADV-NEGATIVE-EXECUTION-001",
+      "family": "execution",
+      "expected": "not_executed",
+      "testName": "materializes stored and deflated approved text without writing or executing it",
+      "blocking": true
+    }
+  ]
+}

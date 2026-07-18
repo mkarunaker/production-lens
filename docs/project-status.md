@@ -20,7 +20,7 @@ At the start of a new session:
 - Current checkpoint commit: use the latest `git log -1` entry.
 - Working tree was clean when this checkpoint was prepared.
 - Deterministic sample findings: 11
-- Automated tests: 37 passing
+- Automated tests: 39 passing
 - Principles-based approval review: implemented for the bundled sensitive-logging remediation
 - Principle mapping: implemented for all 11 deterministic findings
 - Known dependency vulnerabilities at last verification: 0
@@ -177,14 +177,15 @@ Complete for every bundled finding.
 
 ### Milestone 7 — Adversarial evaluation
 
-Not started.
+In progress.
 
-- Archive attack corpus
-- Prompt-injection and obfuscation corpus
-- Authorization and cross-tenant tests
-- Secret-exfiltration tests
+- Stable release-blocking corpus IDs and zero-tolerance thresholds: implemented in `tests/adversarial-corpus.json`
+- Archive attack corpus: partial for evaluated metadata, path, type, collision, bomb, limit, decoding, and disguised-archive cases
+- Prompt-injection corpus: partial for deterministic finding-suppression attempts; encoded, obfuscated, fragmented, and multi-file cases remain
+- Authorization and cross-tenant tests: partial at the framework-independent policy and ingestion boundaries
+- Secret-exfiltration tests: partial for operational audit and alert records
 - Model manipulation and denial-of-wallet tests
-- Release-blocking regression thresholds
+- Release-blocking regression thresholds: implemented for the current deterministic corpus
 
 ### Milestone 8 — Independent security validation
 
@@ -212,7 +213,7 @@ For the fastest safe hackathon path:
 2. Do not accept arbitrary repository uploads yet.
 3. Implement a deployment-backed private quarantine adapter and real fail-closed malware/secret scanning only after selecting infrastructure with owner isolation, retention, and cleanup-alert support; do not add an upload UI yet.
 4. Back the Milestone 3 authorization, admission, audit, and alert contracts with shared deployment services; exercise incident and emergency-disable procedures before enabling uploads.
-5. Add GPT analysis only after upload isolation and authorization controls pass their security gates.
+5. Expand the formal adversarial corpus as deployment adapters and GPT capabilities are added; add GPT analysis only after upload isolation and authorization controls pass their security gates.
 
 ## Latest validation — bounded ZIP materialization
 
@@ -257,6 +258,15 @@ For the fastest safe hackathon path:
 - Intentionally not evaluated: durable audit storage, ordering across instances, delivery retry/idempotency, alert routing, paging, incident response, retention, access review, or emergency disable.
 - Residual risk: interfaces and in-memory test sinks are not operational logging or alerting services; production delivery and monitoring remain absent.
 - Exact next evaluation gate: select shared deployment services for quarantine, admission state, audit delivery, and alerts; then test owner isolation, atomicity, ordering, retries, cleanup alerts, retention, and emergency disable before exposing uploads.
+
+## Latest validation — formal adversarial release gate
+
+- Functional: 17 stable blocking fixture IDs map to executable regression tests across archive, authorization, admission, operations, exfiltration, prompt-injection, and negative-execution families.
+- Release thresholds: 100% blocking-fixture pass rate; zero authorization bypasses, source-leakage events, cleanup-residue events, and scanned-code executions.
+- Regression: `npm test` passes with 39 tests; the corpus manifest validates unique IDs, required families, expected outcomes, and executable-test traceability.
+- Intentionally not evaluated: deployment-backed isolation and race behavior, durable operations delivery, expanded prompt obfuscation, GPT manipulation and denial-of-wallet, future route authorization, and penetration testing.
+- Residual risk: the formal gate covers only declared evaluated fixtures and must not be represented as a complete adversarial corpus.
+- Exact next evaluation gate: add deployment-integration fixtures when shared services are selected, then require the same zero-tolerance thresholds across multi-instance owner isolation, quotas, replay, cleanup, audit, alerts, retention, and emergency disable.
 
 ## Important constraints
 
