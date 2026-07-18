@@ -15,6 +15,8 @@
 3. **Browser → deployed worker:** public HTTP requests cross into a stateless application.
 4. **Future model boundary:** not present in milestone 1; must remain non-privileged when added.
 
+Every architecture revision must explicitly evaluate the lethal trifecta: private-data access, untrusted-content processing, and external communication or consequential action must not coexist in one uncontrolled trust domain.
+
 ## Principal threats and controls
 
 | Threat | Current control | Residual risk |

@@ -2,6 +2,8 @@
 
 Every milestone and meaningful implementation increment must define and pass its evaluations before it can be marked complete or deployed.
 
+Evaluations must demonstrate the applicable Production Lens readiness principles: **Own it, Prove it, Contain it, Trace and reverse it, and Break the lethal trifecta**.
+
 ## Required evaluation layers
 
 Every change must be assessed across the layers that apply:
@@ -14,6 +16,8 @@ Every change must be assessed across the layers that apply:
 6. **Negative behavior:** the system does not execute scanned code, leak secrets, follow repository instructions, or perform unapproved writes.
 7. **Operational:** failures are bounded, observable, recoverable, and do not leave sensitive temporary data.
 8. **Demo:** the user-visible golden path is deterministic, understandable, and resettable.
+9. **Remediation verification:** every applied fix resolves its target, introduces no new findings, preserves unrelated behavior, records approval, and supports rollback.
+10. **Capability separation:** no uncontrolled component simultaneously holds private-data access, untrusted-content processing, and external communication or consequential-action authority.
 
 ## Universal release gate
 
@@ -67,6 +71,10 @@ Before any milestone is marked complete:
 - Expected unrelated findings remain.
 - Newly introduced findings are reported.
 - Before and after counts are accurate.
+- Remediation-specific and existing regression tests pass.
+- The approved patch matches the applied patch.
+- Approval and validation results are retained as evidence.
+- A rollback or reset path is available and verified.
 - Reset restores the exact original result.
 
 ### Repository upload

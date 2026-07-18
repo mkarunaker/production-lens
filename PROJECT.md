@@ -4,6 +4,18 @@
 
 Production Lens explains why an AI application or agent is not ready for production. It statically inspects an untrusted repository, reports evidence-backed gaps, and recommends prioritized remediation.
 
+Production readiness also includes **remediation verification and change safety**: a proposed fix is not considered complete until the target finding is resolved, tests pass, no new findings are introduced, unrelated behavior is preserved, approval is recorded, and rollback is possible.
+
+The governing principles-based release-readiness doctrine is:
+
+1. **Own it** — meaningful human accountability and oversight.
+2. **Prove it** — demonstrate behavior before production.
+3. **Contain it** — limit blast radius.
+4. **Trace and reverse it** — preserve accountability and recovery.
+5. **Break the lethal trifecta** — separate private data, untrusted content, and external or consequential action.
+
+The detailed framework is maintained in `docs/production-readiness-principles.md`.
+
 ## Golden demo
 
 The hackathon demo scans one bundled enterprise analytics agent, shows at least five production-readiness findings with file and line evidence, and establishes the baseline for a later remediation-and-rescan flow.
@@ -35,3 +47,5 @@ GPT analysis, Codex remediation, repository upload, authentication, external/com
 ## Success criteria
 
 The sample scan deterministically returns at least five meaningful findings, at least three with line-level evidence, and the UI displays severity, category, explanation, impact, evidence, and remediation for every finding.
+
+When remediation is performed, the product must also report the before-and-after finding counts, resolved findings, remaining findings, newly introduced findings, validation results, approval state, and reset or rollback path.

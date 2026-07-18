@@ -13,6 +13,7 @@ Production Lens statically scans an AI application repository and explains evide
 - Submitted-code checks for dangerous dynamic execution and missing dependency lockfiles
 - Explicitly approved remediation of the sensitive-logging finding in a disposable copy
 - Deterministic rescan and before/after verification without executing sample code
+- Remediation verification and change-safety evidence as a production-readiness criterion
 - Security headers, a maintained threat model, and dependency audit automation
 - Automated expected-finding, snapshot-parity, redaction, and limit tests
 
@@ -48,6 +49,7 @@ npm run security:check
 - `docs/implementation-plan.md` — milestone plan and risks
 - `docs/threat-model.md` — trust boundaries, threats, controls, and residual risks
 - `docs/evaluation-gates.md` — mandatory evaluations for every milestone and release
+- `docs/production-readiness-principles.md` — principles-based release readiness: Own it, Prove it, Contain it, Trace and reverse it, and Break the lethal trifecta
 - `SECURITY.md` — security posture and future LLM boundary requirements
 
 ## Intentionally not implemented yet
