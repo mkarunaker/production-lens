@@ -45,6 +45,8 @@ Before any milestone is marked complete:
 - File-count and byte limits are enforced.
 - Repository instructions cannot suppress or alter findings.
 - No repository code or dependency is executed.
+- Injection coverage claims match the exact languages, frameworks, sources, sinks, and adversarial fixtures that have been evaluated.
+- New injection rules include both vulnerable and secure-equivalent fixtures.
 
 ### Remediation proposal
 

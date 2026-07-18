@@ -51,6 +51,7 @@ npm run security:check
 - `docs/threat-model.md` — trust boundaries, threats, controls, and residual risks
 - `docs/evaluation-gates.md` — mandatory evaluations for every milestone and release
 - `docs/production-readiness-principles.md` — principles-based release readiness: Own it, Prove it, Contain it, Trace and reverse it, and Break the lethal trifecta
+- `docs/injection-rule-pack.md` — incremental injection and interpreter-safety coverage backlog
 - `SECURITY.md` — security posture and future LLM boundary requirements
 
 ## Intentionally not implemented yet

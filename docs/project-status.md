@@ -70,6 +70,16 @@ Complete.
 - Missing dependency lockfile detection
 - Adversarial test proving repository instructions cannot suppress other findings
 
+### Milestone 1.3 — Injection and Interpreter Safety rule pack
+
+In progress as an incremental scanner milestone.
+
+- Prompt injection: partial
+- Dynamic code execution: partial
+- Remaining application, parser, protocol, identity, and platform injection classes: planned
+- Canonical backlog, evidence standard, implementation waves, and evaluation gates: `docs/injection-rule-pack.md`
+- Coverage must be reported per declared language and framework; universal injection coverage must not be claimed
+
 ## Golden demo status
 
 | Step | Status |
@@ -173,9 +183,10 @@ Mostly complete.
 For the fastest safe hackathon path:
 
 1. Add an automated end-to-end golden-path test and written demo script.
-2. Do not accept arbitrary repository uploads yet.
-3. Build Milestones 2 and 3 before enabling uploads.
-4. Add GPT analysis only after upload isolation and authorization controls pass their security gates.
+2. Add Injection Rule Pack Wave 1 incrementally, starting with SQL/ORM and OS command/argument injection.
+3. Do not accept arbitrary repository uploads yet.
+4. Build Milestones 2 and 3 before enabling uploads.
+5. Add GPT analysis only after upload isolation and authorization controls pass their security gates.
 
 ## Important constraints
 

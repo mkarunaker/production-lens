@@ -15,6 +15,10 @@ The canonical sample remains under `samples/enterprise-analytics-agent`. A build
 5. Build the scan and results experience.
 6. Validate tests and production build; document the demo.
 
+## Incremental scanner expansion
+
+Post-MVP scanner coverage is tracked in `docs/injection-rule-pack.md`. Injection and interpreter-safety rules are added in evaluated waves and must meet the repository-wide evaluation gates before their coverage status changes.
+
 ## Deterministic rules
 
 - shared service-account credential
