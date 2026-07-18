@@ -47,6 +47,7 @@ Before any milestone is marked complete:
 - No repository code or dependency is executed.
 - Injection coverage claims match the exact languages, frameworks, sources, sinks, and adversarial fixtures that have been evaluated.
 - New injection rules include both vulnerable and secure-equivalent fixtures.
+- Production Lens application source passes the implemented injection rules after every code change; intentionally vulnerable bundled samples and adversarial fixtures remain explicitly excluded from this self-scan.
 
 ### Remediation proposal
 

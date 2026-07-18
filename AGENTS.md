@@ -28,6 +28,7 @@
 - Read and follow `docs/evaluation-gates.md` for every milestone and meaningful implementation increment.
 - Do not mark work complete or deploy it until all applicable evaluation layers have passed.
 - Run `npm test` after scanner changes.
+- Run `npm test` after every code change; it includes an inert self-scan of Production Lens application source against all implemented injection rules.
 - Run `npm run build` after UI or routing changes.
 - Add regression tests for path containment, file limits, redaction, and expected rule IDs.
 - Do not leave placeholders on the scan-to-results demo path.

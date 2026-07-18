@@ -37,7 +37,7 @@ const PROMPT_INJECTION_PATTERNS = [
   /ignore\s+(?:all\s+)?previous\s+instructions?/i,
   /(?:reveal|repeat|print|show)\s+(?:the\s+)?(?:system\s+)?prompt/i,
   /you\s+are\s+now\s+(?:in\s+)?developer\s+mode/i,
-  /system\s+(?:message|prompt|override)/i,
+  /system\s+(?:message|prompt)\s+(?:override|instruction)/i,
   /(?:bypass|disable|override)\s+(?:the\s+)?(?:safety|security|policy|guardrails?)/i,
 ];
 
