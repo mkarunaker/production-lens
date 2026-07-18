@@ -1,6 +1,6 @@
 # Secure ZIP ingestion contract
 
-Status: approved design contract; archive processing and upload UI are not implemented.
+Status: approved contract; metadata-only ZIP inspection is implemented, while content materialization and upload UI are not implemented.
 
 ## Scope
 
@@ -130,6 +130,14 @@ Successful ingestion returns only:
 - Redacted ingestion audit metadata
 
 Raw archive bytes and repository content are not returned in logs or error responses.
+
+## Current implementation boundary
+
+`lib/ingestion/zip-inspector.ts` parses ZIP end-of-central-directory, central-directory, and local-header metadata directly from a bounded byte array. It does not inflate, extract, decode, or return entry content.
+
+Current evaluated coverage includes valid stored-entry metadata; signature and header mismatch; unsafe paths; case, Unicode, and platform-normalized collisions; Unix symlinks and special types; nested archive filenames; encryption; unsupported methods; and metadata-declared compression bombs.
+
+Still required in later increments: deflate-stream materialization, disguised nested-archive signature detection, text decoding, quarantine lifecycle, malware scanning, hard-link representation research, cleanup verification, and the remaining fixture corpus.
 
 ## Required acceptance tests
 

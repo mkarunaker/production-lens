@@ -20,7 +20,7 @@ At the start of a new session:
 - Current checkpoint commit: use the latest `git log -1` entry.
 - Working tree was clean when this checkpoint was prepared.
 - Deterministic sample findings: 11
-- Automated tests: 18 passing
+- Automated tests: 24 passing
 - Principles-based approval review: implemented for the bundled sensitive-logging remediation
 - Principle mapping: implemented for all 11 deterministic findings
 - Known dependency vulnerabilities at last verification: 0
@@ -121,7 +121,8 @@ In progress.
 - Authentication before upload
 - ZIP-only hosted ingestion contract: complete in `docs/secure-ingestion-contract.md`
 - Initial archive and file limits: approved
-- Archive implementation and upload UI: not started
+- Metadata-only ZIP inspector: complete for the first evaluated fixture set
+- Content materialization, quarantine, and upload UI: not started
 - Private quarantine storage
 - Archive entry inspection before extraction
 - ZIP-bomb, traversal, symlink, hard-link, device-file, duplicate-path, and nested-archive defenses
