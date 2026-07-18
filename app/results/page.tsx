@@ -46,6 +46,9 @@ function Results({
   isChiefSample: boolean;
   resolvedTitle?: string;
 }) {
+  const patchText = proposal
+    ? `--- a/${proposal.path}\n+++ b/${proposal.path}\n@@ -${proposal.line},1 +${proposal.line},1 @@\n-${proposal.before}\n+${proposal.after}\n`
+    : "";
   const principleLabels: Record<string, string> = {
     "Own it": "Accountability & review",
     "Prove it": "Tests & evidence",
@@ -101,6 +104,7 @@ function Results({
               <h2>{resolvedTitle ?? "Selected risk"} resolved</h2>
               <p>{comparison.beforeCount} → {comparison.afterCount} open findings · no new findings introduced · explicit demo approval completed · canonical sample unchanged</p>
               {proposal && <div className="verification-diff"><span>{proposal.path}:{proposal.line}</span><code className="diff-removed">− {proposal.before}</code><code className="diff-added">+ {proposal.after}</code></div>}
+              {proposal && <a className="patch-download" href={`data:text/plain;charset=utf-8,${encodeURIComponent(patchText)}`} download={`production-lens-${proposal.ruleId}.patch`}>Download reviewable patch ↓</a>}
             </div>
             <Link href={isSecuritySample ? "/results?sample=security" : "/results"}>Reset demo</Link>
           </section>
