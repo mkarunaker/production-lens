@@ -1,6 +1,6 @@
 # Secure ZIP ingestion contract
 
-Status: approved contract; metadata-only ZIP inspection is implemented, while content materialization and upload UI are not implemented.
+Status: approved contract; metadata inspection, bounded in-memory content materialization, and the quarantine/security-scan lifecycle boundary are implemented for the evaluated fixture set. Deployment-backed quarantine, a real malware/secret scanner, authentication, and the upload UI are not implemented.
 
 ## Scope
 
@@ -133,11 +133,19 @@ Raw archive bytes and repository content are not returned in logs or error respo
 
 ## Current implementation boundary
 
-`lib/ingestion/zip-inspector.ts` parses ZIP end-of-central-directory, central-directory, and local-header metadata directly from a bounded byte array. It does not inflate, extract, decode, or return entry content.
+`lib/ingestion/zip-inspector.ts` parses ZIP end-of-central-directory, central-directory, and local-header metadata directly from a bounded byte array. After complete metadata approval, it can materialize stored and raw-deflate entries in memory with bounded output, exact expanded-size and CRC-32 verification, archive-signature rejection, fatal UTF-8 decoding, embedded-NUL rejection, and final scanner-policy enforcement. It returns only approved `RepositoryFile[]` text and never writes archive content to disk.
 
-Current evaluated coverage includes valid stored-entry metadata; signature and header mismatch; unsafe paths; case, Unicode, and platform-normalized collisions; Unix symlinks and special types; nested archive filenames; encryption; unsupported methods; and metadata-declared compression bombs.
+`lib/ingestion/ingest-archive.ts` requires an owner-scoped quarantine adapter and archive security scanner. It fails closed on scanner rejection or outage, enforces cancellation and timeout around scanning, deletes quarantine content after every evaluated terminal path, and blocks success when cleanup fails. Its returned audit metadata contains counts and byte sizes, not repository content.
 
-Still required in later increments: deflate-stream materialization, disguised nested-archive signature detection, text decoding, quarantine lifecycle, malware scanning, hard-link representation research, cleanup verification, and the remaining fixture corpus.
+The lifecycle accepts a validated `Principal` and derives quarantine tenant and owner scope from it; callers cannot provide an independent owner identifier. Framework-independent authorization policy covers create, read, update, and delete, while the current process-local admission controller evaluates per-tenant/per-user rate, quota, concurrency, and replay behavior. These policy primitives are not substitutes for shared deployment state.
+
+The lifecycle also requires audit and operational-alert sinks. Exactly one content-free completion event is attempted for each authenticated ingestion run. Scanner outage and cleanup failure require dedicated alerts. Audit or required-alert delivery failure blocks a successful result; production retry, ordering, retention, and emergency-disable behavior remain unevaluated.
+
+Current evaluated coverage includes valid stored and deflated text; safe Unicode paths; ignored unsupported ordinary binary files; signature, size, CRC, and header mismatch; unsafe paths; case, Unicode, and platform-normalized collisions; declared Unix symlinks and special types; ambiguous Unix entry types; nested archive filenames and disguised ZIP, gzip, 7z, RAR, and tar signatures; encryption; unsupported methods; metadata-declared compression bombs; invalid UTF-8; embedded NUL content; path, depth, file-size, and entry-count limits; scanner rejection and outage; timeout; cancellation; cleanup success; and cleanup failure.
+
+Standard ZIP metadata has no portable, reliable hard-link identity. The fail-closed policy therefore accepts Unix-hosted entries only when their mode explicitly declares a regular file or directory; ambiguous or special Unix types are rejected. This does not establish hard-link detection for non-standard producer-specific metadata, which remains part of the adversarial corpus.
+
+Still required in later increments: a deployment-backed private quarantine adapter, a real malware and secret scanner, cleanup alerting, shared rate/quota/concurrency/replay state, authorization enforcement at every future persisted-object route, remaining malformed/data-descriptor fixtures, and independent security validation. The lifecycle boundary does not authorize an upload route or UI.
 
 ## Required acceptance tests
 

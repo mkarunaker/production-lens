@@ -1,6 +1,6 @@
 # Production Lens project checkpoint
 
-Last updated: 2026-07-17
+Last updated: 2026-07-18
 
 ## Resume instructions
 
@@ -20,7 +20,7 @@ At the start of a new session:
 - Current checkpoint commit: use the latest `git log -1` entry.
 - Working tree was clean when this checkpoint was prepared.
 - Deterministic sample findings: 11
-- Automated tests: 24 passing
+- Automated tests: 37 passing
 - Principles-based approval review: implemented for the bundled sensitive-logging remediation
 - Principle mapping: implemented for all 11 deterministic findings
 - Known dependency vulnerabilities at last verification: 0
@@ -122,7 +122,9 @@ In progress.
 - ZIP-only hosted ingestion contract: complete in `docs/secure-ingestion-contract.md`
 - Initial archive and file limits: approved
 - Metadata-only ZIP inspector: complete for the first evaluated fixture set
-- Content materialization, quarantine, and upload UI: not started
+- Bounded in-memory content materialization: complete for the evaluated stored/deflate, decoding, CRC, NUL, and disguised-archive fixture set
+- Owner-scoped quarantine/security-scanner lifecycle interface: complete for evaluated success, rejection, outage, timeout, cancellation, and cleanup paths
+- Deployment-backed quarantine, real malware/secret scanner, and upload UI: not started
 - Private quarantine storage
 - Archive entry inspection before extraction
 - ZIP-bomb, traversal, symlink, hard-link, device-file, duplicate-path, and nested-archive defenses
@@ -132,13 +134,14 @@ In progress.
 
 ### Milestone 3 — Authorization and operational controls
 
-Not started.
+In progress.
 
-- User and tenant ownership
-- Object-level authorization for scans
-- Rate limiting, quotas, and concurrency controls
-- Structured, redacted audit logging
-- Operational alerts and incident procedures
+- Existing ChatGPT-host authentication: implemented for current application routes
+- User and tenant ownership policy: implemented and connected to the ingestion lifecycle
+- Object-level authorization policy: implemented for create, read, update, and delete; no upload/result persistence routes exist yet
+- In-memory rate, quota, concurrency, and replay controls: implemented and evaluated as policy primitives; distributed deployment backing is not implemented
+- Structured, source-free ingestion audit event contract: implemented and evaluated; durable delivery is not connected
+- Operational alert contract for scanner outage and cleanup failure: implemented and evaluated; real delivery and incident procedures are not connected
 
 ### Milestone 4 — GPT-assisted analysis
 
@@ -207,9 +210,53 @@ For the fastest safe hackathon path:
 
 1. Run the final signed-in deployed-browser rehearsal using `docs/demo-script.md`.
 2. Do not accept arbitrary repository uploads yet.
-3. Implement bounded in-memory content materialization for already-approved ZIP entries: safe decompression, disguised nested-archive signature detection, strict text decoding, embedded-NUL rejection, and conversion to `RepositoryFile[]`; do not write to disk or add an upload UI.
-4. Build Milestone 3 authorization and operational controls before enabling uploads.
+3. Implement a deployment-backed private quarantine adapter and real fail-closed malware/secret scanning only after selecting infrastructure with owner isolation, retention, and cleanup-alert support; do not add an upload UI yet.
+4. Back the Milestone 3 authorization, admission, audit, and alert contracts with shared deployment services; exercise incident and emergency-disable procedures before enabling uploads.
 5. Add GPT analysis only after upload isolation and authorization controls pass their security gates.
+
+## Latest validation — bounded ZIP materialization
+
+- Functional: passed for stored and raw-deflate approved UTF-8 text, safe Unicode paths, and ignored unsupported ordinary binary files.
+- Security and adversarial: passed for bounded inflate, exact expanded-size and CRC-32 verification, disguised archive signatures, invalid UTF-8, embedded NULs, unsafe paths, collisions, unsupported ZIP features, and metadata-declared bombs.
+- Negative behavior: tests use inert source text; materialization remains in memory and adds no upload route, disk extraction, repository execution, dependency installation, network access, or model access.
+- Regression: `npm test` passes with 26 tests; deterministic sample findings remain 11; `npm run build` passes; `npm audit --omit=dev --audit-level=high` reports 0 vulnerabilities.
+- Lint: `npm run lint` remains blocked by two pre-existing `@next/next/no-assign-module-variable` findings in `tests/scanner.test.mjs` at lines 262 and 273.
+- Intentionally not evaluated: quarantine lifecycle and cleanup, malware and secret scanning, timeouts and cancellation, hard-link representation, full archive corpus, authentication, ownership authorization, rate controls, and any upload UI.
+- Residual risk: this evaluated in-memory parser is not a complete hosted-upload boundary and must remain unreachable from public input.
+- Exact next evaluation gate: complete the remaining repository-upload adversarial fixtures and operational lifecycle controls, then pass authentication, object authorization, quota, concurrency, cleanup, and security-scanner fail-closed tests before exposing uploads.
+
+## Latest validation — quarantine and security-scan lifecycle
+
+- Functional: passed owner-scoped quarantine put/read/delete orchestration, clean security-scan approval, repository-file materialization, normalized repository naming, and content-free audit metadata.
+- Security and adversarial: passed fail-closed scanner rejection and outage, cancellation after storage, timeout, cleanup failure, archive-name traversal, declared Unix special-type rejection, ambiguous Unix-type rejection, ingestion limit fixtures, and five disguised archive signatures.
+- Negative behavior: the lifecycle has no public route, filesystem adapter, external integration, model access, execution authority, or remediation authority.
+- Capability separation: the quarantine interface processes untrusted private bytes but grants no outbound communication or consequential-action capability; security scanning is a required narrow interface and cannot authorize upload exposure.
+- Regression and operational: `npm run security:check` passes with 30 tests, 0 dependency vulnerabilities, a passing production build, and a passing production-server golden-path E2E.
+- Intentionally not evaluated: deployment-backed object storage, real malware/secret detection quality, cleanup alert delivery, cross-owner access enforcement by infrastructure, rate/concurrency controls, authentication, an upload route, and independent penetration testing.
+- Residual risk: the interfaces are security contracts, not deployed controls. Uploads remain prohibited until real adapters and Milestone 3 controls pass their gates.
+- Exact next evaluation gate: select and validate owner-isolated quarantine and security-scanning infrastructure, then implement authentication and object-level authorization with cross-tenant denial tests before creating any upload route.
+
+## Latest validation — authorization and admission policy
+
+- Functional: passed authenticated-principal validation, owner/tenant object authorization for create/read/update/delete, and principal-derived quarantine ownership.
+- Security and adversarial: passed unauthenticated, malformed-principal, same-tenant cross-user, cross-tenant, replay, rate, quota, and concurrency denial tests.
+- Isolation: admission counters are scoped by both tenant and user; an invalid ingestion principal is rejected before quarantine writes.
+- Regression: `npm run security:check` passes with 35 tests, 0 dependency vulnerabilities, a passing production build, and a passing production-server golden-path E2E.
+- Intentionally not evaluated: distributed/shared admission state, deployment persistence, multi-instance races, durable object storage authorization, audit-log delivery, alerting, emergency disable, or upload routes.
+- Residual risk: in-memory admission state is process-local and resets on restart, so it is not a production rate-control boundary.
+- UI validation: the signed-in deployed-browser rehearsal remains pending because no browser was connected in this validation session. No ingestion or upload UI exists by design.
+- Exact next evaluation gate: choose shared deployment state and private quarantine/security-scanning infrastructure, then test multi-instance authorization, replay, quota, concurrency, cleanup alerting, and cross-tenant denial before adding an upload route.
+
+## Latest validation — audit and operational alerts
+
+- Functional: passed one correlated ingestion completion event for success, security rejection, scanner outage, cancellation, timeout, and cleanup failure.
+- Data minimization: events contain actor, tenant, scan, outcome, stable reason, byte/count metrics, and cleanup state only. Tests prove archive paths, source text, and a suspected API key are absent.
+- Operational: scanner outage and cleanup failure emit dedicated alerts; unavailable audit or required alert delivery fails closed.
+- Traceability: ingestion events correlate the authenticated actor, tenant, opaque scan identifier, outcome, and cleanup result without logging repository content.
+- Regression: `npm run security:check` passes with 37 tests, 0 dependency vulnerabilities, a passing production build, and a passing production-server golden-path E2E.
+- Intentionally not evaluated: durable audit storage, ordering across instances, delivery retry/idempotency, alert routing, paging, incident response, retention, access review, or emergency disable.
+- Residual risk: interfaces and in-memory test sinks are not operational logging or alerting services; production delivery and monitoring remain absent.
+- Exact next evaluation gate: select shared deployment services for quarantine, admission state, audit delivery, and alerts; then test owner isolation, atomicity, ordering, retries, cleanup alerts, retention, and emergency disable before exposing uploads.
 
 ## Important constraints
 

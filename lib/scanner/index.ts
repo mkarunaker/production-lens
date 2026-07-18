@@ -14,15 +14,20 @@ function extension(path: string) {
   return dot < 0 ? "" : path.slice(dot).toLowerCase();
 }
 
-function isSafePath(path: string) {
+export function isApprovedFileExtension(path: string) {
+  return APPROVED_EXTENSIONS.has(extension(path));
+}
+
+export function isSafePath(path: string) {
+  const segments = path.split("/");
   return (
     path.length > 0 &&
     path.length <= 240 &&
     !path.startsWith("/") &&
     !path.includes("\\") &&
     !path.includes("\0") &&
-    !path.split("/").some((segment) => segment === "" || segment === "..") &&
-    /^[a-zA-Z0-9._/@+-]+$/.test(path)
+    !/[\u0000-\u001f\u007f]/.test(path) &&
+    !segments.some((segment) => segment === "" || segment === "." || segment === "..")
   );
 }
 
@@ -296,7 +301,7 @@ export function sanitizeFiles(files: RepositoryFile[]) {
   if (files.length > SCAN_LIMITS.maxFiles) throw new Error("Repository exceeds the file count limit.");
   let totalBytes = 0;
   return files.filter((file) => {
-    if (!isSafePath(file.path) || !APPROVED_EXTENSIONS.has(extension(file.path))) return false;
+    if (!isSafePath(file.path) || !isApprovedFileExtension(file.path)) return false;
     const bytes = new TextEncoder().encode(file.content).byteLength;
     if (bytes > SCAN_LIMITS.maxFileBytes) return false;
     totalBytes += bytes;

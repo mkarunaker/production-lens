@@ -1,3 +1,7 @@
+import { inflateRawSync } from "node:zlib";
+import { isApprovedFileExtension, sanitizeFiles } from "../scanner/index";
+import type { RepositoryFile } from "../scanner/types";
+
 export const ZIP_INGESTION_LIMITS = {
   maxCompressedBytes: 10 * 1024 * 1024,
   maxExpandedBytes: 50 * 1024 * 1024,
@@ -17,7 +21,8 @@ export type ZipRejectionCode =
   | "ZIP_PATH_REJECTED"
   | "ZIP_COLLISION_REJECTED"
   | "ZIP_NESTED_ARCHIVE_REJECTED"
-  | "ZIP_LIMIT_EXCEEDED";
+  | "ZIP_LIMIT_EXCEEDED"
+  | "ZIP_TEXT_INVALID";
 
 export class ZipInspectionError extends Error {
   constructor(public readonly code: ZipRejectionCode) {
@@ -33,6 +38,8 @@ export type ZipEntryMetadata = {
   compressionMethod: 0 | 8;
   directory: boolean;
   scannerEligible: boolean;
+  dataOffset: number;
+  crc32: number;
 };
 
 export type ZipInspection = {
@@ -45,9 +52,6 @@ export type ZipInspection = {
   entries: ZipEntryMetadata[];
 };
 
-const APPROVED_EXTENSIONS = new Set([
-  ".ts", ".tsx", ".js", ".jsx", ".json", ".lock", ".sql", ".md", ".txt", ".yml", ".yaml",
-]);
 const NESTED_ARCHIVE_EXTENSIONS = new Set([
   ".zip", ".jar", ".war", ".ear", ".tar", ".tgz", ".gz", ".bz2", ".xz", ".7z", ".rar",
 ]);
@@ -129,8 +133,10 @@ function entryType(versionMadeBy: number, externalAttributes: number, rawPath: s
   const unixType = unixMode & 0o170000;
   const dosDirectory = (externalAttributes & 0x10) !== 0;
   const namedDirectory = rawPath.endsWith("/");
-  if (hostSystem === 3 && unixType !== 0 && unixType !== 0o100000 && unixType !== 0o040000) {
-    reject("ZIP_ENTRY_TYPE_REJECTED");
+  if (hostSystem === 3) {
+    if (unixType === 0 || (unixType !== 0o100000 && unixType !== 0o040000)) {
+      reject("ZIP_ENTRY_TYPE_REJECTED");
+    }
   }
   const modeDirectory = hostSystem === 3 && unixType === 0o040000;
   if ((modeDirectory || dosDirectory) !== namedDirectory && (modeDirectory || dosDirectory || namedDirectory)) {
@@ -147,6 +153,7 @@ function validateLocalHeader(
   expectedPathBytes: Uint8Array,
   flags: number,
   method: number,
+  expectedCrc32: number,
   compressedBytes: number,
   expandedBytes: number,
 ) {
@@ -164,14 +171,70 @@ function validateLocalHeader(
   const localName = bytes.subarray(nameStart, nameStart + localNameLength);
   if (localName.some((byte, index) => byte !== expectedPathBytes[index])) reject("ZIP_STRUCTURE_INVALID");
   if ((flags & 0x08) === 0) {
-    if (u32(view, localOffset + 18) !== compressedBytes || u32(view, localOffset + 22) !== expandedBytes) {
+    if (
+      u32(view, localOffset + 14) !== expectedCrc32 ||
+      u32(view, localOffset + 18) !== compressedBytes ||
+      u32(view, localOffset + 22) !== expandedBytes
+    ) {
       reject("ZIP_STRUCTURE_INVALID");
     }
   }
+  return dataStart;
+}
+
+function crc32(bytes: Uint8Array) {
+  let crc = 0xffffffff;
+  for (const byte of bytes) {
+    crc ^= byte;
+    for (let bit = 0; bit < 8; bit += 1) {
+      crc = (crc >>> 1) ^ ((crc & 1) === 1 ? 0xedb88320 : 0);
+    }
+  }
+  return (crc ^ 0xffffffff) >>> 0;
+}
+
+function hasArchiveSignature(bytes: Uint8Array) {
+  const startsWith = (...signature: number[]) =>
+    signature.every((byte, index) => bytes[index] === byte);
+  return (
+    startsWith(0x50, 0x4b, 0x03, 0x04) ||
+    startsWith(0x50, 0x4b, 0x05, 0x06) ||
+    startsWith(0x50, 0x4b, 0x07, 0x08) ||
+    startsWith(0x1f, 0x8b) ||
+    startsWith(0x37, 0x7a, 0xbc, 0xaf, 0x27, 0x1c) ||
+    startsWith(0x52, 0x61, 0x72, 0x21, 0x1a, 0x07) ||
+    (bytes.length >= 262 &&
+      bytes[257] === 0x75 &&
+      bytes[258] === 0x73 &&
+      bytes[259] === 0x74 &&
+      bytes[260] === 0x61 &&
+      bytes[261] === 0x72)
+  );
+}
+
+function expandEntry(entry: ZipEntryMetadata, archiveBytes: Uint8Array) {
+  const compressed = archiveBytes.subarray(entry.dataOffset, entry.dataOffset + entry.compressedBytes);
+  let expanded: Uint8Array;
+  try {
+    expanded = entry.compressionMethod === 0
+      ? compressed
+      : inflateRawSync(compressed, { maxOutputLength: entry.expandedBytes });
+  } catch {
+    reject("ZIP_STRUCTURE_INVALID");
+  }
+  if (expanded.byteLength !== entry.expandedBytes || crc32(expanded) !== entry.crc32) {
+    reject("ZIP_STRUCTURE_INVALID");
+  }
+  return expanded;
 }
 
 export function inspectZip(archiveName: string, archiveBytes: Uint8Array): ZipInspection {
-  if (!archiveName.toLowerCase().endsWith(".zip")) reject("ZIP_SIGNATURE_INVALID");
+  if (
+    !archiveName.toLowerCase().endsWith(".zip") ||
+    archiveName.includes("/") ||
+    archiveName.includes("\\") ||
+    archiveName.includes("\0")
+  ) reject("ZIP_SIGNATURE_INVALID");
   if (archiveBytes.byteLength > ZIP_INGESTION_LIMITS.maxCompressedBytes) reject("ZIP_LIMIT_EXCEEDED");
   if (archiveBytes.byteLength < 22) reject("ZIP_SIGNATURE_INVALID");
   const view = new DataView(archiveBytes.buffer, archiveBytes.byteOffset, archiveBytes.byteLength);
@@ -203,6 +266,7 @@ export function inspectZip(archiveName: string, archiveBytes: Uint8Array): ZipIn
     const method = u16(view, cursor + 10);
     const compressedBytes = u32(view, cursor + 20);
     const expandedBytes = u32(view, cursor + 24);
+    const expectedCrc32 = u32(view, cursor + 16);
     const nameLength = u16(view, cursor + 28);
     const extraLength = u16(view, cursor + 30);
     const commentLength = u16(view, cursor + 32);
@@ -234,7 +298,7 @@ export function inspectZip(archiveName: string, archiveBytes: Uint8Array): ZipIn
     expandedTotal += expandedBytes;
     compressedTotal += compressedBytes;
     if (expandedTotal > ZIP_INGESTION_LIMITS.maxExpandedBytes) reject("ZIP_LIMIT_EXCEEDED");
-    validateLocalHeader(
+    const dataOffset = validateLocalHeader(
       view,
       archiveBytes,
       localOffset,
@@ -242,6 +306,7 @@ export function inspectZip(archiveName: string, archiveBytes: Uint8Array): ZipIn
       pathBytes,
       flags,
       method,
+      expectedCrc32,
       compressedBytes,
       expandedBytes,
     );
@@ -251,7 +316,9 @@ export function inspectZip(archiveName: string, archiveBytes: Uint8Array): ZipIn
       expandedBytes,
       compressionMethod: method,
       directory,
-      scannerEligible: !directory && APPROVED_EXTENSIONS.has(extension(path)),
+      scannerEligible: !directory && isApprovedFileExtension(path),
+      dataOffset,
+      crc32: expectedCrc32,
     });
     cursor = nextCursor;
   }
@@ -268,4 +335,29 @@ export function inspectZip(archiveName: string, archiveBytes: Uint8Array): ZipIn
     ignoredFileCount: entries.filter((entry) => !entry.directory && !entry.scannerEligible).length,
     entries,
   };
+}
+
+export function materializeZip(archiveName: string, archiveBytes: Uint8Array): RepositoryFile[] {
+  const inspection = inspectZip(archiveName, archiveBytes);
+  const files: RepositoryFile[] = [];
+  const decoder = new TextDecoder("utf-8", { fatal: true });
+
+  for (const entry of inspection.entries) {
+    if (entry.directory) continue;
+    const expanded = expandEntry(entry, archiveBytes);
+    if (hasArchiveSignature(expanded)) reject("ZIP_NESTED_ARCHIVE_REJECTED");
+    if (!entry.scannerEligible) continue;
+    let content: string;
+    try {
+      content = decoder.decode(expanded);
+    } catch {
+      reject("ZIP_TEXT_INVALID");
+    }
+    if (content.includes("\0")) reject("ZIP_TEXT_INVALID");
+    files.push({ path: entry.path, content });
+  }
+
+  const sanitized = sanitizeFiles(files);
+  if (sanitized.length !== files.length) reject("ZIP_LIMIT_EXCEEDED");
+  return sanitized;
 }
