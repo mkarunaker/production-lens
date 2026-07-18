@@ -17,7 +17,7 @@ At the start of a new session:
 ## Current product state
 
 - Private deployment: https://production-lens.karunaker-molugu.chatgpt.site
-- Current checkpoint commit: use the latest `git log -1` entry.
+- Current checkpoint commit: `cfb829a` (latest local UI commit is `9bc3147`; hosted version 34 contains the proposal-diff contrast fix; version 33 contains the larger Run Lens button).
 - Local ZIP test checkpoint: the latest `feat: add localhost zip scan demo` entry in `git log`.
 - Deterministic sample findings: 11
 - Automated tests: 49 passing
@@ -25,6 +25,8 @@ At the start of a new session:
 - Principle mapping: implemented for all 11 deterministic findings
 - Known dependency vulnerabilities at last verification: 0
 - Production build: passing
+- Hosted demo: private deployment succeeded through version 34; latest contrast correction is publishing/available at the same URL.
+- Remediation evidence: proposal page and verified-results banner show before/after code and offer a downloadable reviewable `.patch` file; proposal diff uses readable red/green contrast.
 - Codex development default: GPT-5.6 Terra with medium reasoning; Luna and Sol are explicit task-level overrides
 
 ## Completed milestones
@@ -207,17 +209,15 @@ Complete except for the final deployed-browser rehearsal.
 - Core UI, private deployment, remediation approval, rescan, and before/after golden path are complete.
 - Production-server end-to-end route test: complete and included in `npm run security:check`
 - Presenter script and failure-recovery runbook: complete in `docs/demo-script.md`
-- Final signed-in deployed-browser click-through: pending because no browser was available in the current validation session
+- Final signed-in deployed-browser click-through: pending
 
 ## Recommended next step
 
 For the fastest safe hackathon path:
 
 1. Freeze broad feature development and preserve the complete bundled scan/remediate/rescan workflow.
-2. Manually test one or two small AI-agent ZIPs through `npm run demo:zip`; use it as an optional local demo segment, not as a hosted feature.
-3. Commit the validated local-only increment without redeploying it.
-4. Run the final signed-in deployed-browser rehearsal using the under-three-minute path in `docs/demo-script.md`.
-5. Publish or share the repository, record the narrated public YouTube demo, and collect the `/feedback` Session ID.
+2. Run the final signed-in deployed-browser rehearsal using the under-three-minute path in `docs/demo-script.md`.
+3. Publish or share the repository, record the narrated public YouTube demo, and collect the `/feedback` Session ID.
 6. Complete and submit the Devpost draft before July 21, 2026 at 5:00 PM Pacific.
 7. Do not expose hosted arbitrary uploads or runtime GPT analysis for the hackathon demo.
 
