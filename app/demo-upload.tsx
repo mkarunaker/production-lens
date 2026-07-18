@@ -13,6 +13,8 @@ export function DemoUpload() {
   const router = useRouter();
   const [destination, setDestination] = useState<string>();
   const [selectedName, setSelectedName] = useState<string>();
+  const [running, setRunning] = useState(false);
+  const [step, setStep] = useState(0);
   const [message, setMessage] = useState("Only bundled sanitized demo ZIPs are accepted here.");
   return <div className="upload-panel">
     <label className="upload-drop" htmlFor="demo-zip">
@@ -29,7 +31,19 @@ export function DemoUpload() {
       setSelectedName(file.name);
       setMessage("Choose Scan selected project when you are ready.");
     }} />
-    {destination && <button className="upload-scan-button" type="button" onClick={() => router.push(destination)}>Run Lens <span aria-hidden="true">→</span></button>}
+    {destination && !running && <button className="upload-scan-button" type="button" onClick={() => {
+      setRunning(true);
+      setMessage("Production Lens is reviewing the selected project…");
+      let current = 0;
+      const timer = window.setInterval(() => {
+        current += 1;
+        setStep(current);
+        if (current >= 3) { window.clearInterval(timer); window.setTimeout(() => router.push(destination), 350); }
+      }, 420);
+    }}>Run Lens <span aria-hidden="true">→</span></button>}
+    {running && <div className="lens-progress" aria-live="polite">
+      {['Validate archive boundaries', 'Build technology inventory', 'Evaluate readiness risks', 'Prepare evidence report'].map((label, index) => <div key={label} className={index <= step ? 'lens-step lens-step-active' : 'lens-step'}><span>{index < step ? '✓' : index === step ? '·' : '○'}</span>{label}</div>)}
+    </div>}
     <p className="upload-note">{selectedName ? `${selectedName} is ready to scan. ` : ""}{message}</p>
   </div>;
 }
