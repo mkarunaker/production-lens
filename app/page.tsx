@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { DemoUpload } from "./demo-upload";
 
 const checks = [
   ["Authorization", "User identity & access"],
@@ -37,6 +38,8 @@ export default function Home() {
           the security, reliability, and governance gaps that matter most.
         </p>
 
+        <DemoUpload />
+        <div className="projects-heading"><span className="overline">Predefined demo projects</span><span>Pick a known-safe fixture</span></div>
         <div className="sample-card">
           <div className="sample-heading">
             <div className="repo-icon" aria-hidden="true">{"</>"}</div>
