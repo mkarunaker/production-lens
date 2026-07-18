@@ -4,6 +4,18 @@ export const sampleRepositoryName = "enterprise-analytics-agent";
 
 export const sampleFiles: RepositoryFile[] = [
   {
+    path: "package.json",
+    content: `{
+  "name": "enterprise-analytics-agent",
+  "private": true,
+  "version": "0.0.1",
+  "dependencies": {
+    "better-sqlite3": "12.4.1"
+  }
+}
+`,
+  },
+  {
     path: "src/agent.ts",
     content: `import { queryAnalytics } from "./analytics";
 import { getCustomer } from "./crm";
@@ -70,6 +82,23 @@ export async function getCustomer(search: string): Promise<Customer> {
 
 export async function submitChat(message: string) {
   return answerQuestion(message);
+}
+`,
+  },
+  {
+    path: "src/mock-crm-server.ts",
+    content: `type CustomerRecord = {
+  email: string;
+  openDeals: number;
+};
+
+const customers: CustomerRecord[] = [
+  { email: "analyst@example.com", openDeals: 2 },
+];
+
+export function searchCustomers(filter: string) {
+  const predicate = eval(\`(customer) => \${filter}\`);
+  return customers.filter(predicate);
 }
 `,
   },

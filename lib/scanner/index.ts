@@ -6,7 +6,7 @@ export const SCAN_LIMITS = {
   maxTotalBytes: 2_000_000,
 } as const;
 
-const APPROVED_EXTENSIONS = new Set([".ts", ".tsx", ".js", ".jsx", ".json", ".sql", ".md", ".txt", ".yml", ".yaml"]);
+const APPROVED_EXTENSIONS = new Set([".ts", ".tsx", ".js", ".jsx", ".json", ".lock", ".sql", ".md", ".txt", ".yml", ".yaml"]);
 
 function extension(path: string) {
   const dot = path.lastIndexOf(".");
@@ -90,6 +90,52 @@ export function scanRepository(repository: string, inputFiles: RepositoryFile[])
       impact: "If repository text is later passed to an LLM without strict isolation, an attacker could manipulate findings, suppress risks, or induce unauthorized actions.",
       remediation: "Keep repository content in a clearly delimited untrusted-data channel, never grant the analysis model tool authority, validate structured outputs, and require deterministic policy checks before acting.",
       evidence: { path: injectionFile.path, line: match.line, code: match.code },
+    }));
+  }
+
+  const dynamicExecutionPatterns = [
+    /\beval\s*\(/,
+    /\bnew\s+Function\s*\(/,
+    /\b(?:exec|execSync)\s*\(/,
+  ];
+  const dynamicExecutionFile = files.find((file) =>
+    dynamicExecutionPatterns.some((pattern) => pattern.test(file.content)),
+  );
+  if (dynamicExecutionFile) {
+    const lines = dynamicExecutionFile.content.split("\n");
+    const lineIndex = lines.findIndex((line) =>
+      dynamicExecutionPatterns.some((pattern) => pattern.test(line)),
+    );
+    findings.push(finding({
+      ruleId: "SEC_DANGEROUS_DYNAMIC_EXECUTION",
+      title: "Untrusted data can reach a dynamic code-execution primitive",
+      severity: "critical",
+      category: "Code security",
+      explanation: "The repository uses a runtime code-evaluation primitive that can interpret attacker-controlled text as executable code.",
+      impact: "A crafted request could execute arbitrary code with the application's privileges and expose data or infrastructure.",
+      remediation: "Remove dynamic evaluation. Parse an allowlisted filter grammar into typed operations and reject unsupported fields, operators, and values.",
+      evidence: {
+        path: dynamicExecutionFile.path,
+        line: lineIndex + 1,
+        code: redactSecrets(lines[lineIndex].trim()),
+      },
+    }));
+  }
+
+  const hasPackageManifest = files.some((file) => file.path === "package.json");
+  const hasDependencyLock = files.some((file) =>
+    /(?:^|\/)(?:package-lock\.json|npm-shrinkwrap\.json|pnpm-lock\.yaml|yarn\.lock)$/.test(file.path),
+  );
+  if (hasPackageManifest && !hasDependencyLock) {
+    findings.push(finding({
+      ruleId: "SUPPLY_CHAIN_MISSING_LOCKFILE",
+      title: "Application dependencies are not locked",
+      severity: "high",
+      category: "Supply chain",
+      explanation: "A package manifest is present without a supported dependency lockfile.",
+      impact: "Identical builds can resolve different transitive packages, weakening reproducibility and increasing supply-chain exposure.",
+      remediation: "Generate and commit one package-manager lockfile, use frozen-lockfile installs in CI, and run an advisory audit before release.",
+      evidence: evidence(files, "package.json", /"dependencies"\s*:/),
     }));
   }
 

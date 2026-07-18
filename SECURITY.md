@@ -12,6 +12,7 @@ Security is a maintained risk-management process, not a claim of perfect protect
 - Approved text extensions, relative path containment, file-count limits, per-file limits, and aggregate byte limits are enforced before rules run.
 - Suspected credentials are redacted before evidence is returned.
 - Prompt-like instructions inside repository content are treated as data. Deterministic detection can flag common direct and indirect prompt-injection patterns, but detection is not considered a security boundary.
+- Every accepted repository file is also evaluated for code-security and supply-chain rules; current coverage includes dynamic execution primitives and missing dependency lockfiles.
 - The deployed worker adds CSP, anti-framing, MIME-sniffing, referrer, permissions, cross-origin isolation, and HSTS headers.
 - Runtime dependency auditing and regression tests are available through `npm run security:check`.
 

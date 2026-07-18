@@ -5,11 +5,12 @@ Production Lens statically scans an AI application repository and explains evide
 ## What works
 
 - One-click scan of the bundled sample
-- Eight deterministic findings across authorization, sensitive data, observability, evaluations, reliability, prompts, and human oversight
+- Eleven deterministic findings across authorization, sensitive data, observability, evaluations, reliability, prompts, code security, and supply-chain hygiene
 - File and line evidence with suspected-secret redaction
 - Prioritized result cards and a detailed severity/evidence/impact/remediation view
 - Approved extension, safe path, file count, and byte-limit controls
 - Indirect prompt-injection detection while keeping repository text inert
+- Submitted-code checks for dangerous dynamic execution and missing dependency lockfiles
 - Security headers, a maintained threat model, and dependency audit automation
 - Automated expected-finding, snapshot-parity, redaction, and limit tests
 

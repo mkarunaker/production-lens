@@ -1,0 +1,8 @@
+{
+  "name": "enterprise-analytics-agent",
+  "private": true,
+  "version": "0.0.1",
+  "dependencies": {
+    "better-sqlite3": "12.4.1"
+  }
+}

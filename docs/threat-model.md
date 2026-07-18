@@ -24,6 +24,7 @@
 | Resource exhaustion | File-count, per-file, and aggregate byte limits | Request-level rate limits are needed before uploads |
 | Secret disclosure | Evidence redaction and bounded single-line evidence | Pattern-based redaction cannot identify every secret format |
 | Indirect prompt injection | No LLM in current path; deterministic warning rule | Future LLMs remain probabilistic and need capability isolation |
+| Malicious submitted code | Static checks flag dynamic execution and dependency hygiene; submitted code is never run | Deterministic rules are intentionally incomplete and require ongoing expansion |
 | XSS from source evidence | React text escaping plus restrictive CSP and MIME controls | CSP must be regression-tested after UI framework changes |
 | Supply-chain compromise | Lockfile, dependency audit, minimal dependencies | Advisories and compromised packages require continuous review |
 | Clickjacking/cross-origin abuse | CSP `frame-ancestors`, X-Frame-Options, COOP/CORP | Hosting/auth changes may require policy adjustments |
