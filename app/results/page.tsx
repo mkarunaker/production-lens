@@ -3,30 +3,36 @@ import Link from "next/link";
 import { applyRemediation, DEMO_REMEDIATION_RULE_ID, validateRemediation } from "@/lib/remediation";
 import { scanRepository } from "@/lib/scanner";
 import { sampleFiles, sampleRepositoryName } from "@/lib/scanner/sample-bundle";
+import { securitySampleFiles, securitySampleRepositoryName } from "@/lib/scanner/security-sample-bundle";
 
 export const metadata: Metadata = { title: "Scan results" };
 
-export default async function ResultsPage({ searchParams }: { searchParams: Promise<{ finding?: string; mode?: string; approved?: string }> }) {
+export default async function ResultsPage({ searchParams }: { searchParams: Promise<{ finding?: string; mode?: string; approved?: string; sample?: string }> }) {
   const params = await searchParams;
-  const baseline = scanRepository(sampleRepositoryName, sampleFiles);
-  const isAfter = params.mode === "after" && params.approved === "yes";
-  const files = isAfter ? applyRemediation(DEMO_REMEDIATION_RULE_ID, sampleFiles) : sampleFiles;
-  const result = scanRepository(sampleRepositoryName, files);
+  const isSecuritySample = params.sample === "security";
+  const repositoryName = isSecuritySample ? securitySampleRepositoryName : sampleRepositoryName;
+  const repositoryFiles = isSecuritySample ? securitySampleFiles : sampleFiles;
+  const baseline = scanRepository(repositoryName, repositoryFiles);
+  const isAfter = !isSecuritySample && params.mode === "after" && params.approved === "yes";
+  const files = isAfter ? applyRemediation(DEMO_REMEDIATION_RULE_ID, repositoryFiles) : repositoryFiles;
+  const result = scanRepository(repositoryName, files);
   const comparison = isAfter ? validateRemediation(baseline, result, DEMO_REMEDIATION_RULE_ID) : undefined;
-  return <Results result={result} params={params} comparison={comparison} />;
+  return <Results result={result} params={params} comparison={comparison} isSecuritySample={isSecuritySample} />;
 }
 
 function Results({
   result,
   params,
   comparison,
+  isSecuritySample,
 }: {
   result: ReturnType<typeof scanRepository>;
-  params: { finding?: string; mode?: string; approved?: string };
+  params: { finding?: string; mode?: string; approved?: string; sample?: string };
   comparison?: ReturnType<typeof validateRemediation>;
+  isSecuritySample: boolean;
 }) {
   const selected = result.findings.find((finding) => finding.id === params.finding) ?? result.findings[0];
-  const queryPrefix = comparison ? "mode=after&approved=yes&" : "";
+  const queryPrefix = isSecuritySample ? "sample=security&" : comparison ? "mode=after&approved=yes&" : "";
   const counts = {
     critical: result.findings.filter((finding) => finding.severity === "critical").length,
     high: result.findings.filter((finding) => finding.severity === "high").length,
@@ -54,7 +60,7 @@ function Results({
         )}
         <div className="results-title-row">
           <div>
-            <span className="overline">Scan report · bundled sample</span>
+            <span className="overline">Scan report · {isSecuritySample ? "security test project" : "bundled sample"}</span>
             <h1>{comparison ? "One risk resolved" : "Not ready for production"}</h1>
             <p>{result.repository} · {result.scannedFiles} approved files inspected · no code executed</p>
           </div>

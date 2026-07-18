@@ -71,6 +71,11 @@ button { font: inherit; }
   background: rgba(255,255,255,.94); border: 1px solid #d9dfda; border-radius: 18px;
   box-shadow: 0 18px 50px rgba(31, 54, 42, .08), 0 2px 4px rgba(31, 54, 42, .04);
 }
+.secondary-sample { margin-top: 18px; }
+.security-repo-icon { background: #fae9e7; color: var(--critical); }
+.security-check { background: #fae9e7; color: var(--critical); }
+.security-scan-button { background: #7f2f2a; }
+.security-scan-button:hover { background: #67241f; }
 .sample-heading { display: grid; grid-template-columns: auto 1fr auto; gap: 14px; align-items: center; }
 .repo-icon { width: 46px; height: 46px; display: grid; place-items: center; border-radius: 10px; background: #edf2e9; color: var(--green); font: 700 12px/1 ui-monospace, monospace; }
 .overline { display: block; color: #818b85; text-transform: uppercase; letter-spacing: .08em; font-size: 10px; font-weight: 750; margin-bottom: 5px; }

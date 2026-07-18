@@ -13,6 +13,7 @@ Production Lens statically scans an AI application repository and explains evide
 - Submitted-code checks for dangerous dynamic execution and missing dependency lockfiles
 - Evaluated high-signal JavaScript/TypeScript checks for SQL/ORM, OS command, argument, NoSQL, and XSS/unsafe HTML injection
 - Mandatory Production Lens self-scan against every implemented injection rule as part of the test gate
+- A separate visible Security Test Agent with seven intentional, line-evidenced injection findings
 - Explicitly approved remediation of the sensitive-logging finding in a disposable copy
 - Deterministic rescan and before/after verification without executing sample code
 - Remediation verification and change-safety evidence as a production-readiness criterion
@@ -31,7 +32,7 @@ npm install
 npm run dev
 ```
 
-Open `http://localhost:3000`, select **Scan sample project**, and select findings to inspect their evidence and remediation.
+Open `http://localhost:3000`. Use **Scan sample project** for the stable 11→10 golden remediation demo, or **Scan security test project** to review the evaluated injection findings.
 
 ## Verify
 

@@ -1,0 +1,12 @@
+{
+  "minimumFindingCount": 7,
+  "expectedRuleIds": [
+    "SEC_INDIRECT_PROMPT_INJECTION",
+    "SEC_DANGEROUS_DYNAMIC_EXECUTION",
+    "INJ_SQL_OR_ORM",
+    "INJ_OS_COMMAND",
+    "INJ_ARGUMENT",
+    "INJ_NOSQL_QUERY",
+    "INJ_XSS_UNSAFE_HTML"
+  ]
+}

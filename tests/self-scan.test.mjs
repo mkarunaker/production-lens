@@ -17,6 +17,7 @@ const SCANNED_ROOT_FILES = [
 const EXCLUDED_FILES = new Set([
   // This is an inert text snapshot of the intentionally vulnerable demo repository.
   "lib/scanner/sample-bundle.ts",
+  "lib/scanner/security-sample-bundle.ts",
 ]);
 const APPROVED_SOURCE_EXTENSIONS = new Set([".js", ".jsx", ".mjs", ".ts", ".tsx", ".json"]);
 const SELF_SCAN_BLOCKING_RULES = new Set([

@@ -4,17 +4,20 @@ import test from "node:test";
 import ts from "typescript";
 
 async function loadScanner() {
-  const [{ outputText: scanner }, { outputText: bundle }, { outputText: remediation }] = await Promise.all([
+  const [{ outputText: scanner }, { outputText: bundle }, { outputText: securityBundle }, { outputText: remediation }] = await Promise.all([
     transpile("lib/scanner/index.ts"),
     transpile("lib/scanner/sample-bundle.ts"),
+    transpile("lib/scanner/security-sample-bundle.ts"),
     transpile("lib/remediation/index.ts"),
   ]);
   const scannerUrl = `data:text/javascript;base64,${Buffer.from(scanner.replace('from \"./types\";', 'from \"data:text/javascript,export {}\";')).toString("base64")}`;
   const scannerModule = await import(scannerUrl);
   const bundleCode = bundle.replace('from \"./types\";', 'from \"data:text/javascript,export {}\";');
   const bundleModule = await import(`data:text/javascript;base64,${Buffer.from(bundleCode).toString("base64")}`);
+  const securityBundleCode = securityBundle.replace('from "./types";', 'from "data:text/javascript,export {}";');
+  const securityBundleModule = await import(`data:text/javascript;base64,${Buffer.from(securityBundleCode).toString("base64")}`);
   const remediationModule = await import(`data:text/javascript;base64,${Buffer.from(remediation).toString("base64")}`);
-  return { ...scannerModule, ...bundleModule, ...remediationModule };
+  return { ...scannerModule, ...bundleModule, ...securityBundleModule, ...remediationModule };
 }
 
 async function transpile(path) {
@@ -47,6 +50,18 @@ test("bundled scan text exactly matches the canonical sample files", async () =>
   }
 });
 
+test("security sample matches its manifest and canonical inert files", async () => {
+  const { scanRepository, securitySampleFiles, securitySampleRepositoryName } = await loadScanner();
+  const manifest = JSON.parse(await readFile(new URL("../samples/security-test-agent/expected-findings.json", import.meta.url), "utf8"));
+  for (const file of securitySampleFiles) {
+    const canonical = await readFile(new URL(`../samples/security-test-agent/${file.path}`, import.meta.url), "utf8");
+    assert.equal(file.content, canonical, `${file.path} security snapshot drifted`);
+  }
+  const result = scanRepository(securitySampleRepositoryName, securitySampleFiles);
+  assert.equal(result.findings.length, manifest.minimumFindingCount);
+  assert.deepEqual(new Set(result.findings.map((finding) => finding.ruleId)), new Set(manifest.expectedRuleIds));
+  assert.equal(result.findings.every((finding) => finding.evidence), true);
+});
 test("rejects path traversal, unsupported extensions, and redacts credentials", async () => {
   const { redactSecrets, sanitizeFiles } = await loadScanner();
   const clean = sanitizeFiles([

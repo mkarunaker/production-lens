@@ -9,6 +9,15 @@ const checks = [
   ["Oversight", "Human review gates"],
 ];
 
+const securityChecks = [
+  ["Prompt injection", "Hostile instructions"],
+  ["SQL injection", "Unsafe query building"],
+  ["Command injection", "Shell execution"],
+  ["NoSQL injection", "Operator objects"],
+  ["XSS", "Unsafe HTML sinks"],
+  ["Dynamic execution", "Runtime evaluation"],
+];
+
 export default function Home() {
   return (
     <main>
@@ -55,6 +64,36 @@ export default function Home() {
           <div className="safety-note">
             <span aria-hidden="true">◇</span>
             Static analysis only. Repository code is never executed.
+          </div>
+        </div>
+
+        <div className="sample-card secondary-sample">
+          <div className="sample-heading">
+            <div className="repo-icon security-repo-icon" aria-hidden="true">{"!"}</div>
+            <div>
+              <span className="overline">Bundled adversarial repository</span>
+              <h2>Security Test Agent</h2>
+            </div>
+            <span className="ready"><i /> Ready to scan</span>
+          </div>
+          <p>
+            Focused inert fixtures · Seven evaluated injection findings · No code execution
+          </p>
+          <div className="scan-scope">
+            {securityChecks.map(([title, subtitle]) => (
+              <div className="scope-item" key={title}>
+                <span className="scope-check security-check" aria-hidden="true">!</span>
+                <span><strong>{title}</strong><small>{subtitle}</small></span>
+              </div>
+            ))}
+          </div>
+          <Link className="scan-button security-scan-button" href="/results?sample=security">
+            <span>Scan security test project</span>
+            <span aria-hidden="true">→</span>
+          </Link>
+          <div className="safety-note">
+            <span aria-hidden="true">◇</span>
+            Intentionally vulnerable source is treated only as untrusted text.
           </div>
         </div>
       </section>
