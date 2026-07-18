@@ -1,5 +1,10 @@
 # Repository working instructions
 
+## Session startup
+
+- Read `docs/project-status.md` before beginning work so the current milestone, validation state, and recommended next action are recovered.
+- Update `docs/project-status.md` whenever a milestone changes status, validation results materially change, or the recommended next step changes.
+
 ## Boundaries
 
 - Keep the Production Lens application and `samples/enterprise-analytics-agent` separate.
