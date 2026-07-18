@@ -97,6 +97,11 @@ const PRINCIPLES_BY_RULE: Record<string, { name: ReadinessPrinciple; reason: str
     { name: "Contain it", reason: "Database identities and tenant filters must limit the records exposed by a manipulated filter." },
     { name: "Break the lethal trifecta", reason: "Untrusted request objects can reach a private-data query interpreter and enable disclosure or modification." },
   ],
+  INJ_XSS_UNSAFE_HTML: [
+    { name: "Prove it", reason: "Browser-focused adversarial tests must show that attacker-controlled markup is rendered only as inert text." },
+    { name: "Contain it", reason: "Contextual encoding and a restrictive content security policy limit script execution and data exposure." },
+    { name: "Break the lethal trifecta", reason: "Untrusted content rendered in a privileged browser session can reach private data and external actions." },
+  ],
   SUPPLY_CHAIN_MISSING_LOCKFILE: [
     { name: "Prove it", reason: "Reproducible builds are necessary for meaningful security and regression evidence." },
     { name: "Trace and reverse it", reason: "A locked dependency graph makes deployed components identifiable and rollback reproducible." },
@@ -270,6 +275,24 @@ export function scanRepository(repository: string, inputFiles: RepositoryFile[])
       impact: "Operator keys such as $ne, $regex, or $where may bypass intended filters, expose records, modify data, or consume excessive database resources.",
       remediation: "Build a server-owned typed filter from individually validated primitive values, reject keys beginning with '$' or containing '.', disable server-side JavaScript, enforce tenant scope separately, and use a least-privilege database identity.",
       evidence: noSqlInjectionEvidence,
+    }));
+  }
+
+  const xssEvidence = firstPatternEvidence(files, [
+    /dangerouslySetInnerHTML\s*=\s*\{\s*\{\s*__html\s*:\s*(?:(?:props|req(?:uest)?\.body)\.)?(?:user|input|untrusted|raw|html|content|markdown|message)[A-Za-z0-9_$]*/i,
+    /\.(?:innerHTML|outerHTML)\s*=\s*(?:(?:props|req(?:uest)?\.body)\.)?(?:user|input|untrusted|raw|html|content|markdown|message)[A-Za-z0-9_$]*/i,
+    /\b(?:document\.write|insertAdjacentHTML)\s*\([^)]*(?:(?:props|req(?:uest)?\.body)\.)?(?:user|input|untrusted|raw|html|content|markdown|message)[A-Za-z0-9_$]*/i,
+  ]);
+  if (xssEvidence) {
+    findings.push(finding({
+      ruleId: "INJ_XSS_UNSAFE_HTML",
+      title: "Untrusted content may be rendered as executable HTML",
+      severity: "high",
+      category: "Injection",
+      explanation: "A React or browser HTML sink receives a value whose name indicates externally influenced or raw content without an evident contextual encoding boundary.",
+      impact: "An attacker may execute script in another user's browser, access session-visible data, impersonate the user, or trigger consequential actions.",
+      remediation: "Render untrusted values through framework text interpolation or textContent. If HTML is required, sanitize it with a maintained allowlist-based sanitizer, prohibit scriptable URLs and event attributes, and retain a restrictive CSP as defense in depth.",
+      evidence: xssEvidence,
     }));
   }
 

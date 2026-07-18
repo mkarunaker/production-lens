@@ -26,6 +26,7 @@ const SELF_SCAN_BLOCKING_RULES = new Set([
   "INJ_OS_COMMAND",
   "INJ_ARGUMENT",
   "INJ_NOSQL_QUERY",
+  "INJ_XSS_UNSAFE_HTML",
 ]);
 
 async function loadScanner() {

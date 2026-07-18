@@ -171,6 +171,41 @@ test("detects high-signal NoSQL injection while ignoring a typed server-owned fi
   assert.equal(secure.findings.some((candidate) => candidate.ruleId === "INJ_NOSQL_QUERY"), false);
 });
 
+test("detects unsafe React and DOM HTML sinks while ignoring text rendering", async () => {
+  const { scanRepository } = await loadScanner();
+  const reactResult = scanRepository("react-xss-fixture", [
+    {
+      path: "src/preview.tsx",
+      content: "export const Preview = ({ userContent }) => <article dangerouslySetInnerHTML={{ __html: userContent }} />;",
+    },
+  ]);
+  const reactFinding = reactResult.findings.find((candidate) => candidate.ruleId === "INJ_XSS_UNSAFE_HTML");
+  assert.ok(reactFinding);
+  assert.equal(reactFinding.evidence.path, "src/preview.tsx");
+  assert.equal(reactFinding.evidence.line, 1);
+  assert.match(reactFinding.evidence.code, /dangerouslySetInnerHTML/);
+
+  const domResult = scanRepository("dom-xss-fixture", [
+    {
+      path: "src/preview.ts",
+      content: "export const preview = (element, rawHtml) => { element.innerHTML = rawHtml; };",
+    },
+  ]);
+  assert.ok(domResult.findings.some((candidate) => candidate.ruleId === "INJ_XSS_UNSAFE_HTML"));
+
+  const secure = scanRepository("secure-xss-fixtures", [
+    {
+      path: "src/preview.tsx",
+      content: "export const Preview = ({ userContent }) => <article>{userContent}</article>;",
+    },
+    {
+      path: "src/dom.ts",
+      content: "export const preview = (element, rawHtml) => { element.textContent = rawHtml; };",
+    },
+  ]);
+  assert.equal(secure.findings.some((candidate) => candidate.ruleId === "INJ_XSS_UNSAFE_HTML"), false);
+});
+
 test("security headers deny framing, sniffing, and broad browser capabilities", async () => {
   const { outputText } = await transpile("lib/security/headers.ts");
   const module = await import(`data:text/javascript;base64,${Buffer.from(outputText).toString("base64")}`);

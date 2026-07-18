@@ -35,7 +35,7 @@ Finding a function name alone is not sufficient for a critical finding. When dat
 | Argument injection | Partial | JavaScript/TypeScript `spawn` and `execFile` argument arrays with visibly user-controlled values |
 | NoSQL injection | Partial | JavaScript/TypeScript Mongo-style query sinks receiving request objects, spread request objects, or untrusted `$where`/`$expr` values |
 | Server-side template injection | Planned | Common template engines and untrusted template compilation/rendering |
-| XSS and unsafe HTML rendering | Planned | Unsafe HTML sinks, scriptable URLs, and untrusted Markdown/HTML rendering |
+| XSS and unsafe HTML rendering | Partial | React `dangerouslySetInnerHTML` and browser `innerHTML`, `outerHTML`, `document.write`, and `insertAdjacentHTML` sinks with visibly untrusted values |
 | XXE and unsafe XML parsing | Planned | External entities, DTD processing, XInclude, and unsafe parser defaults |
 | XPath and XQuery injection | Planned | Dynamically constructed path/query expressions |
 | LDAP injection | Planned | Unsafe search-filter and distinguished-name construction |
@@ -50,7 +50,7 @@ Finding a function name alone is not sufficient for a critical finding. When dat
 
 ## Implementation waves
 
-Current Wave 1 increment: SQL/ORM, OS command, argument, and NoSQL injection have vulnerable and secure-equivalent fixtures. Their detection is intentionally high-signal and does not yet perform interprocedural taint analysis.
+Current Wave 1 increment: SQL/ORM, OS command, argument, NoSQL, and XSS/unsafe HTML injection have vulnerable and secure-equivalent fixtures. Their detection is intentionally high-signal and does not yet perform interprocedural taint analysis or sanitizer verification.
 
 ### Wave 1 — Common application sinks
 

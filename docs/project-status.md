@@ -20,7 +20,7 @@ At the start of a new session:
 - Current checkpoint commit: use the latest `git log -1` entry.
 - Working tree was clean when this checkpoint was prepared.
 - Deterministic sample findings: 11
-- Automated tests: 14 passing
+- Automated tests: 15 passing
 - Principles-based approval review: implemented for the bundled sensitive-logging remediation
 - Principle mapping: implemented for all 11 deterministic findings
 - Known dependency vulnerabilities at last verification: 0
@@ -80,6 +80,7 @@ In progress as an incremental scanner milestone.
 - OS command injection: partial for interpolated or concatenated `exec`/`execSync` calls
 - Argument injection: partial for visibly user-controlled `spawn`/`execFile` argument arrays
 - NoSQL injection: partial for Mongo-style sinks receiving request objects or untrusted server-side expressions
+- XSS and unsafe HTML rendering: partial for high-signal React and browser HTML sinks
 - Production Lens self-scan: required by `npm test` after every code change; bundled vulnerable sample snapshots and adversarial fixtures are explicitly excluded
 - Remaining application, parser, protocol, identity, and platform injection classes: planned
 - Canonical backlog, evidence standard, implementation waves, and evaluation gates: `docs/injection-rule-pack.md`
