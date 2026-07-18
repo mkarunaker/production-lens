@@ -165,7 +165,7 @@ function Results({
               <h2>{selected.title}</h2>
             </div>
             <div className="detail-body">
-              <details className="detail-section" open><summary><h3>Why this matters</h3></summary><p>{selected.impact}</p></details>
+              <details className="detail-section"><summary><h3>Why this matters</h3></summary><p>{selected.impact}</p></details>
               <details className="detail-section"><summary><h3>Readiness lens</h3></summary>
                 <div className="detail-principles">
                   {selected.principles.map((principle) => (
@@ -177,7 +177,7 @@ function Results({
                   ))}
                 </div>
               </details>
-              <details className="detail-section" open><summary><h3>Evidence</h3></summary>
+              <details className="detail-section"><summary><h3>Evidence</h3></summary>
                 {selected.evidence ? (
                   <div className="code-block">
                     <span className="code-location">{selected.evidence.path}:{selected.evidence.line}</span>

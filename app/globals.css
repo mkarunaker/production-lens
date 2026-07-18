@@ -209,6 +209,7 @@ button { font: inherit; }
 .detail-header h2 { margin: 10px 0 0; font: 500 22px/1.2 Georgia, serif; }
 .detail-body { padding: 22px; }
 .detail-section + .detail-section { margin-top: 22px; }
+.detail-section:last-of-type { padding: 13px; border: 1px solid rgba(185,214,120,.28); border-radius: 9px; background: rgba(185,214,120,.06); }
 .detail-section h3 { color: var(--lime); margin: 0 0 8px; font-size: 10px; text-transform: uppercase; letter-spacing: .09em; }
 .detail-section p { color: #d0d8d3; margin: 0; font-size: 12px; line-height: 1.6; }
 .detail-principles { display: grid; gap: 8px; }
