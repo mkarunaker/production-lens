@@ -44,7 +44,7 @@ export default function Home() {
           <div className="sample-heading">
             <div className="repo-icon" aria-hidden="true">{"</>"}</div>
             <div>
-              <span className="overline">Bundled sample repository</span>
+              <span className="overline">Sample repository</span>
               <h2>Enterprise Analytics Agent</h2>
             </div>
             <span className="ready"><i /> Ready to scan</span>
@@ -74,7 +74,7 @@ export default function Home() {
           <div className="sample-heading">
             <div className="repo-icon security-repo-icon" aria-hidden="true">{"!"}</div>
             <div>
-              <span className="overline">Bundled adversarial repository</span>
+              <span className="overline">Adversarial repository</span>
               <h2>Security Test Agent</h2>
             </div>
             <span className="ready"><i /> Ready to scan</span>
@@ -104,7 +104,7 @@ export default function Home() {
           <div className="sample-heading">
             <div className="repo-icon" aria-hidden="true">{"PY"}</div>
             <div>
-              <span className="overline">Bundled sanitized ZIP fixture</span>
+              <span className="overline">Sanitized ZIP fixture</span>
               <h2>Chief of Staff</h2>
             </div>
             <span className="ready"><i /> Ready to scan</span>

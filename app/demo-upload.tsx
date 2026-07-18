@@ -15,7 +15,7 @@ export function DemoUpload() {
   const [selectedName, setSelectedName] = useState<string>();
   const [running, setRunning] = useState(false);
   const [step, setStep] = useState(0);
-  const [message, setMessage] = useState("Only bundled sanitized demo ZIPs are accepted here.");
+  const [message, setMessage] = useState("Only provided sanitized demo ZIPs are accepted here.");
   return <div className="upload-panel">
     <div className="upload-row"><label className="upload-drop" htmlFor="demo-zip">
       <span className="upload-plus">＋</span>
@@ -34,7 +34,7 @@ export function DemoUpload() {
       const file = event.target.files?.[0];
       if (!file) return;
       const destination = demos[file.name.toLowerCase()];
-      if (!destination) { setDestination(undefined); setSelectedName(undefined); setMessage("That ZIP is not one of the bundled demo archives. Use the local harness for custom projects."); return; }
+      if (!destination) { setDestination(undefined); setSelectedName(undefined); setMessage("That ZIP is not one of the provided demo archives. Use the local harness for custom projects."); return; }
       setDestination(destination);
       setSelectedName(file.name);
       setMessage("Choose Scan selected project when you are ready.");
