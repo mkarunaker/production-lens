@@ -25,6 +25,7 @@ const SELF_SCAN_BLOCKING_RULES = new Set([
   "INJ_SQL_OR_ORM",
   "INJ_OS_COMMAND",
   "INJ_ARGUMENT",
+  "INJ_NOSQL_QUERY",
 ]);
 
 async function loadScanner() {

@@ -147,6 +147,30 @@ test("detects high-signal SQL, command, and argument injection while ignoring se
   assert.equal(secureIds.has("INJ_ARGUMENT"), false);
 });
 
+test("detects high-signal NoSQL injection while ignoring a typed server-owned filter", async () => {
+  const { scanRepository } = await loadScanner();
+  const vulnerable = scanRepository("nosql-injection-fixtures", [
+    {
+      path: "src/users.ts",
+      content: "export const findUser = (req) => users.findOne(req.body);",
+    },
+  ]);
+  const finding = vulnerable.findings.find((candidate) => candidate.ruleId === "INJ_NOSQL_QUERY");
+  assert.ok(finding);
+  assert.equal(finding.evidence.path, "src/users.ts");
+  assert.equal(finding.evidence.line, 1);
+  assert.match(finding.evidence.code, /findOne/);
+  assert.ok(finding.principles.length >= 3);
+
+  const secure = scanRepository("secure-nosql-fixtures", [
+    {
+      path: "src/users.ts",
+      content: "export const findUser = (validatedEmail) => users.findOne({ email: String(validatedEmail) });",
+    },
+  ]);
+  assert.equal(secure.findings.some((candidate) => candidate.ruleId === "INJ_NOSQL_QUERY"), false);
+});
+
 test("security headers deny framing, sniffing, and broad browser capabilities", async () => {
   const { outputText } = await transpile("lib/security/headers.ts");
   const module = await import(`data:text/javascript;base64,${Buffer.from(outputText).toString("base64")}`);

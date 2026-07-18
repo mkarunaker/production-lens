@@ -92,6 +92,11 @@ const PRINCIPLES_BY_RULE: Record<string, { name: ReadinessPrinciple; reason: str
     { name: "Contain it", reason: "Allowlisted arguments and least-privilege processes limit the impact of argument manipulation." },
     { name: "Break the lethal trifecta", reason: "Untrusted input can influence a consequential external process even when no shell is used." },
   ],
+  INJ_NOSQL_QUERY: [
+    { name: "Prove it", reason: "Adversarial tests must show that operator-bearing objects cannot alter the intended query." },
+    { name: "Contain it", reason: "Database identities and tenant filters must limit the records exposed by a manipulated filter." },
+    { name: "Break the lethal trifecta", reason: "Untrusted request objects can reach a private-data query interpreter and enable disclosure or modification." },
+  ],
   SUPPLY_CHAIN_MISSING_LOCKFILE: [
     { name: "Prove it", reason: "Reproducible builds are necessary for meaningful security and regression evidence." },
     { name: "Trace and reverse it", reason: "A locked dependency graph makes deployed components identifiable and rollback reproducible." },
@@ -247,6 +252,24 @@ export function scanRepository(repository: string, inputFiles: RepositoryFile[])
       impact: "A leading flag or specially formed value may change the invoked program's behavior even though no shell is used.",
       remediation: "Map user choices to server-owned arguments, reject leading-option syntax, insert a supported end-of-options marker where appropriate, validate value shape, and test malicious flag inputs.",
       evidence: argumentInjectionEvidence,
+    }));
+  }
+
+  const noSqlInjectionEvidence = firstPatternEvidence(files, [
+    /\b(?:find|findOne|findOneAndUpdate|updateOne|updateMany|deleteOne|deleteMany|countDocuments)\s*\(\s*(?:req(?:uest)?\.body|ctx\.request\.body)\b/i,
+    /\b(?:find|findOne|findOneAndUpdate|updateOne|updateMany|deleteOne|deleteMany|countDocuments)\s*\(\s*\{\s*\.\.\.(?:req(?:uest)?\.body|ctx\.request\.body)\b/i,
+    /\$(?:where|expr)\s*:\s*(?:req(?:uest)?\.(?:body|query)|ctx\.request\.body|user[A-Za-z0-9_$]*|input[A-Za-z0-9_$]*)\b/i,
+  ]);
+  if (noSqlInjectionEvidence) {
+    findings.push(finding({
+      ruleId: "INJ_NOSQL_QUERY",
+      title: "Untrusted objects may alter a NoSQL query",
+      severity: "critical",
+      category: "Injection",
+      explanation: "A Mongo-style query sink receives an entire request object, a spread request object, or an untrusted server-side expression.",
+      impact: "Operator keys such as $ne, $regex, or $where may bypass intended filters, expose records, modify data, or consume excessive database resources.",
+      remediation: "Build a server-owned typed filter from individually validated primitive values, reject keys beginning with '$' or containing '.', disable server-side JavaScript, enforce tenant scope separately, and use a least-privilege database identity.",
+      evidence: noSqlInjectionEvidence,
     }));
   }
 
