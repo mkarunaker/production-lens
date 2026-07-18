@@ -29,6 +29,7 @@ export default async function RemediationPage({
     "Break the lethal trifecta": "Separate sensitive capabilities",
   };
   const sampleQuery = isSecuritySample ? "sample=security&" : "";
+  const patchText = `--- a/${proposal.path}\n+++ b/${proposal.path}\n@@ -${proposal.line},1 +${proposal.line},1 @@\n-${proposal.before}\n+${proposal.after}\n`;
 
   return (
     <main>
@@ -57,6 +58,7 @@ export default async function RemediationPage({
             <div className="diff-line diff-removed"><span>−</span><code>{proposal.before}</code></div>
             <div className="diff-line diff-added"><span>+</span><code>{proposal.after}</code></div>
           </div>
+          <a className="patch-download" href={`data:text/plain;charset=utf-8,${encodeURIComponent(patchText)}`} download={`production-lens-${proposal.ruleId}.patch`}>Download this reviewable patch ↓</a>
         </section>
 
         <section className="remediation-options" aria-label="Remediation options">
