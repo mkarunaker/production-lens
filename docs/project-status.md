@@ -207,7 +207,7 @@ For the fastest safe hackathon path:
 
 1. Run the final signed-in deployed-browser rehearsal using `docs/demo-script.md`.
 2. Do not accept arbitrary repository uploads yet.
-3. Implement the metadata-only ZIP inspector and adversarial fixtures against `docs/secure-ingestion-contract.md`; do not extract entries or add an upload UI.
+3. Implement bounded in-memory content materialization for already-approved ZIP entries: safe decompression, disguised nested-archive signature detection, strict text decoding, embedded-NUL rejection, and conversion to `RepositoryFile[]`; do not write to disk or add an upload UI.
 4. Build Milestone 3 authorization and operational controls before enabling uploads.
 5. Add GPT analysis only after upload isolation and authorization controls pass their security gates.
 
