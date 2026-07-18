@@ -29,7 +29,7 @@ export function DemoUpload() {
       setSelectedName(file.name);
       setMessage("Choose Scan selected project when you are ready.");
     }} />
-    {destination && <button className="upload-scan-button" type="button" onClick={() => router.push(destination)}>Scan selected project <span aria-hidden="true">→</span></button>}
+    {destination && <button className="upload-scan-button" type="button" onClick={() => router.push(destination)}>Run Lens <span aria-hidden="true">→</span></button>}
     <p className="upload-note">{selectedName ? `${selectedName} is ready to scan. ` : ""}{message}</p>
   </div>;
 }
