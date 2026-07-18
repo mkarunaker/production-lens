@@ -1,5 +1,12 @@
 export type Severity = "critical" | "high" | "medium" | "low";
 
+export type ReadinessPrinciple =
+  | "Own it"
+  | "Prove it"
+  | "Contain it"
+  | "Trace and reverse it"
+  | "Break the lethal trifecta";
+
 export type Category =
   | "Authorization"
   | "Sensitive data"
@@ -26,6 +33,10 @@ export type Finding = {
   explanation: string;
   impact: string;
   remediation: string;
+  principles: {
+    name: ReadinessPrinciple;
+    reason: string;
+  }[];
   evidence?: {
     path: string;
     line: number;

@@ -78,6 +78,11 @@ function Results({
                     </div>
                     <h2>{finding.title}</h2>
                     <p>{finding.explanation}</p>
+                    <div className="finding-principles" aria-label="Release-readiness principles">
+                      {finding.principles.map((principle) => (
+                        <span key={principle.name}>{principle.name}</span>
+                      ))}
+                    </div>
                   </div>
                   {finding.evidence && <span className="evidence-chip">{finding.evidence.path}:{finding.evidence.line}</span>}
                 </div>
@@ -91,6 +96,17 @@ function Results({
             </div>
             <div className="detail-body">
               <div className="detail-section"><h3>Why this matters</h3><p>{selected.impact}</p></div>
+              <div className="detail-section">
+                <h3>Release-readiness principles</h3>
+                <div className="detail-principles">
+                  {selected.principles.map((principle) => (
+                    <div key={principle.name}>
+                      <strong>{principle.name}</strong>
+                      <p>{principle.reason}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
               <div className="detail-section">
                 <h3>Evidence</h3>
                 {selected.evidence ? (

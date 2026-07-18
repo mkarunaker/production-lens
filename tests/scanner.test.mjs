@@ -32,6 +32,10 @@ test("finds every expected issue with evidence-rich output", async () => {
   assert.ok(result.findings.filter((finding) => finding.evidence).length >= 3);
   for (const finding of result.findings) {
     assert.ok(finding.title && finding.explanation && finding.impact && finding.remediation);
+    assert.ok(finding.principles.length > 0);
+    for (const principle of finding.principles) {
+      assert.ok(principle.name && principle.reason);
+    }
   }
 });
 
@@ -154,4 +158,19 @@ test("remediation approval presents all principles and residual-risk evidence", 
     assert.ok(principle.status);
     assert.ok(principle.evidence);
   }
+});
+
+test("all five readiness principles are represented across the sample findings", async () => {
+  const { sampleFiles, sampleRepositoryName, scanRepository } = await loadScanner();
+  const result = scanRepository(sampleRepositoryName, sampleFiles);
+  const represented = new Set(
+    result.findings.flatMap((finding) => finding.principles.map((principle) => principle.name)),
+  );
+  assert.deepEqual(represented, new Set([
+    "Own it",
+    "Prove it",
+    "Contain it",
+    "Trace and reverse it",
+    "Break the lethal trifecta",
+  ]));
 });

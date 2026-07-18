@@ -1,4 +1,4 @@
-import type { Finding, RepositoryFile, ScanResult } from "./types";
+import type { Finding, ReadinessPrinciple, RepositoryFile, ScanResult } from "./types";
 
 export const SCAN_LIMITS = {
   maxFiles: 200,
@@ -56,8 +56,60 @@ function evidence(files: RepositoryFile[], path: string, pattern: RegExp) {
   return { path, line: index + 1, code: redactSecrets(lines[index].trim()) };
 }
 
-function finding(input: Omit<Finding, "id">): Finding {
-  return { id: `${input.ruleId.toLowerCase()}-1`, ...input };
+const PRINCIPLES_BY_RULE: Record<string, { name: ReadinessPrinciple; reason: string }[]> = {
+  SEC_INDIRECT_PROMPT_INJECTION: [
+    { name: "Prove it", reason: "Adversarial evaluation must show that hostile repository instructions cannot change system behavior." },
+    { name: "Contain it", reason: "Untrusted content must remain isolated from privileged capabilities." },
+    { name: "Break the lethal trifecta", reason: "A component reading hostile content must not also hold sensitive data and consequential action authority." },
+  ],
+  SEC_DANGEROUS_DYNAMIC_EXECUTION: [
+    { name: "Contain it", reason: "Dynamic execution dramatically expands the blast radius of attacker-controlled input." },
+    { name: "Break the lethal trifecta", reason: "Untrusted input can cross directly into a consequential execution capability." },
+  ],
+  SUPPLY_CHAIN_MISSING_LOCKFILE: [
+    { name: "Prove it", reason: "Reproducible builds are necessary for meaningful security and regression evidence." },
+    { name: "Trace and reverse it", reason: "A locked dependency graph makes deployed components identifiable and rollback reproducible." },
+  ],
+  AUTH_SHARED_SERVICE_ACCOUNT: [
+    { name: "Own it", reason: "A shared identity prevents actions from being attributed to an accountable person." },
+    { name: "Contain it", reason: "A broad reusable credential increases the impact of compromise." },
+    { name: "Trace and reverse it", reason: "Individual actions cannot be reliably reconstructed or revoked." },
+  ],
+  AUTH_MISSING_USER_AUTHORIZATION: [
+    { name: "Own it", reason: "Consequential data access has no verified requesting-user accountability." },
+    { name: "Contain it", reason: "Missing user and tenant scope leaves the data-access blast radius unbounded." },
+    { name: "Break the lethal trifecta", reason: "Untrusted requests can reach private data through a consequential tool without an approval boundary." },
+  ],
+  OBS_MISSING_AI_AUDIT_LOG: [
+    { name: "Own it", reason: "Owners and approvers lack the evidence needed for meaningful accountability." },
+    { name: "Trace and reverse it", reason: "Model and tool behavior cannot be reconstructed, investigated, or safely recovered." },
+  ],
+  EVAL_MISSING_FRAMEWORK: [
+    { name: "Prove it", reason: "No repeatable evidence demonstrates intended behavior, failure handling, or misuse resistance." },
+  ],
+  REL_MISSING_NETWORK_GUARDS: [
+    { name: "Prove it", reason: "Failure, latency, and degraded-mode behavior have not been demonstrated." },
+    { name: "Contain it", reason: "Unbounded waits and retries can amplify dependency failures and resource consumption." },
+  ],
+  GOV_EMBEDDED_PROMPT: [
+    { name: "Own it", reason: "The prompt has no explicit owner or review record." },
+    { name: "Prove it", reason: "Prompt changes cannot be independently versioned and evaluated before release." },
+    { name: "Trace and reverse it", reason: "Prompt versions and rollback history are not explicit." },
+  ],
+  DATA_SENSITIVE_LOGGING: [
+    { name: "Contain it", reason: "Raw customer records can spread into a broad, long-lived logging system." },
+    { name: "Trace and reverse it", reason: "Sensitive log disclosure is difficult to retract and requires auditable handling." },
+  ],
+  GOV_MISSING_HUMAN_REVIEW: [
+    { name: "Own it", reason: "No accountable person reviews sensitive or high-impact disclosures." },
+    { name: "Break the lethal trifecta", reason: "The agent can combine private data, untrusted requests, and disclosure without a human boundary." },
+  ],
+};
+
+function finding(input: Omit<Finding, "id" | "principles">): Finding {
+  const principles = PRINCIPLES_BY_RULE[input.ruleId];
+  if (!principles?.length) throw new Error(`Finding rule ${input.ruleId} has no release-readiness principle mapping.`);
+  return { id: `${input.ruleId.toLowerCase()}-1`, principles, ...input };
 }
 
 export function sanitizeFiles(files: RepositoryFile[]) {
@@ -247,4 +299,4 @@ export function scanRepository(repository: string, inputFiles: RepositoryFile[])
   return { repository, scannedFiles: files.length, findings };
 }
 
-export type { Finding, RepositoryFile, ScanResult } from "./types";
+export type { Finding, ReadinessPrinciple, RepositoryFile, ScanResult } from "./types";

@@ -14,6 +14,7 @@ Production Lens statically scans an AI application repository and explains evide
 - Explicitly approved remediation of the sensitive-logging finding in a disposable copy
 - Deterministic rescan and before/after verification without executing sample code
 - Remediation verification and change-safety evidence as a production-readiness criterion
+- Principle mappings and release-readiness explanations on every finding
 - Security headers, a maintained threat model, and dependency audit automation
 - Automated expected-finding, snapshot-parity, redaction, and limit tests
 
