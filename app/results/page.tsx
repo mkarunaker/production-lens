@@ -104,7 +104,7 @@ function Results({
           <div className="summary-box"><strong>{counts.medium}</strong><span>Medium</span></div>
           <div className="summary-box"><strong>{result.findings.filter((finding) => finding.evidence).length}</strong><span>With line evidence</span></div>
         </div>
-        <details className="applicability-panel" open>
+        <details className="applicability-panel">
           <summary className="applicability-heading" id="applicability-title">
             <div>
               <span className="overline">Code-first applicability</span>
