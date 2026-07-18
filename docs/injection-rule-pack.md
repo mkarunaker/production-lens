@@ -30,9 +30,9 @@ Finding a function name alone is not sufficient for a critical finding. When dat
 | --- | --- | --- |
 | Prompt injection | Partial | Direct, indirect, encoded, obfuscated, tool-output, and persistent patterns |
 | Dynamic code execution | Partial | `eval`, dynamic functions, reflection, runtime compilation, and unsafe deserialization |
-| SQL and ORM injection | Partial | JavaScript/TypeScript string-built query calls and unsafe Prisma raw-query APIs |
-| OS command injection | Partial | JavaScript/TypeScript `exec` and `execSync` with concatenated or interpolated input |
-| Argument injection | Partial | JavaScript/TypeScript `spawn` and `execFile` argument arrays with visibly user-controlled values |
+| SQL and ORM injection | Partial | JavaScript/TypeScript string-built query calls and unsafe Prisma raw-query APIs; Python `execute`, `executemany`, and `raw` calls using f-strings, concatenation, `%`, or `.format()` |
+| OS command injection | Partial | JavaScript/TypeScript `exec` and `execSync` with concatenated or interpolated input; Python `os.system` and `subprocess` shell calls using interpolated or concatenated input |
+| Argument injection | Partial | JavaScript/TypeScript `spawn` and `execFile`, plus Python `subprocess`, argument arrays with visibly user-controlled values |
 | NoSQL injection | Partial | JavaScript/TypeScript Mongo-style query sinks receiving request objects, spread request objects, or untrusted `$where`/`$expr` values |
 | Server-side template injection | Planned | Common template engines and untrusted template compilation/rendering |
 | XSS and unsafe HTML rendering | Partial | React `dangerouslySetInnerHTML` and browser `innerHTML`, `outerHTML`, `document.write`, and `insertAdjacentHTML` sinks with visibly untrusted values |

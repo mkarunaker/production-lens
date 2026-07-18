@@ -20,7 +20,7 @@ At the start of a new session:
 - Current checkpoint commit: use the latest `git log -1` entry.
 - Local ZIP test checkpoint: the latest `feat: add localhost zip scan demo` entry in `git log`.
 - Deterministic sample findings: 11
-- Automated tests: 47 passing
+- Automated tests: 49 passing
 - Principles-based approval review: implemented for the bundled sensitive-logging remediation
 - Principle mapping: implemented for all 11 deterministic findings
 - Known dependency vulnerabilities at last verification: 0
@@ -76,10 +76,10 @@ Complete.
 In progress as an incremental scanner milestone.
 
 - Prompt injection: partial
-- Dynamic code execution: partial
-- SQL/ORM injection: partial for high-signal JavaScript/TypeScript sinks
-- OS command injection: partial for interpolated or concatenated `exec`/`execSync` calls
-- Argument injection: partial for visibly user-controlled `spawn`/`execFile` argument arrays
+- Dynamic code execution: partial for evaluated JavaScript/TypeScript and Python primitives
+- SQL/ORM injection: partial for high-signal JavaScript/TypeScript and Python sinks
+- OS command injection: partial for evaluated JavaScript/TypeScript `exec`/`execSync` and Python `os.system`/`subprocess` shell calls
+- Argument injection: partial for visibly user-controlled JavaScript/TypeScript and Python process argument arrays
 - NoSQL injection: partial for Mongo-style sinks receiving request objects or untrusted server-side expressions
 - XSS and unsafe HTML rendering: partial for high-signal React and browser HTML sinks
 - Visible bundled Security Test Agent: complete for manual review of seven evaluated injection findings
@@ -125,6 +125,7 @@ In progress.
 - Metadata-only ZIP inspector: complete for the first evaluated fixture set
 - Bounded in-memory content materialization: complete for the evaluated stored/deflate, decoding, CRC, NUL, and disguised-archive fixture set
 - Localhost-only ZIP upload and scan harness: complete for manual demo testing; deliberately not part of the hosted application
+- Hosted fixed Chief of Staff demo fixture: complete in the application source; arbitrary hosted upload remains disabled
 - Owner-scoped quarantine/security-scanner lifecycle interface: complete for evaluated success, rejection, outage, timeout, cancellation, and cleanup paths
 - R2 quarantine adapter: implemented and contract-tested; binding and bucket are not provisioned
 - Deployment-backed quarantine, real malware/secret scanner, and hosted upload UI: not enabled
@@ -249,9 +250,23 @@ For the fastest safe hackathon path:
 - Security and adversarial: passed for production-mode refusal, strict localhost binding, 10 MiB request bounding, malformed archive rejection, no-store and browser isolation headers, and text-only result rendering.
 - Negative behavior: no disk extraction, persistence, repository execution, dependency installation, model access, or outbound network access was added.
 - Operational limitation: the harness has no authentication, quarantine, malware scanning, or distributed controls and is therefore intentionally excluded from the hosted application and deployment.
-- Regression: `npm run security:check` passes with 47 tests, 0 known dependency vulnerabilities, a production build, and the production-server golden-path E2E.
+- Regression: `npm run security:check` passes with 49 tests, 0 known dependency vulnerabilities, a production build, and the production-server golden-path E2E.
 - Lint: `npm run lint` remains blocked by two pre-existing `@next/next/no-assign-module-variable` findings in `tests/scanner.test.mjs` at lines 262 and 273.
 - Intentionally not evaluated: visual browser rehearsal because no browser was connected; hosted upload enablement remains out of scope.
+
+## Latest validation — hosted fixed Python demo fixture
+
+- Functional: the home page exposes a Chief of Staff demo card and `/results?sample=chief` scans a sanitized Python fixture through the same deterministic scanner.
+- Security: the fixture contains no credentials, tokens, virtual environments, caches, or Git data; the hosted path accepts only the fixed demo selection and no arbitrary archive bytes.
+- Remaining: deploy this checkpoint and rehearse the hosted browser flow before recording the final demo.
+
+## Latest validation — bounded Python scanner support
+
+- Functional: `.py` is approved as application text; Python, FastAPI, and LangChain/LangGraph inventory is reported; Python dependency manifests and supported lockfiles participate in supply-chain checks.
+- Security: paired vulnerable and secure-equivalent fixtures cover Python `eval`/`exec`, string-built SQL, shell command construction, process arguments, unbounded `requests`/`httpx` calls, embedded prompts, and direct sensitive-value logging.
+- Real-project evaluation: the sanitized Chief of Staff ZIP scans 16 files, identifies Python, FastAPI, LangChain/LangGraph, and AI/model orchestration, and deterministically reports a missing lockfile, missing evaluation framework, and embedded prompt.
+- False-positive regression: log messages that mention a token and logging a `token_path` do not trigger sensitive-value logging.
+- Scope limitation: Python support is regex-based, high-signal, and explicitly partial; it does not claim AST/data-flow completeness, arbitrary framework coverage, or universal Python security analysis.
 - Residual risk: this evaluated in-memory parser is not a complete hosted-upload boundary and must remain unreachable from public input.
 - Exact next evaluation gate: complete the remaining repository-upload adversarial fixtures and operational lifecycle controls, then pass authentication, object authorization, quota, concurrency, cleanup, and security-scanner fail-closed tests before exposing uploads.
 

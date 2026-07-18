@@ -4,14 +4,16 @@ import { applyRemediation, hasRemediation, validateRemediation } from "@/lib/rem
 import { scanRepository } from "@/lib/scanner";
 import { sampleFiles, sampleRepositoryName } from "@/lib/scanner/sample-bundle";
 import { securitySampleFiles, securitySampleRepositoryName } from "@/lib/scanner/security-sample-bundle";
+import { chiefSampleFiles, chiefSampleRepositoryName } from "@/lib/scanner/chief-sample-bundle";
 
 export const metadata: Metadata = { title: "Scan results" };
 
 export default async function ResultsPage({ searchParams }: { searchParams: Promise<{ finding?: string; mode?: string; approved?: string; sample?: string; rule?: string }> }) {
   const params = await searchParams;
   const isSecuritySample = params.sample === "security";
-  const repositoryName = isSecuritySample ? securitySampleRepositoryName : sampleRepositoryName;
-  const repositoryFiles = isSecuritySample ? securitySampleFiles : sampleFiles;
+  const isChiefSample = params.sample === "chief";
+  const repositoryName = isSecuritySample ? securitySampleRepositoryName : isChiefSample ? chiefSampleRepositoryName : sampleRepositoryName;
+  const repositoryFiles = isSecuritySample ? securitySampleFiles : isChiefSample ? chiefSampleFiles : sampleFiles;
   const baseline = scanRepository(repositoryName, repositoryFiles);
   const remediationRuleId = params.rule && baseline.findings.some((finding) => finding.ruleId === params.rule) && hasRemediation(params.rule)
     ? params.rule
@@ -23,7 +25,7 @@ export default async function ResultsPage({ searchParams }: { searchParams: Prom
   const resolvedTitle = remediationRuleId
     ? baseline.findings.find((finding) => finding.ruleId === remediationRuleId)?.title
     : undefined;
-  return <Results result={result} params={params} comparison={comparison} isSecuritySample={isSecuritySample} resolvedTitle={resolvedTitle} />;
+  return <Results result={result} params={params} comparison={comparison} isSecuritySample={isSecuritySample} isChiefSample={isChiefSample} resolvedTitle={resolvedTitle} />;
 }
 
 function Results({
@@ -31,16 +33,18 @@ function Results({
   params,
   comparison,
   isSecuritySample,
+  isChiefSample,
   resolvedTitle,
 }: {
   result: ReturnType<typeof scanRepository>;
   params: { finding?: string; mode?: string; approved?: string; sample?: string; rule?: string };
   comparison?: ReturnType<typeof validateRemediation>;
   isSecuritySample: boolean;
+  isChiefSample: boolean;
   resolvedTitle?: string;
 }) {
   const selected = result.findings.find((finding) => finding.id === params.finding) ?? result.findings[0];
-  const sampleQuery = isSecuritySample ? "sample=security&" : "";
+  const sampleQuery = isSecuritySample ? "sample=security&" : isChiefSample ? "sample=chief&" : "";
   const queryPrefix = comparison
     ? `${sampleQuery}mode=after&approved=yes&rule=${params.rule}&`
     : sampleQuery;
@@ -88,7 +92,7 @@ function Results({
         )}
         <div className="results-title-row">
           <div>
-            <span className="overline">Scan report · {isSecuritySample ? "security test project" : "bundled sample"}</span>
+            <span className="overline">Scan report · {isSecuritySample ? "security test project" : isChiefSample ? "Chief of Staff demo ZIP" : "bundled sample"}</span>
             <h1>{comparison ? "One risk resolved" : "Not ready for production"}</h1>
             <p>{result.repository} · {result.scannedFiles} approved files inspected · no code executed</p>
           </div>

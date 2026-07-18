@@ -36,6 +36,7 @@ The Enterprise Analytics Agent demonstrates an **11 → 10** remediation. The Se
 
 - Eleven deterministic production-readiness findings for the enterprise sample
 - Seven evaluated injection findings for the security sample
+- Sanitized hosted Chief of Staff Python demo fixture (credentials, tokens, virtualenvs, caches, and Git data excluded)
 - Line-level evidence with suspected-secret redaction
 - Technology inventory and explicit applicability/evidence states
 - Prompt-injection, dynamic-execution, lockfile, SQL/ORM, OS-command, argument, NoSQL, and unsafe-HTML checks for declared evaluated patterns
@@ -48,7 +49,7 @@ The Enterprise Analytics Agent demonstrates an **11 → 10** remediation. The Se
 - A formal release-blocking adversarial corpus with stable fixture IDs
 - Security headers, threat model, evaluation gates, and dependency auditing
 
-Hosted arbitrary uploads and runtime GPT analysis are deliberately disabled until their isolation, authorization, operational, and adversarial gates are complete.
+Hosted arbitrary uploads and runtime GPT analysis are deliberately disabled until their isolation, authorization, operational, and adversarial gates are complete. The hosted UI includes a fixed sanitized Chief of Staff demo fixture; it is selected by an allowlisted demo ID, not an arbitrary user upload.
 
 ## Try it without rebuilding
 
@@ -115,7 +116,7 @@ Tests assert that bundled snapshots match their canonical source and expected fi
 
 - Browser UI: current desktop and mobile browsers supported by the deployed Next.js/Vinext application
 - Local development: Node.js 22.13+ on macOS, Linux, and Windows
-- Evaluated scanner languages: declared high-signal JavaScript/TypeScript, React/browser, SQL, configuration, and Markdown patterns
+- Evaluated scanner languages: declared high-signal Python, JavaScript/TypeScript, React/browser, SQL, configuration, and Markdown patterns
 - Archive input contract: ZIP only; local ZIP testing is available and hosted arbitrary upload remains disabled
 
 Production Lens does not claim universal language coverage or perfect security.

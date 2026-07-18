@@ -198,6 +198,82 @@ test("detects high-signal SQL, command, and argument injection while ignoring se
   assert.equal(secureIds.has("INJ_ARGUMENT"), false);
 });
 
+test("supports bounded Python inventory and high-signal security rules", async () => {
+  const { scanRepository } = await loadScanner();
+  const vulnerable = scanRepository("python-agent", [
+    {
+      path: "requirements.txt",
+      content: "langchain==1.0.0\nrequests==2.0.0",
+    },
+    {
+      path: "agent/main.py",
+      content: [
+        "from langchain_openai import ChatOpenAI",
+        "import os, requests, sqlite3, subprocess",
+        "SYSTEM_PROMPT = \"Help the user\"",
+        "def run(user_input, customer):",
+        "    result = eval(user_input)",
+        "    rows = sqlite3.connect('app.db').execute(f\"SELECT * FROM users WHERE email = '{user_input}'\")",
+        "    os.system(f\"convert {user_input} output.png\")",
+        "    subprocess.run(['/usr/bin/curl', user_input])",
+        "    response = requests.get(user_input)",
+        "    print(customer)",
+        "    return result, rows, response",
+      ].join("\n"),
+    },
+  ]);
+  assert.deepEqual(vulnerable.inventory.languages, ["Python"]);
+  assert.ok(vulnerable.inventory.frameworks.includes("LangChain/LangGraph"));
+  assert.ok(vulnerable.inventory.capabilities.includes("AI/model orchestration"));
+  const vulnerableIds = new Set(vulnerable.findings.map((finding) => finding.ruleId));
+  for (const ruleId of [
+    "SEC_DANGEROUS_DYNAMIC_EXECUTION",
+    "SUPPLY_CHAIN_MISSING_LOCKFILE",
+    "INJ_SQL_OR_ORM",
+    "INJ_OS_COMMAND",
+    "INJ_ARGUMENT",
+    "EVAL_MISSING_FRAMEWORK",
+    "REL_MISSING_NETWORK_GUARDS",
+    "GOV_EMBEDDED_PROMPT",
+    "DATA_SENSITIVE_LOGGING",
+  ]) {
+    assert.ok(vulnerableIds.has(ruleId), `${ruleId} was not detected`);
+  }
+});
+
+test("Python secure equivalents avoid high-signal injection findings", async () => {
+  const { scanRepository } = await loadScanner();
+  const secure = scanRepository("secure-python-agent", [
+    { path: "requirements.txt", content: "requests==2.0.0" },
+    { path: "uv.lock", content: "version = 1" },
+    {
+      path: "agent/main.py",
+      content: [
+        "import logging",
+        "import requests, sqlite3, subprocess",
+        "def run(validated_email):",
+        "    logging.getLogger(__name__).warning('Failed to load token: %s', RuntimeError('unavailable'))",
+        "    logging.getLogger(__name__).info('OAuth token saved to %s', token_path)",
+        "    rows = sqlite3.connect('app.db').execute('SELECT * FROM users WHERE email = ?', (validated_email,))",
+        "    subprocess.run(['/usr/bin/curl', '--', 'https://example.com/report'], shell=False)",
+        "    return requests.get('https://example.com/health', timeout=5), rows",
+      ].join("\n"),
+    },
+  ]);
+  const secureIds = new Set(secure.findings.map((finding) => finding.ruleId));
+  for (const ruleId of [
+    "SEC_DANGEROUS_DYNAMIC_EXECUTION",
+    "SUPPLY_CHAIN_MISSING_LOCKFILE",
+    "INJ_SQL_OR_ORM",
+    "INJ_OS_COMMAND",
+    "INJ_ARGUMENT",
+    "REL_MISSING_NETWORK_GUARDS",
+    "DATA_SENSITIVE_LOGGING",
+  ]) {
+    assert.equal(secureIds.has(ruleId), false, `${ruleId} produced a false positive`);
+  }
+});
+
 test("detects high-signal NoSQL injection while ignoring a typed server-owned filter", async () => {
   const { scanRepository } = await loadScanner();
   const vulnerable = scanRepository("nosql-injection-fixtures", [

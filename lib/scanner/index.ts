@@ -6,8 +6,8 @@ export const SCAN_LIMITS = {
   maxTotalBytes: 2_000_000,
 } as const;
 
-const APPROVED_EXTENSIONS = new Set([".ts", ".tsx", ".js", ".jsx", ".json", ".lock", ".sql", ".md", ".txt", ".yml", ".yaml"]);
-const APPLICATION_EXTENSIONS = new Set([".ts", ".tsx", ".js", ".jsx"]);
+const APPROVED_EXTENSIONS = new Set([".ts", ".tsx", ".js", ".jsx", ".py", ".json", ".lock", ".sql", ".md", ".txt", ".yml", ".yaml"]);
+const APPLICATION_EXTENSIONS = new Set([".ts", ".tsx", ".js", ".jsx", ".py"]);
 
 function extension(path: string) {
   const dot = path.lastIndexOf(".");
@@ -109,12 +109,15 @@ function inventory(files: RepositoryFile[], applicationSource: string): Technolo
     languages: unique([
       ...(extensions.has(".ts") || extensions.has(".tsx") ? ["TypeScript"] : []),
       ...(extensions.has(".js") || extensions.has(".jsx") ? ["JavaScript"] : []),
+      ...(extensions.has(".py") ? ["Python"] : []),
       ...(extensions.has(".sql") ? ["SQL"] : []),
       ...(extensions.has(".json") ? ["JSON"] : []),
     ]),
     frameworks: unique([
       ...(/"next"\s*:|from\s+["']next/.test(manifestSource + applicationSource) ? ["Next.js"] : []),
       ...(/"react"\s*:|from\s+["']react/.test(manifestSource + applicationSource) || extensions.has(".tsx") || extensions.has(".jsx") ? ["React"] : []),
+      ...(/\b(?:from|import)\s+(?:fastapi|starlette)\b/.test(applicationSource) ? ["FastAPI"] : []),
+      ...(/\b(?:from|import)\s+(?:langchain|langgraph)(?:_|\.)/.test(applicationSource) ? ["LangChain/LangGraph"] : []),
     ]),
     dataStores: unique([
       ...(/better-sqlite3|\bsqlite\b/i.test(manifestSource + applicationSource) ? ["SQLite"] : []),
@@ -122,9 +125,9 @@ function inventory(files: RepositoryFile[], applicationSource: string): Technolo
       ...(/\bSELECT\b|\.query\s*\(/i.test(applicationSource) ? ["SQL query API"] : []),
     ]),
     capabilities: unique([
-      ...(/mockModelResponse|modelCall|SYSTEM_PROMPT|answerQuestion/i.test(applicationSource) ? ["AI/model orchestration"] : []),
-      ...(/\bfetch\s*\(/.test(applicationSource) ? ["Outbound HTTP"] : []),
-      ...(/\b(?:exec|execFile|spawn)\s*\(/.test(applicationSource) ? ["Process execution"] : []),
+      ...(/mockModelResponse|modelCall|SYSTEM_PROMPT|answerQuestion|ChatOpenAI|ChatAnthropic|ChatPromptTemplate|langchain|langgraph/i.test(applicationSource) ? ["AI/model orchestration"] : []),
+      ...(/\bfetch\s*\(|\brequests\.(?:get|post|put|patch|delete|request)\s*\(|\bhttpx\.(?:get|post|put|patch|delete|request)\s*\(/.test(applicationSource) ? ["Outbound HTTP"] : []),
+      ...(/\b(?:exec|execFile|spawn)\s*\(|\bos\.system\s*\(|\bsubprocess\.(?:run|call|Popen|check_call|check_output)\s*\(/.test(applicationSource) ? ["Process execution"] : []),
       ...(/userId|principal|authenticate|authorize|permission/i.test(applicationSource) ? ["Identity boundary"] : []),
       ...(/customer|lifetime_value|notes/i.test(applicationSource) ? ["Sensitive customer data"] : []),
     ]),
@@ -141,8 +144,8 @@ function assessChecks(
   const docs = files.filter((file) => [".md", ".txt"].includes(extension(file.path)));
   const documentedControl = firstPatternEvidence(docs, [/\b(?:authentication|authorization|authorized|human review|audit logging|evaluation framework)\b/i]);
   const findingByRule = new Map(findings.map((item) => [item.ruleId, item]));
-  const hasManifest = files.some((file) => file.path === "package.json");
-  const hasLock = files.some((file) => /(?:^|\/)(?:package-lock\.json|npm-shrinkwrap\.json|pnpm-lock\.yaml|yarn\.lock)$/.test(file.path));
+  const hasManifest = files.some((file) => /(?:^|\/)(?:package\.json|requirements\.txt|pyproject\.toml|Pipfile)$/.test(file.path));
+  const hasLock = files.some((file) => /(?:^|\/)(?:package-lock\.json|npm-shrinkwrap\.json|pnpm-lock\.yaml|yarn\.lock|uv\.lock|poetry\.lock|Pipfile\.lock)$/.test(file.path));
   const hasEvaluationArtifact = files.some((file) => /(eval|benchmark|golden|dataset)/i.test(file.path));
   const hasAi = technology.capabilities.includes("AI/model orchestration");
   const hasNetwork = technology.capabilities.includes("Outbound HTTP");
@@ -164,8 +167,8 @@ function assessChecks(
     if (ruleId === "SEC_DANGEROUS_DYNAMIC_EXECUTION") return { state: "passed", reason: "No supported runtime code-evaluation primitive was detected." };
     if (ruleId === "SUPPLY_CHAIN_MISSING_LOCKFILE") {
       return hasManifest
-        ? { state: hasLock ? "passed" : "finding", reason: hasLock ? "A supported dependency lockfile is present." : "A package manifest has no supported lockfile." }
-        : { state: "not_applicable", reason: "No supported package manifest was detected." };
+        ? { state: hasLock ? "passed" : "finding", reason: hasLock ? "A supported dependency lockfile is present." : "A dependency manifest has no supported lockfile." }
+        : { state: "not_applicable", reason: "No supported dependency manifest was detected." };
     }
     if (ruleId === "INJ_SQL_OR_ORM") return hasSql
       ? { state: "implemented_unverified", reason: "SQL usage was detected without a high-signal unsafe sink; deeper data-flow verification is still required." }
@@ -336,12 +339,14 @@ export function scanRepository(repository: string, inputFiles: RepositoryFile[])
     /\bnew\s+Function\s*\(/,
   ];
   const dynamicExecutionFile = applicationFiles.find((file) =>
-    dynamicExecutionPatterns.some((pattern) => pattern.test(file.content)),
+    dynamicExecutionPatterns.some((pattern) => pattern.test(file.content)) ||
+    (extension(file.path) === ".py" && /\bexec\s*\(/.test(file.content)),
   );
   if (dynamicExecutionFile) {
     const lines = dynamicExecutionFile.content.split("\n");
     const lineIndex = lines.findIndex((line) =>
-      dynamicExecutionPatterns.some((pattern) => pattern.test(line)),
+      dynamicExecutionPatterns.some((pattern) => pattern.test(line)) ||
+      (extension(dynamicExecutionFile.path) === ".py" && /\bexec\s*\(/.test(line)),
     );
     findings.push(finding({
       ruleId: "SEC_DANGEROUS_DYNAMIC_EXECUTION",
@@ -363,6 +368,9 @@ export function scanRepository(repository: string, inputFiles: RepositoryFile[])
     /\b(?:query|execute|prepare|raw)\s*\(\s*`[^`]*\$\{[^}]+\}[^`]*`/,
     /\b(?:query|execute|prepare|raw)\s*\(\s*["'][^"']*["']\s*\+/,
     /\$(?:queryRawUnsafe|executeRawUnsafe)\s*\(\s*(?!["'`][^"'`]*["'`]\s*\))/,
+    /\b(?:execute|executemany|raw)\s*\(\s*f["'].*\{[^}]+\}.*["']/,
+    /\b(?:execute|executemany|raw)\s*\(\s*["'][^"']*["']\s*(?:\+|%)/,
+    /\b(?:execute|executemany|raw)\s*\(\s*["'][^"']*\{\}[^"']*["']\.format\s*\(/,
   ]);
   if (sqlInjectionEvidence) {
     findings.push(finding({
@@ -380,6 +388,8 @@ export function scanRepository(repository: string, inputFiles: RepositoryFile[])
   const osCommandEvidence = firstPatternEvidence(applicationFiles, [
     /\b(?:exec|execSync)\s*\(\s*`[^`]*\$\{[^}]+\}[^`]*`/,
     /\b(?:exec|execSync)\s*\(\s*["'][^"']*["']\s*\+/,
+    /\bos\.system\s*\(\s*f?["'][^"']*(?:\{[^}]+\}|["']\s*\+)/,
+    /\bsubprocess\.(?:run|call|Popen|check_call|check_output)\s*\(\s*f?["'][^"']*(?:\{[^}]+\}|["']\s*\+)[^)]*shell\s*=\s*True/,
   ]);
   if (osCommandEvidence) {
     findings.push(finding({
@@ -396,6 +406,7 @@ export function scanRepository(repository: string, inputFiles: RepositoryFile[])
 
   const argumentInjectionEvidence = firstPatternEvidence(applicationFiles, [
     /\b(?:spawn|execFile|execFileSync)\s*\(\s*["'][^"']+["']\s*,\s*\[\s*(?:["'][^"']*["']\s*,\s*)*(?:user|input|arg|option|url|path|query|filename)[a-zA-Z0-9_$]*/i,
+    /\bsubprocess\.(?:run|call|Popen|check_call|check_output)\s*\(\s*\[\s*["'][^"']+["']\s*,\s*(?:user|input|arg|option|url|path|query|filename)[a-zA-Z0-9_]*\b/i,
   ]);
   if (argumentInjectionEvidence) {
     findings.push(finding({
@@ -446,20 +457,24 @@ export function scanRepository(repository: string, inputFiles: RepositoryFile[])
     }));
   }
 
-  const hasPackageManifest = files.some((file) => file.path === "package.json");
-  const hasDependencyLock = files.some((file) =>
-    /(?:^|\/)(?:package-lock\.json|npm-shrinkwrap\.json|pnpm-lock\.yaml|yarn\.lock)$/.test(file.path),
+  const dependencyManifest = files.find((file) =>
+    /(?:^|\/)(?:package\.json|requirements\.txt|pyproject\.toml|Pipfile)$/.test(file.path),
   );
-  if (hasPackageManifest && !hasDependencyLock) {
+  const hasDependencyLock = files.some((file) =>
+    /(?:^|\/)(?:package-lock\.json|npm-shrinkwrap\.json|pnpm-lock\.yaml|yarn\.lock|uv\.lock|poetry\.lock|Pipfile\.lock)$/.test(file.path),
+  );
+  if (dependencyManifest && !hasDependencyLock) {
+    const manifestEvidencePattern =
+      extension(dependencyManifest.path) === ".json" ? /"dependencies"\s*:/ : /^(?!\s*#)\s*\S/;
     findings.push(finding({
       ruleId: "SUPPLY_CHAIN_MISSING_LOCKFILE",
       title: "Application dependencies are not locked",
       severity: "high",
       category: "Supply chain",
-      explanation: "A package manifest is present without a supported dependency lockfile.",
+      explanation: "A dependency manifest is present without a supported dependency lockfile.",
       impact: "Identical builds can resolve different transitive packages, weakening reproducibility and increasing supply-chain exposure.",
       remediation: "Generate and commit one package-manager lockfile, use frozen-lockfile installs in CI, and run an advisory audit before release.",
-      evidence: evidence(files, "package.json", /"dependencies"\s*:/),
+      evidence: firstPatternEvidence([dependencyManifest], [manifestEvidencePattern]),
     }));
   }
 
@@ -502,7 +517,7 @@ export function scanRepository(repository: string, inputFiles: RepositoryFile[])
     }));
   }
 
-  const hasAiApplication = /mockModelResponse|SYSTEM_PROMPT|answerQuestion|modelCall|toolCall/i.test(applicationSource);
+  const hasAiApplication = /mockModelResponse|SYSTEM_PROMPT|answerQuestion|modelCall|toolCall|ChatOpenAI|ChatAnthropic|ChatPromptTemplate|langchain|langgraph/i.test(applicationSource);
   if (hasAiApplication && !files.some((file) => /(eval|benchmark|golden|dataset)/i.test(file.path))) {
     findings.push(finding({
       ruleId: "EVAL_MISSING_FRAMEWORK",
@@ -515,7 +530,12 @@ export function scanRepository(repository: string, inputFiles: RepositoryFile[])
     }));
   }
 
-  if (/await fetch\(/.test(applicationSource) && !/(AbortSignal|timeout|retry|backoff)/i.test(applicationSource)) {
+  const unguardedNetworkEvidence = firstPatternEvidence(applicationFiles, [
+    /\bfetch\s*\(/,
+    /\brequests\.(?:get|post|put|patch|delete|request)\s*\((?![^\n]*\btimeout\s*=)/,
+    /\bhttpx\.(?:get|post|put|patch|delete|request)\s*\((?![^\n]*\btimeout\s*=)/,
+  ]);
+  if (unguardedNetworkEvidence && !/(AbortSignal|timeout|retry|backoff)/i.test(applicationSource)) {
     findings.push(finding({
       ruleId: "REL_MISSING_NETWORK_GUARDS",
       title: "CRM calls have no timeout or retry policy",
@@ -524,11 +544,15 @@ export function scanRepository(repository: string, inputFiles: RepositoryFile[])
       explanation: "The CRM request waits on a single fetch with no deadline, bounded retry, or failure mapping.",
       impact: "A slow or transiently unavailable dependency can stall chat requests and create cascading failures.",
       remediation: "Add an abort timeout, retry only transient failures with bounded exponential backoff and jitter, and return a controlled degraded response.",
-      evidence: evidence(files, "src/crm.ts", /await fetch/),
+      evidence: unguardedNetworkEvidence,
     }));
   }
 
-  if (/const SYSTEM_PROMPT\s*=/.test(applicationSource)) {
+  const embeddedPromptEvidence = firstPatternEvidence(applicationFiles, [
+    /\bconst\s+[A-Z0-9_]*PROMPT\s*=/,
+    /^[A-Z][A-Z0-9_]*PROMPT\s*(?::[^=]+)?=/,
+  ]);
+  if (embeddedPromptEvidence) {
     findings.push(finding({
       ruleId: "GOV_EMBEDDED_PROMPT",
       title: "System prompt is embedded in application code",
@@ -537,20 +561,25 @@ export function scanRepository(repository: string, inputFiles: RepositoryFile[])
       explanation: "The production instruction set is a source constant with no version, owner, or review metadata.",
       impact: "Prompt changes are hard to audit, evaluate independently, or roll back safely.",
       remediation: "Move the prompt to a versioned configuration artifact with ownership, change review, release notes, and evaluation gates.",
-      evidence: evidence(files, "src/agent.ts", /const SYSTEM_PROMPT/),
+      evidence: embeddedPromptEvidence,
     }));
   }
 
-  if (/console\.log\([^)]*customer/i.test(applicationSource)) {
+  const sensitiveLoggingEvidence = firstPatternEvidence(applicationFiles, [
+    /console\.log\([^)]*customer/i,
+    /\bprint\s*\(\s*(?:customer|record|notes|email|token|credential)(?:_data|_value|_record|_object)?\s*\)/i,
+    /\b(?:logger|logging)\.(?:debug|info|warning|error|critical)\s*\([^)]*,\s*(?:customer|record|notes|email|token|credential)(?:_data|_value|_record|_object)?\s*\)/i,
+  ]);
+  if (sensitiveLoggingEvidence) {
     findings.push(finding({
       ruleId: "DATA_SENSITIVE_LOGGING",
-      title: "Customer records may be written to application logs",
+      title: "Sensitive values may be written to application logs",
       severity: "critical",
       category: "Sensitive data",
-      explanation: "The complete CRM customer object is passed to an unrestricted console log.",
-      impact: "Email addresses, sales notes, and other customer data can leak into broadly retained logging systems.",
+      explanation: "A sensitive-looking application value is passed directly to an unrestricted logging sink.",
+      impact: "Credentials, customer records, or other sensitive values can leak into broadly retained logging systems.",
       remediation: "Remove raw-object logging, apply an allowlist-based redactor, classify fields, and test that sensitive values never reach logs.",
-      evidence: evidence(files, "src/agent.ts", /console\.log/),
+      evidence: sensitiveLoggingEvidence,
     }));
   }
 
