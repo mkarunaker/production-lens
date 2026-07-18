@@ -21,6 +21,13 @@ export default async function RemediationPage({
   const finding = scan.findings.find((candidate) => candidate.id === requested);
   if (!finding) throw new Error("Requested finding is missing.");
   const proposal = proposeRemediation(finding.ruleId, repositoryFiles);
+  const principleLabels: Record<string, string> = {
+    "Own it": "Accountability & review",
+    "Prove it": "Tests & evidence",
+    "Contain it": "Limit the blast radius",
+    "Trace and reverse it": "Audit & rollback",
+    "Break the lethal trifecta": "Separate sensitive capabilities",
+  };
   const sampleQuery = isSecuritySample ? "sample=security&" : "";
 
   return (
@@ -82,7 +89,8 @@ export default async function RemediationPage({
                 <span className="principle-number">{index + 1}</span>
                 <div>
                   <div className="principle-title">
-                    <h3>{principle.name}</h3>
+                    <h3>{principleLabels[principle.name] ?? principle.name}</h3>
+                    <span className="principle-canonical">{principle.name}</span>
                     <span className={`principle-status status-${principle.status}`}>
                       {principle.status === "review" ? "Needs human review" : principle.status === "verify" ? "Verify after patch" : "Boundary enforced"}
                     </span>
