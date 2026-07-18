@@ -149,6 +149,10 @@ button { font: inherit; }
 .summary-box strong { display: block; font: 500 26px/1 Georgia, serif; }
 .summary-box span { color: var(--muted); font-size: 11px; }
 .applicability-panel { margin-bottom: 28px; padding: 22px; background: white; border: 1px solid var(--line); border-radius: 14px; }
+.applicability-panel > summary, .detail-section > summary { cursor: pointer; list-style: none; }
+.applicability-panel > summary::-webkit-details-marker, .detail-section > summary::-webkit-details-marker { display: none; }
+.applicability-panel > summary::after, .detail-section > summary::after { content: "＋"; float: right; color: var(--green); font-weight: 800; }
+.applicability-panel[open] > summary::after, .detail-section[open] > summary::after { content: "−"; }
 .applicability-heading { display: flex; justify-content: space-between; gap: 26px; align-items: start; }
 .applicability-heading h2 { margin: 4px 0 7px; font: 600 24px/1.2 Georgia, serif; }
 .applicability-heading p { max-width: 620px; margin: 0; color: var(--muted); font-size: 12px; line-height: 1.55; }

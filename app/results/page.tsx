@@ -104,8 +104,8 @@ function Results({
           <div className="summary-box"><strong>{counts.medium}</strong><span>Medium</span></div>
           <div className="summary-box"><strong>{result.findings.filter((finding) => finding.evidence).length}</strong><span>With line evidence</span></div>
         </div>
-        <section className="applicability-panel" aria-labelledby="applicability-title">
-          <div className="applicability-heading">
+        <details className="applicability-panel" open>
+          <summary className="applicability-heading" id="applicability-title">
             <div>
               <span className="overline">Code-first applicability</span>
               <h2 id="applicability-title">What Production Lens evaluated</h2>
@@ -116,7 +116,7 @@ function Results({
                 ? inventoryItems.map((item) => <span key={item}>{item}</span>)
                 : <span>No supported technology detected</span>}
             </div>
-          </div>
+          </summary>
           <div className="state-summary">
             {(Object.keys(stateLabels) as (keyof typeof stateLabels)[]).map((state) => (
               <div key={state}>
@@ -137,7 +137,7 @@ function Results({
               </article>
             ))}
           </div>
-        </section>
+        </details>
         <div className="findings-layout">
           <section className="findings-list" aria-label="Findings">
             {result.findings.map((finding) => (
@@ -167,9 +167,8 @@ function Results({
               <h2>{selected.title}</h2>
             </div>
             <div className="detail-body">
-              <div className="detail-section"><h3>Why this matters</h3><p>{selected.impact}</p></div>
-              <div className="detail-section">
-                <h3>Release-readiness principles</h3>
+              <details className="detail-section" open><summary><h3>Why this matters</h3></summary><p>{selected.impact}</p></details>
+              <details className="detail-section"><summary><h3>Release-readiness principles</h3></summary>
                 <div className="detail-principles">
                   {selected.principles.map((principle) => (
                     <div key={principle.name}>
@@ -178,17 +177,16 @@ function Results({
                     </div>
                   ))}
                 </div>
-              </div>
-              <div className="detail-section">
-                <h3>Evidence</h3>
+              </details>
+              <details className="detail-section" open><summary><h3>Evidence</h3></summary>
                 {selected.evidence ? (
                   <div className="code-block">
                     <span className="code-location">{selected.evidence.path}:{selected.evidence.line}</span>
                     <code>{selected.evidence.code}</code>
                   </div>
                 ) : <p className="empty-evidence">Repository-level absence detected; no single source line applies.</p>}
-              </div>
-              <div className="detail-section"><h3>Recommended remediation</h3><p>{selected.remediation}</p></div>
+              </details>
+              <details className="detail-section" open><summary><h3>Recommended remediation</h3></summary><p>{selected.remediation}</p></details>
               {!comparison && hasRemediation(selected.ruleId) && (
                 <Link className="remediate-button" href={`/remediation?${sampleQuery}finding=${selected.id}`}>
                   Review remediation options <span>→</span>
