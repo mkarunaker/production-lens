@@ -1,18 +1,32 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { applyRemediation, DEMO_REMEDIATION_RULE_ID, validateRemediation } from "@/lib/remediation";
 import { scanRepository } from "@/lib/scanner";
 import { sampleFiles, sampleRepositoryName } from "@/lib/scanner/sample-bundle";
 
 export const metadata: Metadata = { title: "Scan results" };
 
-export default function ResultsPage({ searchParams }: { searchParams: Promise<{ finding?: string }> }) {
-  const result = scanRepository(sampleRepositoryName, sampleFiles);
-  return <Results result={result} searchParams={searchParams} />;
+export default async function ResultsPage({ searchParams }: { searchParams: Promise<{ finding?: string; mode?: string }> }) {
+  const params = await searchParams;
+  const baseline = scanRepository(sampleRepositoryName, sampleFiles);
+  const isAfter = params.mode === "after";
+  const files = isAfter ? applyRemediation(DEMO_REMEDIATION_RULE_ID, sampleFiles) : sampleFiles;
+  const result = scanRepository(sampleRepositoryName, files);
+  const comparison = isAfter ? validateRemediation(baseline, result, DEMO_REMEDIATION_RULE_ID) : undefined;
+  return <Results result={result} params={params} comparison={comparison} />;
 }
 
-async function Results({ result, searchParams }: { result: ReturnType<typeof scanRepository>; searchParams: Promise<{ finding?: string }> }) {
-  const requested = (await searchParams).finding;
-  const selected = result.findings.find((finding) => finding.id === requested) ?? result.findings[0];
+function Results({
+  result,
+  params,
+  comparison,
+}: {
+  result: ReturnType<typeof scanRepository>;
+  params: { finding?: string; mode?: string };
+  comparison?: ReturnType<typeof validateRemediation>;
+}) {
+  const selected = result.findings.find((finding) => finding.id === params.finding) ?? result.findings[0];
+  const queryPrefix = params.mode === "after" ? "mode=after&" : "";
   const counts = {
     critical: result.findings.filter((finding) => finding.severity === "critical").length,
     high: result.findings.filter((finding) => finding.severity === "high").length,
@@ -27,10 +41,21 @@ async function Results({ result, searchParams }: { result: ReturnType<typeof sca
       </header>
       <div className="results-shell">
         <Link className="back-link" href="/">← Scan another project</Link>
+        {comparison && (
+          <section className="success-banner" aria-label="Remediation result">
+            <div className="success-mark">✓</div>
+            <div>
+              <span className="overline">Remediation verified</span>
+              <h2>Sensitive customer logging resolved</h2>
+              <p>{comparison.beforeCount} → {comparison.afterCount} open findings · no new findings introduced · canonical sample unchanged</p>
+            </div>
+            <Link href="/results">Reset demo</Link>
+          </section>
+        )}
         <div className="results-title-row">
           <div>
             <span className="overline">Scan report · bundled sample</span>
-            <h1>Not ready for production</h1>
+            <h1>{comparison ? "One risk resolved" : "Not ready for production"}</h1>
             <p>{result.repository} · {result.scannedFiles} approved files inspected · no code executed</p>
           </div>
           <div className="risk-score"><strong>{result.findings.length}</strong><span>open findings</span></div>
@@ -44,7 +69,7 @@ async function Results({ result, searchParams }: { result: ReturnType<typeof sca
         <div className="findings-layout">
           <section className="findings-list" aria-label="Findings">
             {result.findings.map((finding) => (
-              <Link className="finding-card" href={`/results?finding=${finding.id}`} key={finding.id}>
+              <Link className="finding-card" href={`/results?${queryPrefix}finding=${finding.id}`} key={finding.id}>
                 <div className="finding-top">
                   <div>
                     <div className="badges">
@@ -76,6 +101,11 @@ async function Results({ result, searchParams }: { result: ReturnType<typeof sca
                 ) : <p className="empty-evidence">Repository-level absence detected; no single source line applies.</p>}
               </div>
               <div className="detail-section"><h3>Recommended remediation</h3><p>{selected.remediation}</p></div>
+              {!comparison && selected.ruleId === DEMO_REMEDIATION_RULE_ID && (
+                <Link className="remediate-button" href={`/remediation?finding=${selected.id}`}>
+                  Generate remediation with Codex <span>→</span>
+                </Link>
+              )}
             </div>
           </aside>
         </div>

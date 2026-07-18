@@ -15,10 +15,10 @@ At the start of a new session:
 ## Current product state
 
 - Private deployment: https://production-lens.karunaker-molugu.chatgpt.site
-- Current checkpoint commit: `a66aaa4` — `Scan submitted code for security risks`
+- Current checkpoint commit: use the latest `git log -1` entry.
 - Working tree was clean when this checkpoint was prepared.
 - Deterministic sample findings: 11
-- Automated tests: 8 passing
+- Automated tests: 9 passing
 - Known dependency vulnerabilities at last verification: 0
 - Production build: passing
 
@@ -77,9 +77,9 @@ Complete.
 | Show at least three line-level findings | Complete |
 | Explain severity, evidence, impact, and remediation | Complete |
 | Select a finding | Complete |
-| Codex implements remediation with tests | Not started |
-| Rescan modified project | Not started |
-| Show before-and-after results | Not started |
+| Codex implements remediation with tests | Complete for sensitive-logging golden path |
+| Rescan modified project | Complete for disposable bundled copy |
+| Show before-and-after results | Complete for one resolved finding |
 
 ## Remaining milestones
 
@@ -120,7 +120,7 @@ Not started.
 
 ### Milestone 5 — Codex remediation
 
-Not started.
+Complete for the bundled sensitive-logging golden path.
 
 - Select a finding
 - Generate a proposed remediation
@@ -130,7 +130,7 @@ Not started.
 
 ### Milestone 6 — Rescan and comparison
 
-Not started.
+Complete for the bundled sensitive-logging golden path.
 
 - Rescan the modified project
 - Verify resolved findings
@@ -159,20 +159,19 @@ Not started.
 
 ### Milestone 9 — Hackathon polish
 
-Partially complete.
+Mostly complete.
 
-- Core UI and private deployment are complete.
-- The remediation and before/after golden path remains incomplete.
+- Core UI, private deployment, remediation approval, rescan, and before/after golden path are complete.
+- A written presenter script, automated browser-level test, and failure-recovery rehearsal remain.
 
 ## Recommended next step
 
 For the fastest safe hackathon path:
 
-1. Implement Milestone 5 against a disposable copy of the bundled sample only.
-2. Implement Milestone 6 to complete the before-and-after golden demo.
-3. Do not accept arbitrary repository uploads yet.
-4. Build Milestones 2 and 3 before enabling uploads.
-5. Add GPT analysis only after upload isolation and authorization controls pass their security gates.
+1. Add an automated end-to-end golden-path test and written demo script.
+2. Do not accept arbitrary repository uploads yet.
+3. Build Milestones 2 and 3 before enabling uploads.
+4. Add GPT analysis only after upload isolation and authorization controls pass their security gates.
 
 ## Important constraints
 

@@ -4,15 +4,17 @@ import test from "node:test";
 import ts from "typescript";
 
 async function loadScanner() {
-  const [{ outputText: scanner }, { outputText: bundle }] = await Promise.all([
+  const [{ outputText: scanner }, { outputText: bundle }, { outputText: remediation }] = await Promise.all([
     transpile("lib/scanner/index.ts"),
     transpile("lib/scanner/sample-bundle.ts"),
+    transpile("lib/remediation/index.ts"),
   ]);
   const scannerUrl = `data:text/javascript;base64,${Buffer.from(scanner.replace('from \"./types\";', 'from \"data:text/javascript,export {}\";')).toString("base64")}`;
   const scannerModule = await import(scannerUrl);
   const bundleCode = bundle.replace('from \"./types\";', 'from \"data:text/javascript,export {}\";');
   const bundleModule = await import(`data:text/javascript;base64,${Buffer.from(bundleCode).toString("base64")}`);
-  return { ...scannerModule, ...bundleModule };
+  const remediationModule = await import(`data:text/javascript;base64,${Buffer.from(remediation).toString("base64")}`);
+  return { ...scannerModule, ...bundleModule, ...remediationModule };
 }
 
 async function transpile(path) {
@@ -115,4 +117,27 @@ test("CSP allows only the exact framework inline scripts by hash", async () => {
   assert.match(csp, /script-src 'self' 'sha256-[A-Za-z0-9+/=]+'/);
   assert.doesNotMatch(csp, /script-src[^;]*'unsafe-inline'/);
   assert.equal(await response.text(), "<script>framework()</script>");
+});
+
+test("approved remediation changes only a disposable copy and resolves exactly one finding", async () => {
+  const {
+    applyRemediation,
+    DEMO_REMEDIATION_RULE_ID,
+    sampleFiles,
+    sampleRepositoryName,
+    scanRepository,
+    validateRemediation,
+  } = await loadScanner();
+  const canonicalBefore = structuredClone(sampleFiles);
+  const before = scanRepository(sampleRepositoryName, sampleFiles);
+  const remediated = applyRemediation(DEMO_REMEDIATION_RULE_ID, sampleFiles);
+  const after = scanRepository(sampleRepositoryName, remediated);
+  const validation = validateRemediation(before, after, DEMO_REMEDIATION_RULE_ID);
+
+  assert.equal(validation.passed, true);
+  assert.deepEqual(validation.resolved, [DEMO_REMEDIATION_RULE_ID]);
+  assert.deepEqual(validation.introduced, []);
+  assert.equal(validation.beforeCount - validation.afterCount, 1);
+  assert.deepEqual(sampleFiles, canonicalBefore);
+  assert.notDeepEqual(remediated, sampleFiles);
 });

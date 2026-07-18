@@ -136,11 +136,48 @@ button { font: inherit; }
 .code-block { margin-top: 10px; padding: 13px; background: #0e1914; border-radius: 7px; overflow: auto; color: #d9e7dc; font: 11px/1.5 ui-monospace, monospace; }
 .code-location { display: block; color: #91ad9a; margin-bottom: 7px; }
 .empty-evidence { color: #aab5af; font-style: italic; }
+.remediate-button, .approve-button {
+  margin-top: 22px; min-height: 48px; padding: 0 15px; border-radius: 8px;
+  display: flex; align-items: center; justify-content: space-between; gap: 16px;
+  background: var(--lime); color: #17251f; font-size: 12px; font-weight: 800;
+}
+.remediate-button:hover, .approve-button:hover { background: #c9e28e; }
+.remediation-shell { max-width: 960px; margin: 0 auto; padding: 44px 24px 90px; }
+.remediation-heading { margin: 34px 0 28px; }
+.remediation-heading h1 { margin: 7px 0 10px; font: 500 clamp(38px, 6vw, 60px)/1 Georgia, serif; letter-spacing: -.04em; }
+.remediation-heading p { max-width: 680px; color: var(--muted); line-height: 1.6; }
+.proposal-card, .approval-card { background: white; border: 1px solid var(--line); border-radius: 14px; padding: 24px; }
+.proposal-summary { display: flex; align-items: start; justify-content: space-between; gap: 24px; }
+.proposal-summary h2, .approval-card h2 { margin: 12px 0 8px; font: 600 23px/1.2 Georgia, serif; }
+.proposal-summary p { color: var(--muted); line-height: 1.6; font-size: 13px; }
+.diff { margin-top: 22px; overflow: auto; border-radius: 9px; background: #12201a; color: white; font: 12px/1.6 ui-monospace, monospace; }
+.diff-line { display: grid; grid-template-columns: 34px 1fr; padding: 11px 14px; }
+.diff-line span { opacity: .8; }
+.diff-removed { background: rgba(194, 65, 56, .18); color: #ffd2cf; }
+.diff-added { background: rgba(164, 207, 105, .16); color: #dff4bc; }
+.approval-card { margin-top: 16px; display: grid; grid-template-columns: 1fr 310px; gap: 36px; }
+.approval-card ul { list-style: none; margin: 20px 0 0; padding: 0; display: grid; gap: 10px; }
+.approval-card li { display: flex; gap: 10px; color: var(--muted); font-size: 12px; }
+.approval-card li span { color: var(--green); font-weight: 900; }
+.approval-action { padding-left: 28px; border-left: 1px solid var(--line); align-self: stretch; display: flex; flex-direction: column; justify-content: center; }
+.approval-action p { color: var(--muted); font-size: 12px; line-height: 1.55; }
+.approve-button { background: var(--green-dark); color: white; }
+.approve-button:hover { background: #173f2e; }
+.success-banner {
+  margin: 22px 0 34px; padding: 18px; display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 16px;
+  background: #eef6e6; border: 1px solid #c8dcad; border-radius: 12px;
+}
+.success-mark { width: 38px; height: 38px; display: grid; place-items: center; border-radius: 50%; background: var(--green); color: white; font-weight: 900; }
+.success-banner h2 { margin: 3px 0; font: 600 20px/1.2 Georgia, serif; }
+.success-banner p { margin: 0; color: #5f6d63; font-size: 11px; }
+.success-banner > a { color: var(--green-dark); font-size: 11px; font-weight: 800; }
 
 @media (max-width: 840px) {
   .scan-scope { grid-template-columns: repeat(2, 1fr); }
   .findings-layout { grid-template-columns: 1fr; }
   .detail-panel { position: static; }
+  .approval-card { grid-template-columns: 1fr; }
+  .approval-action { padding: 22px 0 0; border-left: 0; border-top: 1px solid var(--line); }
 }
 @media (max-width: 600px) {
   .site-header { height: 64px; padding: 0 18px; }
@@ -156,4 +193,6 @@ button { font: inherit; }
   .risk-score { display: none; }
   .finding-top { display: block; }
   .evidence-chip { display: inline-block; margin-top: 12px; }
+  .proposal-summary, .success-banner { display: block; }
+  .success-mark, .success-banner > a { margin-top: 12px; }
 }
