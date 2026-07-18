@@ -205,6 +205,7 @@ button { font: inherit; }
 .detail-principles { display: grid; gap: 8px; }
 .detail-principles > div { padding: 10px; border: 1px solid rgba(255,255,255,.12); border-radius: 7px; background: rgba(255,255,255,.04); }
 .detail-principles strong { display: block; color: white; font: 600 13px/1.2 Georgia, serif; }
+.principle-canonical { display: block; margin-top: 3px; color: #91ad9a; font-size: 9px; }
 .detail-principles p { margin-top: 5px; color: #bfcac4; font-size: 10px; }
 .code-block { margin-top: 10px; padding: 13px; background: #0e1914; border-radius: 7px; overflow: auto; color: #d9e7dc; font: 11px/1.5 ui-monospace, monospace; }
 .code-location { display: block; color: #91ad9a; margin-bottom: 7px; }

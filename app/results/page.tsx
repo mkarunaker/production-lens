@@ -43,6 +43,13 @@ function Results({
   isChiefSample: boolean;
   resolvedTitle?: string;
 }) {
+  const principleLabels: Record<string, string> = {
+    "Own it": "Accountability & review",
+    "Prove it": "Tests & evidence",
+    "Contain it": "Limit the blast radius",
+    "Trace and reverse it": "Audit & rollback",
+    "Break the lethal trifecta": "Separate sensitive capabilities",
+  };
   const selected = result.findings.find((finding) => finding.id === params.finding) ?? result.findings[0];
   const sampleQuery = isSecuritySample ? "sample=security&" : isChiefSample ? "sample=chief&" : "";
   const queryPrefix = comparison
@@ -147,11 +154,6 @@ function Results({
                     </div>
                     <h2>{finding.title}</h2>
                     <p>{finding.explanation}</p>
-                    <div className="finding-principles" aria-label="Release-readiness principles">
-                      {finding.principles.map((principle) => (
-                        <span key={principle.name}>{principle.name}</span>
-                      ))}
-                    </div>
                   </div>
                   {finding.evidence && <span className="evidence-chip">{finding.evidence.path}:{finding.evidence.line}</span>}
                 </div>
@@ -165,11 +167,12 @@ function Results({
             </div>
             <div className="detail-body">
               <details className="detail-section" open><summary><h3>Why this matters</h3></summary><p>{selected.impact}</p></details>
-              <details className="detail-section"><summary><h3>Release-readiness principles</h3></summary>
+              <details className="detail-section"><summary><h3>Readiness lens</h3></summary>
                 <div className="detail-principles">
                   {selected.principles.map((principle) => (
                     <div key={principle.name}>
-                      <strong>{principle.name}</strong>
+                      <strong>{principleLabels[principle.name] ?? principle.name}</strong>
+                      <span className="principle-canonical">{principle.name}</span>
                       <p>{principle.reason}</p>
                     </div>
                   ))}
