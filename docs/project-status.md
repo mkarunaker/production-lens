@@ -191,19 +191,21 @@ Not started.
 
 ### Milestone 9 — Hackathon polish
 
-Mostly complete.
+Complete except for the final deployed-browser rehearsal.
 
 - Core UI, private deployment, remediation approval, rescan, and before/after golden path are complete.
-- A written presenter script, automated browser-level test, and failure-recovery rehearsal remain.
+- Production-server end-to-end route test: complete and included in `npm run security:check`
+- Presenter script and failure-recovery runbook: complete in `docs/demo-script.md`
+- Final signed-in deployed-browser click-through: pending because no browser was available in the current validation session
 
 ## Recommended next step
 
 For the fastest safe hackathon path:
 
-1. Add an automated end-to-end golden-path test and written demo script.
-2. Add Injection Rule Pack Wave 1 incrementally, starting with SQL/ORM and OS command/argument injection.
-3. Do not accept arbitrary repository uploads yet.
-4. Build Milestones 2 and 3 before enabling uploads.
+1. Run the final signed-in deployed-browser rehearsal using `docs/demo-script.md`.
+2. Do not accept arbitrary repository uploads yet.
+3. Begin Milestone 2 secure repository ingestion with archive inspection and isolation tests before adding an upload UI.
+4. Build Milestone 3 authorization and operational controls before enabling uploads.
 5. Add GPT analysis only after upload isolation and authorization controls pass their security gates.
 
 ## Important constraints

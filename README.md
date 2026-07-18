@@ -45,6 +45,8 @@ npm run build
 npm run security:check
 ```
 
+`npm run security:check` also starts the production build locally and verifies both bundled scan and remediation paths end to end.
+
 ## Repository map
 
 - `app/` — Production Lens pages
@@ -58,6 +60,7 @@ npm run security:check
 - `docs/evaluation-gates.md` — mandatory evaluations for every milestone and release
 - `docs/production-readiness-principles.md` — principles-based release readiness: Own it, Prove it, Contain it, Trace and reverse it, and Break the lethal trifecta
 - `docs/injection-rule-pack.md` — incremental injection and interpreter-safety coverage backlog
+- `docs/demo-script.md` — presenter walkthrough, release checklist, and failure-recovery runbook
 - `SECURITY.md` — security posture and future LLM boundary requirements
 
 ## Intentionally not implemented yet
