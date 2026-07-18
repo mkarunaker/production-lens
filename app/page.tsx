@@ -40,7 +40,7 @@ export default function Home() {
 
         <DemoUpload />
         <div className="projects-heading"><span className="overline">Predefined demo projects</span><span>Pick a known-safe fixture</span></div>
-        <div className="sample-card">
+        <div className="project-strip"><div className="sample-card">
           <div className="sample-heading">
             <div className="repo-icon" aria-hidden="true">{"</>"}</div>
             <div>
@@ -114,7 +114,7 @@ export default function Home() {
             <span>Upload and scan demo ZIP</span><span aria-hidden="true">→</span>
           </Link>
           <div className="safety-note"><span aria-hidden="true">◇</span> Hosted demos are fixed sanitized fixtures; arbitrary uploads remain disabled.</div>
-        </div>
+        </div></div>
       </section>
 
       <footer className="home-footer">

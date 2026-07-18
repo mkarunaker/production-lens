@@ -87,6 +87,15 @@ button { font: inherit; }
 .visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 .projects-heading { max-width: 790px; margin: 34px auto -34px; display: flex; justify-content: space-between; align-items: end; color: var(--muted); font-size: 11px; }
 .projects-heading .overline { margin: 0; color: var(--green); }
+.project-strip { max-width: 1100px; margin: 48px auto 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; text-align: left; }
+.project-strip .sample-card, .project-strip .secondary-sample { margin: 0; padding: 18px; }
+.project-strip .sample-heading { grid-template-columns: auto 1fr; gap: 10px; }
+.project-strip .ready { grid-column: 2; }
+.project-strip .sample-card h2 { font-size: 17px; }
+.project-strip .sample-card > p { min-height: 38px; margin: 12px 0 0; font-size: 11px; }
+.project-strip .scan-scope { display: none; }
+.project-strip .scan-button { min-height: 42px; margin-top: 15px; padding: 0 13px; font-size: 11px; }
+.project-strip .safety-note { display: none; }
 
 .sample-card {
   max-width: 790px; margin: 48px auto 0; padding: 22px 24px; text-align: left;
@@ -281,6 +290,7 @@ button { font: inherit; }
   .sample-card { padding: 19px; }
   .upload-row { display: grid; grid-template-columns: 1fr; }
   .upload-scan-button { width: 100%; min-height: 42px; }
+  .project-strip { grid-template-columns: 1fr; margin-top: 48px; }
   .sample-heading { grid-template-columns: auto 1fr; }
   .ready { grid-column: 2; }
   .scan-scope, .summary-grid { grid-template-columns: 1fr 1fr; }
