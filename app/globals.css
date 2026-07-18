@@ -158,6 +158,14 @@ button { font: inherit; }
 .remediation-heading h1 { margin: 7px 0 10px; font: 500 clamp(38px, 6vw, 60px)/1 Georgia, serif; letter-spacing: -.04em; }
 .remediation-heading p { max-width: 680px; color: var(--muted); line-height: 1.6; }
 .proposal-card, .approval-card { background: white; border: 1px solid var(--line); border-radius: 14px; padding: 24px; }
+.remediation-options { margin-top: 16px; padding: 24px; background: white; border: 1px solid var(--line); border-radius: 14px; }
+.remediation-options h2 { margin: 7px 0 18px; font: 600 23px/1.2 Georgia, serif; }
+.option-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.option-card { padding: 16px; border: 1px solid var(--line); border-radius: 10px; background: #fafbf9; }
+.option-recommended { border-color: #9eba7e; background: #f3f8ed; }
+.option-card strong { display: block; font: 600 16px/1.2 Georgia, serif; }
+.option-card p { margin: 7px 0 12px; color: var(--muted); font-size: 11px; line-height: 1.5; }
+.option-card span, .option-card a { color: var(--green); font-size: 9px; font-weight: 850; text-transform: uppercase; letter-spacing: .06em; }
 .proposal-summary { display: flex; align-items: start; justify-content: space-between; gap: 24px; }
 .proposal-summary h2, .approval-card h2 { margin: 12px 0 8px; font: 600 23px/1.2 Georgia, serif; }
 .proposal-summary p { color: var(--muted); line-height: 1.6; font-size: 13px; }
@@ -208,6 +216,7 @@ button { font: inherit; }
   .findings-layout { grid-template-columns: 1fr; }
   .detail-panel { position: static; }
   .approval-card { grid-template-columns: 1fr; }
+  .option-grid { grid-template-columns: 1fr; }
   .approval-action { padding: 22px 0 0; border-left: 0; border-top: 1px solid var(--line); }
 }
 @media (max-width: 600px) {

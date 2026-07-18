@@ -20,7 +20,7 @@ At the start of a new session:
 - Current checkpoint commit: use the latest `git log -1` entry.
 - Working tree was clean when this checkpoint was prepared.
 - Deterministic sample findings: 11
-- Automated tests: 16 passing
+- Automated tests: 17 passing
 - Principles-based approval review: implemented for the bundled sensitive-logging remediation
 - Principle mapping: implemented for all 11 deterministic findings
 - Known dependency vulnerabilities at last verification: 0
@@ -141,17 +141,18 @@ Not started.
 
 ### Milestone 5 — Codex remediation
 
-Complete for the bundled sensitive-logging golden path.
+Complete for all findings across both bundled projects using deterministic recommended patches.
 
 - Select a finding
-- Generate a proposed remediation
+- Review recommended remediation steps and a deterministic patch
+- Choose to apply the recommended fix or defer and keep the finding open
 - Require explicit user approval
 - Apply changes only to a disposable working copy
 - Add and run tests
 
 ### Milestone 6 — Rescan and comparison
 
-Complete for the bundled sensitive-logging golden path.
+Complete for every bundled finding.
 
 - Rescan the modified project
 - Verify resolved findings

@@ -1,21 +1,27 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { DEMO_REMEDIATION_RULE_ID, proposeRemediation } from "@/lib/remediation";
+import { proposeRemediation } from "@/lib/remediation";
 import { scanRepository } from "@/lib/scanner";
 import { sampleFiles, sampleRepositoryName } from "@/lib/scanner/sample-bundle";
+import { securitySampleFiles, securitySampleRepositoryName } from "@/lib/scanner/security-sample-bundle";
 
 export const metadata: Metadata = { title: "Review remediation" };
 
 export default async function RemediationPage({
   searchParams,
 }: {
-  searchParams: Promise<{ finding?: string }>;
+  searchParams: Promise<{ finding?: string; sample?: string }>;
 }) {
-  const requested = (await searchParams).finding;
-  const scan = scanRepository(sampleRepositoryName, sampleFiles);
+  const params = await searchParams;
+  const isSecuritySample = params.sample === "security";
+  const repositoryName = isSecuritySample ? securitySampleRepositoryName : sampleRepositoryName;
+  const repositoryFiles = isSecuritySample ? securitySampleFiles : sampleFiles;
+  const requested = params.finding;
+  const scan = scanRepository(repositoryName, repositoryFiles);
   const finding = scan.findings.find((candidate) => candidate.id === requested);
-  const ruleId = finding?.ruleId ?? DEMO_REMEDIATION_RULE_ID;
-  const proposal = proposeRemediation(ruleId, sampleFiles);
+  if (!finding) throw new Error("Requested finding is missing.");
+  const proposal = proposeRemediation(finding.ruleId, repositoryFiles);
+  const sampleQuery = isSecuritySample ? "sample=security&" : "";
 
   return (
     <main>
@@ -24,7 +30,7 @@ export default async function RemediationPage({
         <span className="prototype-pill">Disposable working copy</span>
       </header>
       <div className="remediation-shell">
-        <Link className="back-link" href={`/results?finding=${finding?.id ?? ""}`}>← Back to finding</Link>
+        <Link className="back-link" href={`/results?${sampleQuery}finding=${finding.id}`}>← Back to finding</Link>
         <div className="remediation-heading">
           <span className="overline">Codex remediation proposal</span>
           <h1>Review before applying</h1>
@@ -34,7 +40,7 @@ export default async function RemediationPage({
         <section className="proposal-card">
           <div className="proposal-summary">
             <div>
-              <span className="badge badge-critical">critical finding</span>
+              <span className={`badge badge-${finding.severity}`}>{finding.severity} finding</span>
               <h2>{proposal.title}</h2>
               <p>{proposal.rationale}</p>
             </div>
@@ -43,6 +49,22 @@ export default async function RemediationPage({
           <div className="diff" aria-label="Proposed code change">
             <div className="diff-line diff-removed"><span>−</span><code>{proposal.before}</code></div>
             <div className="diff-line diff-added"><span>+</span><code>{proposal.after}</code></div>
+          </div>
+        </section>
+
+        <section className="remediation-options" aria-label="Remediation options">
+          <span className="overline">Choose an outcome</span>
+          <h2>How should Production Lens proceed?</h2>
+          <div className="option-grid">
+            {proposal.options.map((option) => (
+              <article className={`option-card ${option.changesCode ? "option-recommended" : ""}`} key={option.id}>
+                <strong>{option.label}</strong>
+                <p>{option.description}</p>
+                {option.changesCode
+                  ? <span>Recommended</span>
+                  : <Link href={`/results?${sampleQuery}finding=${finding.id}`}>Keep finding open</Link>}
+              </article>
+            ))}
           </div>
         </section>
 
@@ -88,7 +110,8 @@ export default async function RemediationPage({
             <form action="/results" method="get">
               <input type="hidden" name="mode" value="after" />
               <input type="hidden" name="approved" value="yes" />
-              <input type="hidden" name="finding" value={finding?.id ?? "data_sensitive_logging-1"} />
+              <input type="hidden" name="rule" value={finding.ruleId} />
+              {isSecuritySample && <input type="hidden" name="sample" value="security" />}
               <label className="approval-confirmation">
                 <input type="checkbox" required />
                 <span>I reviewed the patch, evidence, validation plan, and residual risk. I approve applying this change to the disposable copy.</span>

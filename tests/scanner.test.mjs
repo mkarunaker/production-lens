@@ -267,6 +267,33 @@ test("approved remediation changes only a disposable copy and resolves exactly o
   assert.notDeepEqual(remediated, sampleFiles);
 });
 
+test("every bundled finding has a deterministic remediation that resolves only its target", async () => {
+  const {
+    applyRemediation,
+    hasRemediation,
+    sampleFiles,
+    sampleRepositoryName,
+    scanRepository,
+    securitySampleFiles,
+    securitySampleRepositoryName,
+    validateRemediation,
+  } = await loadScanner();
+  for (const [repositoryName, repositoryFiles] of [
+    [sampleRepositoryName, sampleFiles],
+    [securitySampleRepositoryName, securitySampleFiles],
+  ]) {
+    const baseline = scanRepository(repositoryName, repositoryFiles);
+    for (const finding of baseline.findings) {
+      assert.equal(hasRemediation(finding.ruleId), true, `${finding.ruleId} has no remediation`);
+      const changed = applyRemediation(finding.ruleId, repositoryFiles);
+      const after = scanRepository(repositoryName, changed);
+      const validation = validateRemediation(baseline, after, finding.ruleId);
+      assert.equal(validation.passed, true, `${finding.ruleId}: ${JSON.stringify(validation)}`);
+      assert.deepEqual(repositoryFiles, repositoryName === sampleRepositoryName ? sampleFiles : securitySampleFiles);
+    }
+  }
+});
+
 test("remediation approval presents all principles and residual-risk evidence", async () => {
   const { DEMO_REMEDIATION_RULE_ID, proposeRemediation, sampleFiles } = await loadScanner();
   const proposal = proposeRemediation(DEMO_REMEDIATION_RULE_ID, sampleFiles);

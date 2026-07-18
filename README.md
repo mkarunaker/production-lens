@@ -14,6 +14,7 @@ Production Lens statically scans an AI application repository and explains evide
 - Evaluated high-signal JavaScript/TypeScript checks for SQL/ORM, OS command, argument, NoSQL, and XSS/unsafe HTML injection
 - Mandatory Production Lens self-scan against every implemented injection rule as part of the test gate
 - A separate visible Security Test Agent with seven intentional, line-evidenced injection findings
+- Reviewable remediation steps and deterministic recommended patches for every finding in both bundled projects
 - Explicitly approved remediation of the sensitive-logging finding in a disposable copy
 - Deterministic rescan and before/after verification without executing sample code
 - Remediation verification and change-safety evidence as a production-readiness criterion

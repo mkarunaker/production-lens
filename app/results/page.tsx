@@ -1,23 +1,29 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { applyRemediation, DEMO_REMEDIATION_RULE_ID, validateRemediation } from "@/lib/remediation";
+import { applyRemediation, hasRemediation, validateRemediation } from "@/lib/remediation";
 import { scanRepository } from "@/lib/scanner";
 import { sampleFiles, sampleRepositoryName } from "@/lib/scanner/sample-bundle";
 import { securitySampleFiles, securitySampleRepositoryName } from "@/lib/scanner/security-sample-bundle";
 
 export const metadata: Metadata = { title: "Scan results" };
 
-export default async function ResultsPage({ searchParams }: { searchParams: Promise<{ finding?: string; mode?: string; approved?: string; sample?: string }> }) {
+export default async function ResultsPage({ searchParams }: { searchParams: Promise<{ finding?: string; mode?: string; approved?: string; sample?: string; rule?: string }> }) {
   const params = await searchParams;
   const isSecuritySample = params.sample === "security";
   const repositoryName = isSecuritySample ? securitySampleRepositoryName : sampleRepositoryName;
   const repositoryFiles = isSecuritySample ? securitySampleFiles : sampleFiles;
   const baseline = scanRepository(repositoryName, repositoryFiles);
-  const isAfter = !isSecuritySample && params.mode === "after" && params.approved === "yes";
-  const files = isAfter ? applyRemediation(DEMO_REMEDIATION_RULE_ID, repositoryFiles) : repositoryFiles;
+  const remediationRuleId = params.rule && baseline.findings.some((finding) => finding.ruleId === params.rule) && hasRemediation(params.rule)
+    ? params.rule
+    : undefined;
+  const isAfter = params.mode === "after" && params.approved === "yes" && Boolean(remediationRuleId);
+  const files = isAfter ? applyRemediation(remediationRuleId!, repositoryFiles) : repositoryFiles;
   const result = scanRepository(repositoryName, files);
-  const comparison = isAfter ? validateRemediation(baseline, result, DEMO_REMEDIATION_RULE_ID) : undefined;
-  return <Results result={result} params={params} comparison={comparison} isSecuritySample={isSecuritySample} />;
+  const comparison = isAfter ? validateRemediation(baseline, result, remediationRuleId!) : undefined;
+  const resolvedTitle = remediationRuleId
+    ? baseline.findings.find((finding) => finding.ruleId === remediationRuleId)?.title
+    : undefined;
+  return <Results result={result} params={params} comparison={comparison} isSecuritySample={isSecuritySample} resolvedTitle={resolvedTitle} />;
 }
 
 function Results({
@@ -25,14 +31,19 @@ function Results({
   params,
   comparison,
   isSecuritySample,
+  resolvedTitle,
 }: {
   result: ReturnType<typeof scanRepository>;
-  params: { finding?: string; mode?: string; approved?: string; sample?: string };
+  params: { finding?: string; mode?: string; approved?: string; sample?: string; rule?: string };
   comparison?: ReturnType<typeof validateRemediation>;
   isSecuritySample: boolean;
+  resolvedTitle?: string;
 }) {
   const selected = result.findings.find((finding) => finding.id === params.finding) ?? result.findings[0];
-  const queryPrefix = isSecuritySample ? "sample=security&" : comparison ? "mode=after&approved=yes&" : "";
+  const sampleQuery = isSecuritySample ? "sample=security&" : "";
+  const queryPrefix = comparison
+    ? `${sampleQuery}mode=after&approved=yes&rule=${params.rule}&`
+    : sampleQuery;
   const counts = {
     critical: result.findings.filter((finding) => finding.severity === "critical").length,
     high: result.findings.filter((finding) => finding.severity === "high").length,
@@ -52,10 +63,10 @@ function Results({
             <div className="success-mark">✓</div>
             <div>
               <span className="overline">Remediation verified</span>
-              <h2>Sensitive customer logging resolved</h2>
+              <h2>{resolvedTitle ?? "Selected risk"} resolved</h2>
               <p>{comparison.beforeCount} → {comparison.afterCount} open findings · no new findings introduced · explicit demo approval completed · canonical sample unchanged</p>
             </div>
-            <Link href="/results">Reset demo</Link>
+            <Link href={isSecuritySample ? "/results?sample=security" : "/results"}>Reset demo</Link>
           </section>
         )}
         <div className="results-title-row">
@@ -123,9 +134,9 @@ function Results({
                 ) : <p className="empty-evidence">Repository-level absence detected; no single source line applies.</p>}
               </div>
               <div className="detail-section"><h3>Recommended remediation</h3><p>{selected.remediation}</p></div>
-              {!comparison && selected.ruleId === DEMO_REMEDIATION_RULE_ID && (
-                <Link className="remediate-button" href={`/remediation?finding=${selected.id}`}>
-                  Generate remediation with Codex <span>→</span>
+              {!comparison && hasRemediation(selected.ruleId) && (
+                <Link className="remediate-button" href={`/remediation?${sampleQuery}finding=${selected.id}`}>
+                  Review remediation options <span>→</span>
                 </Link>
               )}
             </div>

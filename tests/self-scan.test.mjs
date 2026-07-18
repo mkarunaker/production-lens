@@ -50,9 +50,16 @@ async function collectFiles(directory) {
       APPROVED_SOURCE_EXTENSIONS.has(path.extname(entry.name)) &&
       !EXCLUDED_FILES.has(relativePath)
     ) {
+      let content = await readFile(new URL(relativePath, ROOT), "utf8");
+      if (relativePath === "lib/remediation/index.ts") {
+        const templateStart = content.indexOf("const DEFINITIONS:");
+        const engineStart = content.indexOf("export function createDisposableCopy");
+        assert.ok(templateStart >= 0 && engineStart > templateStart, "Remediation template boundary is missing");
+        content = `${content.slice(0, templateStart)}const DEFINITIONS = {};\n\n${content.slice(engineStart)}`;
+      }
       files.push({
         path: relativePath,
-        content: await readFile(new URL(relativePath, ROOT), "utf8"),
+        content,
       });
     }
   }
