@@ -35,7 +35,8 @@ export default function Home() {
         <h1>See what stands between<br />your AI agent and <em>production.</em></h1>
         <p className="hero-copy">
           Production Lens inspects repository evidence—not promises—to surface
-          the security, reliability, and governance gaps that matter most.
+          the security, reliability, and governance gaps that matter most,
+          using five production-readiness principles.
         </p>
 
         <DemoUpload />

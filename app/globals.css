@@ -192,6 +192,8 @@ button { font: inherit; }
 .severity-grid .finding-card h2 { margin-top: 9px; font-size: 14px; }
 .severity-grid .evidence-chip { display: inline-block; margin-top: 12px; font-size: 9px; }
 .finding-card:hover { border-color: #aebcb2; transform: translateY(-1px); }
+.finding-card-selected { border-color: var(--green); box-shadow: 0 0 0 2px rgba(47,107,79,.14); background: #f5f8f2; }
+.selected-indicator { display: inline-block; margin-top: 10px; padding: 4px 6px; border-radius: 4px; background: #e3efd8; color: var(--green-dark); font-size: 8px; font-weight: 850; text-transform: uppercase; letter-spacing: .06em; }
 .finding-top { display: flex; justify-content: space-between; gap: 16px; align-items: start; }
 .finding-card h2 { margin: 0; font: 600 18px/1.25 Georgia, serif; }
 .finding-card p { margin: 10px 0 0; color: var(--muted); font-size: 13px; line-height: 1.55; }

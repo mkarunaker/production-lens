@@ -151,9 +151,10 @@ function Results({
             {severityGroups.map((group) => <section className="severity-group" key={group.severity}>
               <div className="severity-heading"><h2>{group.severity}</h2><span>{group.findings.length} {group.findings.length === 1 ? "finding" : "findings"}</span></div>
               <div className="severity-grid">{group.findings.map((finding) => (
-                <Link className="finding-card" href={`/results?${queryPrefix}finding=${finding.id}#selected-finding`} key={finding.id}>
+                <Link className={`finding-card ${finding.id === selected.id ? "finding-card-selected" : ""}`} aria-current={finding.id === selected.id ? "true" : undefined} href={`/results?${queryPrefix}finding=${finding.id}#selected-finding`} key={finding.id}>
                   <div className="badges"><span className={`badge badge-${finding.severity}`}>{finding.severity}</span><span className="category">{finding.category}</span></div>
                   <h2>{finding.title}</h2>
+                  {finding.id === selected.id && <span className="selected-indicator">Selected</span>}
                   {finding.evidence && <span className="evidence-chip">{finding.evidence.path}:{finding.evidence.line}</span>}
                 </Link>
               ))}</div>
