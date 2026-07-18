@@ -19,6 +19,12 @@ The canonical sample remains under `samples/enterprise-analytics-agent`. A build
 
 Post-MVP scanner coverage is tracked in `docs/injection-rule-pack.md`. Injection and interpreter-safety rules are added in evaluated waves and must meet the repository-wide evaluation gates before their coverage status changes.
 
+## Secure ingestion expansion
+
+The hosted ingestion boundary is ZIP-only. Its approved limits, rejected archive features, isolation requirements, failure semantics, and acceptance-test corpus are defined in `docs/secure-ingestion-contract.md`.
+
+Implementation proceeds metadata-first: inspect and reject unsafe archives before extraction, then add isolated bounded text materialization. No upload UI is permitted until authentication, ownership authorization, quarantine, malware scanning, rate controls, cleanup, and audit logging pass their gates.
+
 ## Deterministic rules
 
 - shared service-account credential

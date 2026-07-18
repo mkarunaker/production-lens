@@ -116,10 +116,12 @@ Complete for the current deterministic rule catalog.
 
 ### Milestone 2 — Secure repository ingestion
 
-Not started.
+In progress.
 
 - Authentication before upload
-- ZIP-only initial upload
+- ZIP-only hosted ingestion contract: complete in `docs/secure-ingestion-contract.md`
+- Initial archive and file limits: approved
+- Archive implementation and upload UI: not started
 - Private quarantine storage
 - Archive entry inspection before extraction
 - ZIP-bomb, traversal, symlink, hard-link, device-file, duplicate-path, and nested-archive defenses
@@ -204,7 +206,7 @@ For the fastest safe hackathon path:
 
 1. Run the final signed-in deployed-browser rehearsal using `docs/demo-script.md`.
 2. Do not accept arbitrary repository uploads yet.
-3. Begin Milestone 2 secure repository ingestion with archive inspection and isolation tests before adding an upload UI.
+3. Implement the metadata-only ZIP inspector and adversarial fixtures against `docs/secure-ingestion-contract.md`; do not extract entries or add an upload UI.
 4. Build Milestone 3 authorization and operational controls before enabling uploads.
 5. Add GPT analysis only after upload isolation and authorization controls pass their security gates.
 

@@ -61,6 +61,7 @@ npm run security:check
 - `docs/production-readiness-principles.md` — principles-based release readiness: Own it, Prove it, Contain it, Trace and reverse it, and Break the lethal trifecta
 - `docs/injection-rule-pack.md` — incremental injection and interpreter-safety coverage backlog
 - `docs/demo-script.md` — presenter walkthrough, release checklist, and failure-recovery runbook
+- `docs/secure-ingestion-contract.md` — ZIP-only hosted ingestion limits, rejection policy, isolation guarantees, and acceptance tests
 - `SECURITY.md` — security posture and future LLM boundary requirements
 
 ## Intentionally not implemented yet

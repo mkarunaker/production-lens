@@ -29,6 +29,12 @@ Before any model analysis is enabled:
 7. Add adversarial evaluations for direct, indirect, encoded, obfuscated, and multi-turn injection attempts.
 8. Log redacted security decisions without storing repository secrets or sensitive source.
 
+## Repository upload boundary
+
+The hosted upload design is ZIP-only and governed by `docs/secure-ingestion-contract.md`. No upload interface may be enabled until archive inspection, bomb and path defenses, private quarantine, authentication, object authorization, malware scanning, rate controls, cleanup, and adversarial tests are implemented and passing.
+
+A browser or API client must never submit a server filesystem path. Local directory scanning is reserved for a future separately distributed local CLI with its own containment contract.
+
 ## Vulnerability management
 
 - Run `npm run security:check` before release.
