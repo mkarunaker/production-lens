@@ -74,6 +74,8 @@ button { font: inherit; }
 .upload-drop small { margin-top: 4px; color: #b9c8bf; font-size: 11px; }
 .upload-action { margin-left: auto; color: var(--lime); font-size: 11px; font-weight: 800; }
 .upload-note { margin: 9px 4px 1px; color: #aab9b0; font-size: 10px; }
+.upload-scan-button { width: 100%; margin-top: 10px; padding: 11px 14px; display: flex; justify-content: space-between; border: 0; border-radius: 8px; background: var(--lime); color: #17251f; font-size: 12px; font-weight: 850; cursor: pointer; }
+.upload-scan-button:hover { background: #c9e28e; }
 .visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 .projects-heading { max-width: 790px; margin: 34px auto -34px; display: flex; justify-content: space-between; align-items: end; color: var(--muted); font-size: 11px; }
 .projects-heading .overline { margin: 0; color: var(--green); }

@@ -11,6 +11,8 @@ const demos: Record<string, string> = {
 
 export function DemoUpload() {
   const router = useRouter();
+  const [destination, setDestination] = useState<string>();
+  const [selectedName, setSelectedName] = useState<string>();
   const [message, setMessage] = useState("Only bundled sanitized demo ZIPs are accepted here.");
   return <div className="upload-panel">
     <label className="upload-drop" htmlFor="demo-zip">
@@ -22,10 +24,12 @@ export function DemoUpload() {
       const file = event.target.files?.[0];
       if (!file) return;
       const destination = demos[file.name.toLowerCase()];
-      if (!destination) { setMessage("That ZIP is not one of the bundled demo archives. Use the local harness for custom projects."); return; }
-      setMessage(`Loaded ${file.name}. Opening the deterministic hosted scan…`);
-      router.push(destination);
+      if (!destination) { setDestination(undefined); setSelectedName(undefined); setMessage("That ZIP is not one of the bundled demo archives. Use the local harness for custom projects."); return; }
+      setDestination(destination);
+      setSelectedName(file.name);
+      setMessage("Choose Scan selected project when you are ready.");
     }} />
-    <p className="upload-note">{message}</p>
+    {destination && <button className="upload-scan-button" type="button" onClick={() => router.push(destination)}>Scan selected project <span aria-hidden="true">→</span></button>}
+    <p className="upload-note">{selectedName ? `${selectedName} is ready to scan. ` : ""}{message}</p>
   </div>;
 }
