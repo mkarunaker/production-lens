@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { applyRemediation, hasRemediation, validateRemediation } from "@/lib/remediation";
+import { applyRemediation, hasRemediation, proposeRemediation, validateRemediation } from "@/lib/remediation";
 import { scanRepository } from "@/lib/scanner";
 import { sampleFiles, sampleRepositoryName } from "@/lib/scanner/sample-bundle";
 import { securitySampleFiles, securitySampleRepositoryName } from "@/lib/scanner/security-sample-bundle";
@@ -22,16 +22,18 @@ export default async function ResultsPage({ searchParams }: { searchParams: Prom
   const files = isAfter ? applyRemediation(remediationRuleId!, repositoryFiles) : repositoryFiles;
   const result = scanRepository(repositoryName, files);
   const comparison = isAfter ? validateRemediation(baseline, result, remediationRuleId!) : undefined;
+  const proposal = remediationRuleId ? proposeRemediation(remediationRuleId, repositoryFiles) : undefined;
   const resolvedTitle = remediationRuleId
     ? baseline.findings.find((finding) => finding.ruleId === remediationRuleId)?.title
     : undefined;
-  return <Results result={result} params={params} comparison={comparison} isSecuritySample={isSecuritySample} isChiefSample={isChiefSample} resolvedTitle={resolvedTitle} />;
+  return <Results result={result} params={params} comparison={comparison} proposal={proposal} isSecuritySample={isSecuritySample} isChiefSample={isChiefSample} resolvedTitle={resolvedTitle} />;
 }
 
 function Results({
   result,
   params,
   comparison,
+  proposal,
   isSecuritySample,
   isChiefSample,
   resolvedTitle,
@@ -39,6 +41,7 @@ function Results({
   result: ReturnType<typeof scanRepository>;
   params: { finding?: string; mode?: string; approved?: string; sample?: string; rule?: string };
   comparison?: ReturnType<typeof validateRemediation>;
+  proposal?: ReturnType<typeof proposeRemediation>;
   isSecuritySample: boolean;
   isChiefSample: boolean;
   resolvedTitle?: string;
@@ -97,6 +100,7 @@ function Results({
               <span className="overline">Remediation verified</span>
               <h2>{resolvedTitle ?? "Selected risk"} resolved</h2>
               <p>{comparison.beforeCount} → {comparison.afterCount} open findings · no new findings introduced · explicit demo approval completed · canonical sample unchanged</p>
+              {proposal && <div className="verification-diff"><span>{proposal.path}:{proposal.line}</span><code className="diff-removed">− {proposal.before}</code><code className="diff-added">+ {proposal.after}</code></div>}
             </div>
             <Link href={isSecuritySample ? "/results?sample=security" : "/results"}>Reset demo</Link>
           </section>

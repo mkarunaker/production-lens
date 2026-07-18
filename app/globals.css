@@ -291,6 +291,9 @@ button { font: inherit; }
 .success-banner h2 { margin: 3px 0; font: 600 20px/1.2 Georgia, serif; }
 .success-banner p { margin: 0; color: #5f6d63; font-size: 11px; }
 .success-banner > a { color: var(--green-dark); font-size: 11px; font-weight: 800; }
+.verification-diff { margin-top: 12px; display: grid; gap: 3px; font: 10px/1.45 ui-monospace, monospace; }
+.verification-diff > span { color: #68796d; }
+.verification-diff code { padding: 5px 7px; border-radius: 4px; overflow-wrap: anywhere; }
 
 @media (max-width: 840px) {
   .scan-scope { grid-template-columns: repeat(2, 1fr); }
