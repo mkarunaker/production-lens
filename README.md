@@ -47,6 +47,7 @@ npm run security:check
 - `AGENTS.md` — repository working instructions
 - `docs/implementation-plan.md` — milestone plan and risks
 - `docs/threat-model.md` — trust boundaries, threats, controls, and residual risks
+- `docs/evaluation-gates.md` — mandatory evaluations for every milestone and release
 - `SECURITY.md` — security posture and future LLM boundary requirements
 
 ## Intentionally not implemented yet
