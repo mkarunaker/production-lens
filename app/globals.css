@@ -228,7 +228,13 @@ button { font: inherit; }
   background: var(--lime); color: #17251f; font-size: 12px; font-weight: 800;
 }
 .remediate-button:hover, .approve-button:hover { background: #c9e28e; }
-.remediation-shell { max-width: 960px; margin: 0 auto; padding: 44px 24px 90px; }
+.remediation-shell { max-width: 960px; margin: 0 auto; padding: 44px 24px 90px; display: flex; flex-direction: column; }
+.remediation-shell > .principles-card { order: 3; }
+.remediation-shell > .approval-card { order: 2; }
+.principles-card > summary { cursor: pointer; list-style: none; }
+.principles-card > summary::-webkit-details-marker { display: none; }
+.principles-card > summary::after { content: "＋"; color: var(--lime); font-weight: 800; }
+.principles-card[open] > summary::after { content: "−"; }
 .remediation-heading { margin: 34px 0 28px; }
 .remediation-heading h1 { margin: 7px 0 10px; font: 500 clamp(38px, 6vw, 60px)/1 Georgia, serif; letter-spacing: -.04em; }
 .remediation-heading p { max-width: 680px; color: var(--muted); line-height: 1.6; }

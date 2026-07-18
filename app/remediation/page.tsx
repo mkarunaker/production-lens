@@ -75,14 +75,14 @@ export default async function RemediationPage({
           </div>
         </section>
 
-        <section className="principles-card">
-          <div className="principles-heading">
+        <details className="principles-card">
+          <summary className="principles-heading">
             <div>
               <span className="overline">Principles-based release readiness</span>
               <h2>Evidence to review before approval</h2>
             </div>
             <span className="review-count">5 principles</span>
-          </div>
+          </summary>
           <div className="principles-grid">
             {proposal.principles.map((principle, index) => (
               <article className="principle-item" key={principle.name}>
@@ -104,7 +104,7 @@ export default async function RemediationPage({
             <strong>Residual risk</strong>
             <p>This prototype does not persist approver identity or approval history. Durable accountability and authorization remain required before arbitrary repository remediation.</p>
           </div>
-        </section>
+        </details>
 
         <section className="approval-card">
           <div>
