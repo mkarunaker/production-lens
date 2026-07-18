@@ -1,4 +1,4 @@
-import type { Finding, ReadinessPrinciple, RepositoryFile, ScanResult } from "./types";
+import type { Category, CheckAssessment, EvidenceState, Finding, ReadinessPrinciple, RepositoryFile, ScanResult, TechnologyInventory } from "./types";
 
 export const SCAN_LIMITS = {
   maxFiles: 200,
@@ -7,6 +7,7 @@ export const SCAN_LIMITS = {
 } as const;
 
 const APPROVED_EXTENSIONS = new Set([".ts", ".tsx", ".js", ".jsx", ".json", ".lock", ".sql", ".md", ".txt", ".yml", ".yaml"]);
+const APPLICATION_EXTENSIONS = new Set([".ts", ".tsx", ".js", ".jsx"]);
 
 function extension(path: string) {
   const dot = path.lastIndexOf(".");
@@ -65,6 +66,149 @@ function firstPatternEvidence(files: RepositoryFile[], patterns: RegExp[]) {
     }
   }
   return undefined;
+}
+
+type RuleProfile = {
+  ruleId: string;
+  title: string;
+  category: Category;
+};
+
+const RULE_PROFILES: RuleProfile[] = [
+  { ruleId: "SEC_INDIRECT_PROMPT_INJECTION", title: "Repository instructions remain inert", category: "Prompt injection" },
+  { ruleId: "SEC_DANGEROUS_DYNAMIC_EXECUTION", title: "Dynamic code execution is absent", category: "Code security" },
+  { ruleId: "SUPPLY_CHAIN_MISSING_LOCKFILE", title: "Dependencies are reproducibly locked", category: "Supply chain" },
+  { ruleId: "AUTH_SHARED_SERVICE_ACCOUNT", title: "Data access uses attributable scoped identity", category: "Authorization" },
+  { ruleId: "AUTH_MISSING_USER_AUTHORIZATION", title: "Requests enforce requesting-user authorization", category: "Authorization" },
+  { ruleId: "OBS_MISSING_AI_AUDIT_LOG", title: "AI and tool activity has an audit trail", category: "Observability" },
+  { ruleId: "EVAL_MISSING_FRAMEWORK", title: "Behavior has a regression evaluation framework", category: "Evaluations" },
+  { ruleId: "REL_MISSING_NETWORK_GUARDS", title: "Network calls have bounded failure handling", category: "Reliability" },
+  { ruleId: "GOV_EMBEDDED_PROMPT", title: "Prompts have versioned ownership", category: "Prompt management" },
+  { ruleId: "DATA_SENSITIVE_LOGGING", title: "Sensitive records stay out of logs", category: "Sensitive data" },
+  { ruleId: "GOV_MISSING_HUMAN_REVIEW", title: "Sensitive actions have accountable review", category: "Human oversight" },
+  { ruleId: "INJ_SQL_OR_ORM", title: "SQL and ORM query structure is separated from input", category: "Injection" },
+  { ruleId: "INJ_OS_COMMAND", title: "Input cannot alter shell commands", category: "Injection" },
+  { ruleId: "INJ_ARGUMENT", title: "Input cannot alter process argument semantics", category: "Injection" },
+  { ruleId: "INJ_NOSQL_QUERY", title: "NoSQL query structure is server-owned", category: "Injection" },
+  { ruleId: "INJ_XSS_UNSAFE_HTML", title: "Untrusted content is rendered as inert text", category: "Injection" },
+];
+
+function unique(values: string[]) {
+  return [...new Set(values)].sort();
+}
+
+function inventory(files: RepositoryFile[], applicationSource: string): TechnologyInventory {
+  const extensions = new Set(files.map((file) => extension(file.path)));
+  const manifestSource = files.filter((file) => /(?:^|\/)package(?:-lock)?\.json$/.test(file.path)).map((file) => file.content).join("\n");
+  return {
+    languages: unique([
+      ...(extensions.has(".ts") || extensions.has(".tsx") ? ["TypeScript"] : []),
+      ...(extensions.has(".js") || extensions.has(".jsx") ? ["JavaScript"] : []),
+      ...(extensions.has(".sql") ? ["SQL"] : []),
+      ...(extensions.has(".json") ? ["JSON"] : []),
+    ]),
+    frameworks: unique([
+      ...(/"next"\s*:|from\s+["']next/.test(manifestSource + applicationSource) ? ["Next.js"] : []),
+      ...(/"react"\s*:|from\s+["']react/.test(manifestSource + applicationSource) || extensions.has(".tsx") || extensions.has(".jsx") ? ["React"] : []),
+    ]),
+    dataStores: unique([
+      ...(/better-sqlite3|\bsqlite\b/i.test(manifestSource + applicationSource) ? ["SQLite"] : []),
+      ...(/\b(?:mongodb|mongoose)\b|\.findOne\s*\(/i.test(manifestSource + applicationSource) ? ["MongoDB-style"] : []),
+      ...(/\bSELECT\b|\.query\s*\(/i.test(applicationSource) ? ["SQL query API"] : []),
+    ]),
+    capabilities: unique([
+      ...(/mockModelResponse|modelCall|SYSTEM_PROMPT|answerQuestion/i.test(applicationSource) ? ["AI/model orchestration"] : []),
+      ...(/\bfetch\s*\(/.test(applicationSource) ? ["Outbound HTTP"] : []),
+      ...(/\b(?:exec|execFile|spawn)\s*\(/.test(applicationSource) ? ["Process execution"] : []),
+      ...(/userId|principal|authenticate|authorize|permission/i.test(applicationSource) ? ["Identity boundary"] : []),
+      ...(/customer|lifetime_value|notes/i.test(applicationSource) ? ["Sensitive customer data"] : []),
+    ]),
+  };
+}
+
+function assessChecks(
+  files: RepositoryFile[],
+  applicationFiles: RepositoryFile[],
+  findings: Finding[],
+  technology: TechnologyInventory,
+): CheckAssessment[] {
+  const applicationSource = applicationFiles.map((file) => file.content).join("\n");
+  const docs = files.filter((file) => [".md", ".txt"].includes(extension(file.path)));
+  const documentedControl = firstPatternEvidence(docs, [/\b(?:authentication|authorization|authorized|human review|audit logging|evaluation framework)\b/i]);
+  const findingByRule = new Map(findings.map((item) => [item.ruleId, item]));
+  const hasManifest = files.some((file) => file.path === "package.json");
+  const hasLock = files.some((file) => /(?:^|\/)(?:package-lock\.json|npm-shrinkwrap\.json|pnpm-lock\.yaml|yarn\.lock)$/.test(file.path));
+  const hasEvaluationArtifact = files.some((file) => /(eval|benchmark|golden|dataset)/i.test(file.path));
+  const hasAi = technology.capabilities.includes("AI/model orchestration");
+  const hasNetwork = technology.capabilities.includes("Outbound HTTP");
+  const hasSensitiveData = technology.capabilities.includes("Sensitive customer data");
+  const hasChatBoundary = /submitChat\s*\(/.test(applicationSource);
+  const hasIdentityCode = /userId|principal|authenticate|authorize|permission/i.test(applicationSource);
+  const hasPrompt = /PROMPT|promptConfig|promptVersion/i.test(applicationSource);
+  const hasSql = technology.dataStores.includes("SQL query API") || technology.dataStores.includes("SQLite");
+  const hasNoSql = technology.dataStores.includes("MongoDB-style");
+  const hasProcess = technology.capabilities.includes("Process execution");
+  const hasBrowserRendering =
+    /dangerouslySetInnerHTML|innerHTML|outerHTML|document\.write|insertAdjacentHTML/.test(applicationSource) ||
+    applicationFiles.some((file) => [".tsx", ".jsx"].includes(extension(file.path)));
+
+  function stateFor(ruleId: string): { state: EvidenceState; reason: string; evidence?: CheckAssessment["evidence"] } {
+    const detected = findingByRule.get(ruleId);
+    if (detected) return { state: "finding", reason: detected.explanation, evidence: detected.evidence };
+    if (ruleId === "SEC_INDIRECT_PROMPT_INJECTION") return { state: "passed", reason: "No recognized hostile instruction pattern was detected in approved repository text." };
+    if (ruleId === "SEC_DANGEROUS_DYNAMIC_EXECUTION") return { state: "passed", reason: "No supported runtime code-evaluation primitive was detected." };
+    if (ruleId === "SUPPLY_CHAIN_MISSING_LOCKFILE") {
+      return hasManifest
+        ? { state: hasLock ? "passed" : "finding", reason: hasLock ? "A supported dependency lockfile is present." : "A package manifest has no supported lockfile." }
+        : { state: "not_applicable", reason: "No supported package manifest was detected." };
+    }
+    if (ruleId === "INJ_SQL_OR_ORM") return hasSql
+      ? { state: "implemented_unverified", reason: "SQL usage was detected without a high-signal unsafe sink; deeper data-flow verification is still required." }
+      : { state: "not_applicable", reason: "No supported SQL or ORM usage was detected." };
+    if (ruleId === "INJ_NOSQL_QUERY") return hasNoSql
+      ? { state: "implemented_unverified", reason: "Mongo-style usage was detected without a high-signal unsafe sink; schema and operator validation remain unverified." }
+      : { state: "not_applicable", reason: "No supported NoSQL query API was detected." };
+    if (ruleId === "INJ_OS_COMMAND" || ruleId === "INJ_ARGUMENT") return hasProcess
+      ? { state: "implemented_unverified", reason: "Process execution exists without a detected high-signal issue; allowlists and runtime containment remain unverified." }
+      : { state: "not_applicable", reason: "No supported process-execution API was detected." };
+    if (ruleId === "INJ_XSS_UNSAFE_HTML") return hasBrowserRendering
+      ? { state: "implemented_unverified", reason: "Browser rendering exists without a detected unsafe sink; contextual encoding and sanitizer behavior remain unverified." }
+      : { state: "not_applicable", reason: "No supported browser HTML rendering surface was detected." };
+    if (ruleId === "AUTH_MISSING_USER_AUTHORIZATION") {
+      if (!hasChatBoundary) return documentedControl
+        ? { state: "documented_only", reason: "Documentation claims a control, but no supported request boundary implementation was detected.", evidence: documentedControl }
+        : { state: "not_applicable", reason: "No supported user request boundary was detected." };
+      return hasIdentityCode
+        ? { state: "implemented_unverified", reason: "Identity-related code exists, but policy enforcement and tenant isolation have not been proven." }
+        : { state: "needs_review", reason: "A request boundary exists, but deterministic analysis cannot prove complete authorization." };
+    }
+    if (ruleId === "AUTH_SHARED_SERVICE_ACCOUNT") return technology.dataStores.length
+      ? { state: "needs_review", reason: "No embedded shared credential was detected, but runtime identity scope and attribution require review." }
+      : { state: "not_applicable", reason: "No supported data-store access was detected." };
+    if (ruleId === "OBS_MISSING_AI_AUDIT_LOG") return hasAi
+      ? { state: "implemented_unverified", reason: "Audit-related evidence exists or no absence rule fired, but event completeness and redaction are unverified." }
+      : documentedControl
+        ? { state: "documented_only", reason: "Documentation mentions controls, but no supported AI orchestration implementation was detected.", evidence: documentedControl }
+        : { state: "not_applicable", reason: "No supported AI/model orchestration was detected." };
+    if (ruleId === "EVAL_MISSING_FRAMEWORK") return hasAi
+      ? { state: hasEvaluationArtifact ? "implemented_unverified" : "needs_review", reason: hasEvaluationArtifact ? "An evaluation artifact exists, but execution and scoring are not verified." : "AI behavior was detected without verified evaluation evidence." }
+      : { state: "not_applicable", reason: "No supported AI/model orchestration was detected." };
+    if (ruleId === "REL_MISSING_NETWORK_GUARDS") return hasNetwork
+      ? { state: "implemented_unverified", reason: "Network calls exist without a detected missing-guard pattern; retry and degraded-mode behavior remain unverified." }
+      : { state: "not_applicable", reason: "No supported outbound HTTP call was detected." };
+    if (ruleId === "GOV_EMBEDDED_PROMPT") return hasPrompt
+      ? { state: "implemented_unverified", reason: "Prompt-related configuration exists, but ownership, review, and rollback evidence remain unverified." }
+      : { state: "not_applicable", reason: "No supported application prompt was detected." };
+    if (ruleId === "DATA_SENSITIVE_LOGGING") return hasSensitiveData
+      ? { state: "needs_review", reason: "Sensitive-data handling exists without a detected raw logging sink; redaction coverage still requires review." }
+      : { state: "not_applicable", reason: "No supported sensitive customer-data field was detected." };
+    if (ruleId === "GOV_MISSING_HUMAN_REVIEW") return hasSensitiveData
+      ? { state: "implemented_unverified", reason: "A review indicator exists or the absence rule did not fire, but approval authority and bypass resistance remain unverified." }
+      : { state: "not_applicable", reason: "No supported sensitive action or data field was detected." };
+    return { state: "needs_review", reason: "Applicability could not be established deterministically." };
+  }
+
+  return RULE_PROFILES.map((profile) => ({ ...profile, ...stateFor(profile.ruleId) }));
 }
 
 const PRINCIPLES_BY_RULE: Record<string, { name: ReadinessPrinciple; reason: string }[]> = {
@@ -163,7 +307,8 @@ export function sanitizeFiles(files: RepositoryFile[]) {
 
 export function scanRepository(repository: string, inputFiles: RepositoryFile[]): ScanResult {
   const files = sanitizeFiles(inputFiles);
-  const allSource = files.map((file) => file.content).join("\n");
+  const applicationFiles = files.filter((file) => APPLICATION_EXTENSIONS.has(extension(file.path)));
+  const applicationSource = applicationFiles.map((file) => file.content).join("\n");
   const findings: Finding[] = [];
 
   const injectionFile = files.find((file) => detectPromptInjection(file.content));
@@ -185,7 +330,7 @@ export function scanRepository(repository: string, inputFiles: RepositoryFile[])
     /\beval\s*\(/,
     /\bnew\s+Function\s*\(/,
   ];
-  const dynamicExecutionFile = files.find((file) =>
+  const dynamicExecutionFile = applicationFiles.find((file) =>
     dynamicExecutionPatterns.some((pattern) => pattern.test(file.content)),
   );
   if (dynamicExecutionFile) {
@@ -209,7 +354,7 @@ export function scanRepository(repository: string, inputFiles: RepositoryFile[])
     }));
   }
 
-  const sqlInjectionEvidence = firstPatternEvidence(files, [
+  const sqlInjectionEvidence = firstPatternEvidence(applicationFiles, [
     /\b(?:query|execute|prepare|raw)\s*\(\s*`[^`]*\$\{[^}]+\}[^`]*`/,
     /\b(?:query|execute|prepare|raw)\s*\(\s*["'][^"']*["']\s*\+/,
     /\$(?:queryRawUnsafe|executeRawUnsafe)\s*\(\s*(?!["'`][^"'`]*["'`]\s*\))/,
@@ -227,7 +372,7 @@ export function scanRepository(repository: string, inputFiles: RepositoryFile[])
     }));
   }
 
-  const osCommandEvidence = firstPatternEvidence(files, [
+  const osCommandEvidence = firstPatternEvidence(applicationFiles, [
     /\b(?:exec|execSync)\s*\(\s*`[^`]*\$\{[^}]+\}[^`]*`/,
     /\b(?:exec|execSync)\s*\(\s*["'][^"']*["']\s*\+/,
   ]);
@@ -244,7 +389,7 @@ export function scanRepository(repository: string, inputFiles: RepositoryFile[])
     }));
   }
 
-  const argumentInjectionEvidence = firstPatternEvidence(files, [
+  const argumentInjectionEvidence = firstPatternEvidence(applicationFiles, [
     /\b(?:spawn|execFile|execFileSync)\s*\(\s*["'][^"']+["']\s*,\s*\[\s*(?:["'][^"']*["']\s*,\s*)*(?:user|input|arg|option|url|path|query|filename)[a-zA-Z0-9_$]*/i,
   ]);
   if (argumentInjectionEvidence) {
@@ -260,7 +405,7 @@ export function scanRepository(repository: string, inputFiles: RepositoryFile[])
     }));
   }
 
-  const noSqlInjectionEvidence = firstPatternEvidence(files, [
+  const noSqlInjectionEvidence = firstPatternEvidence(applicationFiles, [
     /\b(?:find|findOne|findOneAndUpdate|updateOne|updateMany|deleteOne|deleteMany|countDocuments)\s*\(\s*(?:req(?:uest)?\.body|ctx\.request\.body)\b/i,
     /\b(?:find|findOne|findOneAndUpdate|updateOne|updateMany|deleteOne|deleteMany|countDocuments)\s*\(\s*\{\s*\.\.\.(?:req(?:uest)?\.body|ctx\.request\.body)\b/i,
     /\$(?:where|expr)\s*:\s*(?:req(?:uest)?\.(?:body|query)|ctx\.request\.body|user[A-Za-z0-9_$]*|input[A-Za-z0-9_$]*)\b/i,
@@ -278,7 +423,7 @@ export function scanRepository(repository: string, inputFiles: RepositoryFile[])
     }));
   }
 
-  const xssEvidence = firstPatternEvidence(files, [
+  const xssEvidence = firstPatternEvidence(applicationFiles, [
     /dangerouslySetInnerHTML\s*=\s*\{\s*\{\s*__html\s*:\s*(?:(?:props|req(?:uest)?\.body)\.)?(?:user|input|untrusted|raw|html|content|markdown|message)[A-Za-z0-9_$]*/i,
     /\.(?:innerHTML|outerHTML)\s*=\s*(?:(?:props|req(?:uest)?\.body)\.)?(?:user|input|untrusted|raw|html|content|markdown|message)[A-Za-z0-9_$]*/i,
     /\b(?:document\.write|insertAdjacentHTML)\s*\([^)]*(?:(?:props|req(?:uest)?\.body)\.)?(?:user|input|untrusted|raw|html|content|markdown|message)[A-Za-z0-9_$]*/i,
@@ -313,7 +458,7 @@ export function scanRepository(repository: string, inputFiles: RepositoryFile[])
     }));
   }
 
-  if (/SERVICE_ACCOUNT/.test(allSource) && /password\s*:/.test(allSource)) {
+  if (/SERVICE_ACCOUNT/.test(applicationSource) && /password\s*:/.test(applicationSource)) {
     findings.push(finding({
       ruleId: "AUTH_SHARED_SERVICE_ACCOUNT",
       title: "Shared service account is embedded in the data layer",
@@ -326,7 +471,7 @@ export function scanRepository(repository: string, inputFiles: RepositoryFile[])
     }));
   }
 
-  if (/submitChat\(message: string\)/.test(allSource) && !/(userId|principal|authorize|permission)/i.test(allSource)) {
+  if (/submitChat\(message: string\)/.test(applicationSource) && !/(userId|principal|authorize|permission)/i.test(applicationSource)) {
     findings.push(finding({
       ruleId: "AUTH_MISSING_USER_AUTHORIZATION",
       title: "Requests are not authorized for the requesting user",
@@ -339,7 +484,7 @@ export function scanRepository(repository: string, inputFiles: RepositoryFile[])
     }));
   }
 
-  if (/mockModelResponse/.test(allSource) && !/(modelCall|toolCall|traceId|auditLog)/.test(allSource)) {
+  if (/mockModelResponse/.test(applicationSource) && !/(modelCall|toolCall|traceId|auditLog)/.test(applicationSource)) {
     findings.push(finding({
       ruleId: "OBS_MISSING_AI_AUDIT_LOG",
       title: "Model and tool calls have no structured audit trail",
@@ -352,7 +497,8 @@ export function scanRepository(repository: string, inputFiles: RepositoryFile[])
     }));
   }
 
-  if (!files.some((file) => /(eval|benchmark|golden|dataset)/i.test(file.path))) {
+  const hasAiApplication = /mockModelResponse|SYSTEM_PROMPT|answerQuestion|modelCall|toolCall/i.test(applicationSource);
+  if (hasAiApplication && !files.some((file) => /(eval|benchmark|golden|dataset)/i.test(file.path))) {
     findings.push(finding({
       ruleId: "EVAL_MISSING_FRAMEWORK",
       title: "No evaluation dataset or regression framework",
@@ -364,7 +510,7 @@ export function scanRepository(repository: string, inputFiles: RepositoryFile[])
     }));
   }
 
-  if (/await fetch\(/.test(allSource) && !/(AbortSignal|timeout|retry|backoff)/i.test(allSource)) {
+  if (/await fetch\(/.test(applicationSource) && !/(AbortSignal|timeout|retry|backoff)/i.test(applicationSource)) {
     findings.push(finding({
       ruleId: "REL_MISSING_NETWORK_GUARDS",
       title: "CRM calls have no timeout or retry policy",
@@ -377,7 +523,7 @@ export function scanRepository(repository: string, inputFiles: RepositoryFile[])
     }));
   }
 
-  if (/const SYSTEM_PROMPT\s*=/.test(allSource)) {
+  if (/const SYSTEM_PROMPT\s*=/.test(applicationSource)) {
     findings.push(finding({
       ruleId: "GOV_EMBEDDED_PROMPT",
       title: "System prompt is embedded in application code",
@@ -390,7 +536,7 @@ export function scanRepository(repository: string, inputFiles: RepositoryFile[])
     }));
   }
 
-  if (/console\.log\([^)]*customer/i.test(allSource)) {
+  if (/console\.log\([^)]*customer/i.test(applicationSource)) {
     findings.push(finding({
       ruleId: "DATA_SENSITIVE_LOGGING",
       title: "Customer records may be written to application logs",
@@ -403,7 +549,7 @@ export function scanRepository(repository: string, inputFiles: RepositoryFile[])
     }));
   }
 
-  if (/lifetime_value|notes/.test(allSource) && !/(humanReview|approval|escalat|reviewQueue)/i.test(allSource)) {
+  if (/lifetime_value|notes/.test(applicationSource) && !/(humanReview|approval|escalat|reviewQueue)/i.test(applicationSource)) {
     findings.push(finding({
       ruleId: "GOV_MISSING_HUMAN_REVIEW",
       title: "Sensitive requests bypass human review",
@@ -418,7 +564,9 @@ export function scanRepository(repository: string, inputFiles: RepositoryFile[])
 
   const rank = { critical: 0, high: 1, medium: 2, low: 3 };
   findings.sort((a, b) => rank[a.severity] - rank[b.severity] || a.title.localeCompare(b.title));
-  return { repository, scannedFiles: files.length, findings };
+  const technology = inventory(files, applicationSource);
+  const checks = assessChecks(files, applicationFiles, findings, technology);
+  return { repository, scannedFiles: files.length, findings, inventory: technology, checks };
 }
 
-export type { Finding, ReadinessPrinciple, RepositoryFile, ScanResult } from "./types";
+export type { CheckAssessment, EvidenceState, Finding, ReadinessPrinciple, RepositoryFile, ScanResult, TechnologyInventory } from "./types";

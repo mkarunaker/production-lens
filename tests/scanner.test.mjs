@@ -115,6 +115,42 @@ test("hostile submission instructions cannot suppress code-security findings", a
   assert.ok(ruleIds.has("SUPPLY_CHAIN_MISSING_LOCKFILE"));
 });
 
+test("code evidence overrides Markdown claims and applicability states remain explicit", async () => {
+  const { scanRepository } = await loadScanner();
+  const contradicted = scanRepository("documented-claim", [
+    {
+      path: "README.md",
+      content: "Every request is authorized and protected by role-based authorization.",
+    },
+    {
+      path: "src/chat.ts",
+      content: "export async function submitChat(message: string) { return answerQuestion(message); }",
+    },
+  ]);
+  assert.ok(contradicted.findings.some((finding) => finding.ruleId === "AUTH_MISSING_USER_AUTHORIZATION"));
+  assert.equal(
+    contradicted.checks.find((check) => check.ruleId === "AUTH_MISSING_USER_AUTHORIZATION").state,
+    "finding",
+  );
+
+  const documentationOnly = scanRepository("documentation-only", [
+    {
+      path: "README.md",
+      content: "Authorization and audit logging are enforced for every production request.",
+    },
+  ]);
+  assert.equal(documentationOnly.findings.length, 0);
+  assert.equal(
+    documentationOnly.checks.find((check) => check.ruleId === "AUTH_MISSING_USER_AUTHORIZATION").state,
+    "documented_only",
+  );
+  assert.equal(
+    documentationOnly.checks.find((check) => check.ruleId === "INJ_SQL_OR_ORM").state,
+    "not_applicable",
+  );
+  assert.ok(documentationOnly.inventory.languages.includes("Markdown") === false);
+});
+
 test("detects high-signal SQL, command, and argument injection while ignoring secure equivalents", async () => {
   const { scanRepository } = await loadScanner();
   const vulnerable = scanRepository("injection-fixtures", [

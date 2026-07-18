@@ -15,6 +15,8 @@ Production Lens statically scans an AI application repository and explains evide
 - Mandatory Production Lens self-scan against every implemented injection rule as part of the test gate
 - A separate visible Security Test Agent with seven intentional, line-evidenced injection findings
 - Reviewable remediation steps and deterministic recommended patches for every finding in both bundled projects
+- Code-first technology inventory and applicability states for every catalog check
+- Explicit separation of findings, passed checks, unverified controls, documentation-only claims, review needs, and non-applicable checks
 - Explicitly approved remediation of the sensitive-logging finding in a disposable copy
 - Deterministic rescan and before/after verification without executing sample code
 - Remediation verification and change-safety evidence as a production-readiness criterion

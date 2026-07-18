@@ -49,6 +49,23 @@ function Results({
     high: result.findings.filter((finding) => finding.severity === "high").length,
     medium: result.findings.filter((finding) => finding.severity === "medium").length,
   };
+  const stateLabels = {
+    finding: "Finding",
+    passed: "Passed check",
+    implemented_unverified: "Implemented, not verified",
+    documented_only: "Documented only",
+    needs_review: "Needs review",
+    not_applicable: "Not applicable",
+  } as const;
+  const stateCounts = Object.fromEntries(
+    Object.keys(stateLabels).map((state) => [state, result.checks.filter((check) => check.state === state).length]),
+  ) as Record<keyof typeof stateLabels, number>;
+  const inventoryItems = [
+    ...result.inventory.languages,
+    ...result.inventory.frameworks,
+    ...result.inventory.dataStores,
+    ...result.inventory.capabilities,
+  ];
 
   return (
     <main>
@@ -83,6 +100,40 @@ function Results({
           <div className="summary-box"><strong>{counts.medium}</strong><span>Medium</span></div>
           <div className="summary-box"><strong>{result.findings.filter((finding) => finding.evidence).length}</strong><span>With line evidence</span></div>
         </div>
+        <section className="applicability-panel" aria-labelledby="applicability-title">
+          <div className="applicability-heading">
+            <div>
+              <span className="overline">Code-first applicability</span>
+              <h2 id="applicability-title">What Production Lens evaluated</h2>
+              <p>Code, configuration, and tests drive conclusions. Documentation provides context but cannot prove a control.</p>
+            </div>
+            <div className="inventory-chips" aria-label="Detected technology inventory">
+              {inventoryItems.length
+                ? inventoryItems.map((item) => <span key={item}>{item}</span>)
+                : <span>No supported technology detected</span>}
+            </div>
+          </div>
+          <div className="state-summary">
+            {(Object.keys(stateLabels) as (keyof typeof stateLabels)[]).map((state) => (
+              <div key={state}>
+                <strong>{stateCounts[state]}</strong>
+                <span>{stateLabels[state]}</span>
+              </div>
+            ))}
+          </div>
+          <div className="assessment-grid">
+            {result.checks.map((check) => (
+              <article className={`assessment assessment-${check.state}`} key={check.ruleId}>
+                <div>
+                  <span className="assessment-state">{stateLabels[check.state]}</span>
+                  <strong>{check.title}</strong>
+                </div>
+                <p>{check.reason}</p>
+                {check.evidence && <code>{check.evidence.path}:{check.evidence.line}</code>}
+              </article>
+            ))}
+          </div>
+        </section>
         <div className="findings-layout">
           <section className="findings-list" aria-label="Findings">
             {result.findings.map((finding) => (

@@ -25,6 +25,34 @@ export type RepositoryFile = {
   content: string;
 };
 
+export type EvidenceState =
+  | "finding"
+  | "passed"
+  | "implemented_unverified"
+  | "documented_only"
+  | "needs_review"
+  | "not_applicable";
+
+export type TechnologyInventory = {
+  languages: string[];
+  frameworks: string[];
+  dataStores: string[];
+  capabilities: string[];
+};
+
+export type CheckAssessment = {
+  ruleId: string;
+  title: string;
+  category: Category;
+  state: EvidenceState;
+  reason: string;
+  evidence?: {
+    path: string;
+    line: number;
+    code: string;
+  };
+};
+
 export type Finding = {
   id: string;
   ruleId: string;
@@ -49,4 +77,6 @@ export type ScanResult = {
   repository: string;
   scannedFiles: number;
   findings: Finding[];
+  inventory: TechnologyInventory;
+  checks: CheckAssessment[];
 };

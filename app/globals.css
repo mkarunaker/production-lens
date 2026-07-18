@@ -117,6 +117,33 @@ button { font: inherit; }
 .summary-box { background: white; border: 1px solid var(--line); border-radius: 10px; padding: 16px; }
 .summary-box strong { display: block; font: 500 26px/1 Georgia, serif; }
 .summary-box span { color: var(--muted); font-size: 11px; }
+.applicability-panel { margin-bottom: 28px; padding: 22px; background: white; border: 1px solid var(--line); border-radius: 14px; }
+.applicability-heading { display: flex; justify-content: space-between; gap: 26px; align-items: start; }
+.applicability-heading h2 { margin: 4px 0 7px; font: 600 24px/1.2 Georgia, serif; }
+.applicability-heading p { max-width: 620px; margin: 0; color: var(--muted); font-size: 12px; line-height: 1.55; }
+.inventory-chips { max-width: 390px; display: flex; justify-content: flex-end; flex-wrap: wrap; gap: 6px; }
+.inventory-chips span { padding: 6px 8px; border-radius: 999px; background: #eff4ef; color: #4e6d57; font-size: 9px; font-weight: 750; }
+.state-summary { margin: 20px 0 14px; display: grid; grid-template-columns: repeat(6, 1fr); border: 1px solid var(--line); border-radius: 9px; overflow: hidden; }
+.state-summary > div { padding: 12px; background: #fafbf9; border-right: 1px solid var(--line); }
+.state-summary > div:last-child { border-right: 0; }
+.state-summary strong, .state-summary span { display: block; }
+.state-summary strong { font: 600 20px/1 Georgia, serif; }
+.state-summary span { margin-top: 5px; color: var(--muted); font-size: 8px; text-transform: uppercase; letter-spacing: .05em; }
+.assessment-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.assessment { padding: 12px; border: 1px solid var(--line); border-left-width: 4px; border-radius: 8px; background: #fbfcfa; }
+.assessment > div { display: flex; gap: 9px; align-items: center; }
+.assessment strong { font-size: 11px; }
+.assessment p { margin: 7px 0 0; color: var(--muted); font-size: 9px; line-height: 1.45; }
+.assessment code { display: block; margin-top: 7px; color: var(--green); font-size: 8px; }
+.assessment-state { flex: 0 0 auto; padding: 4px 5px; border-radius: 4px; background: #edf1ed; color: #66726b; font-size: 7px; font-weight: 900; text-transform: uppercase; letter-spacing: .04em; }
+.assessment-finding { border-left-color: var(--critical); }
+.assessment-finding .assessment-state { color: var(--critical); background: #fae9e7; }
+.assessment-passed { border-left-color: #6f9a4f; }
+.assessment-passed .assessment-state { color: #49713c; background: #eaf3df; }
+.assessment-implemented_unverified { border-left-color: #d3973e; }
+.assessment-documented_only { border-left-color: #7f78a9; }
+.assessment-needs_review { border-left-color: #c56f45; }
+.assessment-not_applicable { border-left-color: #b7bfba; }
 .findings-layout { display: grid; grid-template-columns: minmax(0, 1fr) 340px; gap: 20px; align-items: start; }
 .findings-list { display: grid; gap: 12px; }
 .finding-card { display: block; padding: 20px; background: white; border: 1px solid var(--line); border-radius: 12px; transition: border .2s, transform .2s; }
@@ -217,6 +244,11 @@ button { font: inherit; }
   .detail-panel { position: static; }
   .approval-card { grid-template-columns: 1fr; }
   .option-grid { grid-template-columns: 1fr; }
+  .applicability-heading { display: block; }
+  .inventory-chips { max-width: none; margin-top: 14px; justify-content: flex-start; }
+  .state-summary { grid-template-columns: repeat(3, 1fr); }
+  .state-summary > div:nth-child(3) { border-right: 0; }
+  .state-summary > div:nth-child(-n+3) { border-bottom: 1px solid var(--line); }
   .approval-action { padding: 22px 0 0; border-left: 0; border-top: 1px solid var(--line); }
 }
 @media (max-width: 600px) {
@@ -232,6 +264,7 @@ button { font: inherit; }
   .results-title-row { align-items: start; }
   .risk-score { display: none; }
   .finding-top { display: block; }
+  .assessment-grid { grid-template-columns: 1fr; }
   .evidence-chip { display: inline-block; margin-top: 12px; }
   .proposal-summary, .success-banner { display: block; }
   .principles-heading, .principle-title { align-items: start; }

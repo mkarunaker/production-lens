@@ -20,7 +20,7 @@ At the start of a new session:
 - Current checkpoint commit: use the latest `git log -1` entry.
 - Working tree was clean when this checkpoint was prepared.
 - Deterministic sample findings: 11
-- Automated tests: 17 passing
+- Automated tests: 18 passing
 - Principles-based approval review: implemented for the bundled sensitive-logging remediation
 - Principle mapping: implemented for all 11 deterministic findings
 - Known dependency vulnerabilities at last verification: 0
@@ -86,6 +86,16 @@ In progress as an incremental scanner milestone.
 - Remaining application, parser, protocol, identity, and platform injection classes: planned
 - Canonical backlog, evidence standard, implementation waves, and evaluation gates: `docs/injection-rule-pack.md`
 - Coverage must be reported per declared language and framework; universal injection coverage must not be claimed
+
+### Milestone 1.4 — Applicability and evidence states
+
+Complete for the current deterministic rule catalog.
+
+- Static technology inventory for supported languages, frameworks, data stores, and capabilities
+- Code-first applicability decisions
+- Explicit finding, passed, implemented-but-unverified, documented-only, needs-review, and not-applicable states
+- Markdown claims cannot suppress application-code findings
+- Results UI shows technology inventory and the state of every catalog check
 
 ## Golden demo status
 

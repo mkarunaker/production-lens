@@ -49,6 +49,9 @@ Before any milestone is marked complete:
 - New injection rules include both vulnerable and secure-equivalent fixtures.
 - Production Lens application source passes the implemented injection rules after every code change; intentionally vulnerable bundled samples and adversarial fixtures remain explicitly excluded from this self-scan.
 - The remediation engine is self-scanned, while its explicitly delimited inert before/after patch-template block is omitted because it intentionally contains vulnerable source evidence.
+- Markdown and comments cannot suppress findings derived from application code.
+- Every catalog check reports one explicit evidence state: finding, passed, implemented but unverified, documented only, needs review, or not applicable.
+- Technology applicability is established without importing, installing, or executing repository code.
 
 ### Remediation proposal
 
