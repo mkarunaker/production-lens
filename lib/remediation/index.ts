@@ -11,6 +11,11 @@ export type RemediationProposal = {
   after: string;
   rationale: string;
   checks: string[];
+  principles: {
+    name: string;
+    status: "enforced" | "verify" | "review";
+    evidence: string;
+  }[];
 };
 
 const SENSITIVE_LOG_BEFORE = '    console.log("CRM customer response", customer);';
@@ -45,6 +50,33 @@ export function proposeRemediation(
       "Raw customer object is absent from the disposable copy",
       "Sensitive-logging rule is resolved after rescan",
       "No other finding is removed by the patch",
+    ],
+    principles: [
+      {
+        name: "Own it",
+        status: "review",
+        evidence: "A person must review the evidence and explicitly approve this consequential change.",
+      },
+      {
+        name: "Prove it",
+        status: "verify",
+        evidence: "Four deterministic checks and a full rescan must pass before the change is considered resolved.",
+      },
+      {
+        name: "Contain it",
+        status: "enforced",
+        evidence: "The patch is limited to one known line in a disposable in-memory copy; scanned code is never executed.",
+      },
+      {
+        name: "Trace and reverse it",
+        status: "enforced",
+        evidence: "The exact before/after patch is shown, the result is compared, and Reset demo restores the baseline.",
+      },
+      {
+        name: "Break the lethal trifecta",
+        status: "enforced",
+        evidence: "The scanner reads untrusted text but has no private-data connection, outbound communication, or consequential tool authority.",
+      },
     ],
   };
 }

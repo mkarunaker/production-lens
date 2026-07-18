@@ -20,7 +20,8 @@ At the start of a new session:
 - Current checkpoint commit: use the latest `git log -1` entry.
 - Working tree was clean when this checkpoint was prepared.
 - Deterministic sample findings: 11
-- Automated tests: 9 passing
+- Automated tests: 10 passing
+- Principles-based approval review: implemented for the bundled sensitive-logging remediation
 - Known dependency vulnerabilities at last verification: 0
 - Production build: passing
 

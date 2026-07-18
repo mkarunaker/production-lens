@@ -6,10 +6,10 @@ import { sampleFiles, sampleRepositoryName } from "@/lib/scanner/sample-bundle";
 
 export const metadata: Metadata = { title: "Scan results" };
 
-export default async function ResultsPage({ searchParams }: { searchParams: Promise<{ finding?: string; mode?: string }> }) {
+export default async function ResultsPage({ searchParams }: { searchParams: Promise<{ finding?: string; mode?: string; approved?: string }> }) {
   const params = await searchParams;
   const baseline = scanRepository(sampleRepositoryName, sampleFiles);
-  const isAfter = params.mode === "after";
+  const isAfter = params.mode === "after" && params.approved === "yes";
   const files = isAfter ? applyRemediation(DEMO_REMEDIATION_RULE_ID, sampleFiles) : sampleFiles;
   const result = scanRepository(sampleRepositoryName, files);
   const comparison = isAfter ? validateRemediation(baseline, result, DEMO_REMEDIATION_RULE_ID) : undefined;
@@ -22,11 +22,11 @@ function Results({
   comparison,
 }: {
   result: ReturnType<typeof scanRepository>;
-  params: { finding?: string; mode?: string };
+  params: { finding?: string; mode?: string; approved?: string };
   comparison?: ReturnType<typeof validateRemediation>;
 }) {
   const selected = result.findings.find((finding) => finding.id === params.finding) ?? result.findings[0];
-  const queryPrefix = params.mode === "after" ? "mode=after&" : "";
+  const queryPrefix = comparison ? "mode=after&approved=yes&" : "";
   const counts = {
     critical: result.findings.filter((finding) => finding.severity === "critical").length,
     high: result.findings.filter((finding) => finding.severity === "high").length,
@@ -47,7 +47,7 @@ function Results({
             <div>
               <span className="overline">Remediation verified</span>
               <h2>Sensitive customer logging resolved</h2>
-              <p>{comparison.beforeCount} → {comparison.afterCount} open findings · no new findings introduced · canonical sample unchanged</p>
+              <p>{comparison.beforeCount} → {comparison.afterCount} open findings · no new findings introduced · explicit demo approval completed · canonical sample unchanged</p>
             </div>
             <Link href="/results">Reset demo</Link>
           </section>

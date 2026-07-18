@@ -141,3 +141,17 @@ test("approved remediation changes only a disposable copy and resolves exactly o
   assert.deepEqual(sampleFiles, canonicalBefore);
   assert.notDeepEqual(remediated, sampleFiles);
 });
+
+test("remediation approval presents all principles and residual-risk evidence", async () => {
+  const { DEMO_REMEDIATION_RULE_ID, proposeRemediation, sampleFiles } = await loadScanner();
+  const proposal = proposeRemediation(DEMO_REMEDIATION_RULE_ID, sampleFiles);
+  assert.deepEqual(
+    proposal.principles.map((principle) => principle.name),
+    ["Own it", "Prove it", "Contain it", "Trace and reverse it", "Break the lethal trifecta"],
+  );
+  assert.equal(proposal.principles.length, 5);
+  for (const principle of proposal.principles) {
+    assert.ok(principle.status);
+    assert.ok(principle.evidence);
+  }
+});
