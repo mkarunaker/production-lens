@@ -66,6 +66,7 @@ button { font: inherit; }
 .hero h1 em { color: var(--green); font-weight: 500; }
 .hero-copy { max-width: 670px; margin: 0 auto; color: var(--muted); font-size: 18px; line-height: 1.65; }
 .upload-panel { max-width: 790px; margin: 36px auto 0; padding: 12px; background: #17251f; border-radius: 16px; box-shadow: 0 18px 50px rgba(31,54,42,.12); }
+.upload-row { display: flex; gap: 10px; align-items: stretch; }
 .upload-drop { min-height: 78px; padding: 15px 18px; display: flex; align-items: center; gap: 14px; border: 1px dashed rgba(185,214,120,.55); border-radius: 11px; color: white; cursor: pointer; }
 .upload-drop:hover { background: rgba(255,255,255,.05); }
 .upload-plus { width: 34px; height: 34px; display: grid; place-items: center; border-radius: 9px; background: rgba(185,214,120,.16); color: var(--lime); font-size: 22px; }
@@ -73,7 +74,7 @@ button { font: inherit; }
 .upload-drop strong { font-size: 14px; }
 .upload-drop small { margin-top: 4px; color: #b9c8bf; font-size: 11px; }
 .upload-note { margin: 9px 4px 1px; color: #aab9b0; font-size: 10px; }
-.upload-scan-button { width: 100%; margin-top: 10px; padding: 11px 14px; display: flex; justify-content: space-between; border: 0; border-radius: 8px; background: var(--lime); color: #17251f; font-size: 12px; font-weight: 850; cursor: pointer; }
+.upload-scan-button { width: 122px; flex: 0 0 122px; padding: 11px 12px; display: flex; justify-content: space-between; align-items: center; border: 0; border-radius: 8px; background: var(--lime); color: #17251f; font-size: 11px; font-weight: 850; cursor: pointer; }
 .upload-scan-button:hover { background: #c9e28e; }
 .upload-scan-button:disabled { background: #51665a; color: #9eafa4; cursor: not-allowed; }
 .demo-downloads { display: flex; flex-wrap: wrap; gap: 9px; margin: 11px 4px 1px; color: #91a197; font-size: 10px; align-items: center; }
@@ -278,6 +279,8 @@ button { font: inherit; }
   .hero { padding-top: 50px; }
   .hero h1 br { display: none; }
   .sample-card { padding: 19px; }
+  .upload-row { display: grid; grid-template-columns: 1fr; }
+  .upload-scan-button { width: 100%; min-height: 42px; }
   .sample-heading { grid-template-columns: auto 1fr; }
   .ready { grid-column: 2; }
   .scan-scope, .summary-grid { grid-template-columns: 1fr 1fr; }
