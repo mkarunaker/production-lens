@@ -159,6 +159,7 @@ function Results({
             ))}
           </div>
         </details>
+        {result.findings.length === 0 && <section className="clean-result" aria-label="Clean baseline result"><span className="clean-result-mark">✓</span><div><span className="overline">Catalog review complete</span><h2>No evaluated risks found</h2><p>This baseline matched none of Production Lens’s current deterministic rules. It is a positive signal, not a universal security guarantee.</p></div></section>}
         <div className="findings-layout">
           <section className="findings-list" aria-label="Findings">
             {severityGroups.map((group) => <section className="severity-group" key={group.severity}>
@@ -173,7 +174,7 @@ function Results({
               ))}</div>
             </section>)}
           </section>
-          <aside id="selected-finding" className="detail-panel" aria-label="Selected finding details">
+          {selected && <aside id="selected-finding" className="detail-panel" aria-label="Selected finding details">
             <div className="detail-header">
               <span className={`badge badge-${selected.severity}`}>{selected.severity}</span>
               <h2>{selected.title}</h2>
@@ -206,7 +207,7 @@ function Results({
                 </Link>
               )}
             </div>
-          </aside>
+          </aside>}
         </div>
       </div>
     </main>
