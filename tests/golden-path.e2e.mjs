@@ -56,8 +56,8 @@ try {
   const enterprise = visibleText(await fetchText("/results"));
   assert.match(enterprise, /11 open findings/);
   assert.match(enterprise, /What Production Lens evaluated/);
-  assert.match(enterprise, /Select an issue to remediate/);
-  assert.match(enterprise, /finding card or a flagged file/);
+  assert.match(enterprise, /Select a finding card or flagged file/);
+  assert.match(enterprise, /finding card or flagged file/);
   assert.match(enterprise, /Caught with Lens/);
 
   const security = visibleText(await fetchText("/results?sample=security"));

@@ -83,8 +83,8 @@ export function ResultsWorkspace({ result, files, proposals, sample, canApply }:
               })}
             </div>
           </section>
-          <section className="file-explorer" aria-label="Scanned files">
-            <div className="explorer-heading"><span>Explorer</span><strong>{visibleFiles.length}</strong></div>
+          <details className="file-explorer" open>
+            <summary className="explorer-heading"><span>Explorer</span><strong>{visibleFiles.length}</strong></summary>
             <button className={`lens-filter ${showCaught ? "lens-filter-active" : ""}`} type="button" onClick={() => setShowCaught((value) => !value)}>
               <span aria-hidden="true">◉</span> {showCaught ? "Showing caught files" : "Caught with Lens"}
             </button>
@@ -96,33 +96,28 @@ export function ResultsWorkspace({ result, files, proposals, sample, canApply }:
                 </button>
               ))}
             </nav>
-          </section>
+          </details>
         </aside>
 
-        <section className="code-review" aria-label="Source code">
-          <div className="code-tab"><span>{activeFile?.path ?? "No approved source file"}</span>{selected?.evidence?.path === activeFile?.path && <small>Finding evidence</small>}</div>
-          {activeFile ? <CodeView file={activeFile} proposal={showPatch && proposal?.path === activeFile.path ? proposal : undefined} /> : <div className="code-empty">No approved text files were available to show.</div>}
-        </section>
+        <div className="workspace-content">
+          <section className="code-review" aria-label="Source code">
+            <div className="code-tab"><span>{activeFile?.path ?? "No approved source file"}</span>{selected?.evidence?.path === activeFile?.path && <small>Finding evidence</small>}</div>
+            {activeFile ? <CodeView file={activeFile} proposal={showPatch && proposal?.path === activeFile.path ? proposal : undefined} /> : <div className="code-empty">No approved text files were available to show.</div>}
+          </section>
 
-        <aside className="remediation-panel" aria-live="polite">
+          <aside className="remediation-panel" aria-live="polite">
           {!selected ? (
             <div className="remediation-empty">
-              <span className="empty-lens" aria-hidden="true">⌕</span>
               <span className="overline">Remediation workspace</span>
-              <h2>Select an issue to remediate</h2>
-              <p>Choose a finding card or a flagged file to inspect its code, evidence, impact, and recommended patch without leaving this review.</p>
+              <p>Select a finding card or flagged file to open its remediation review.</p>
             </div>
           ) : (
             <div className="remediation-detail">
-              <div className="remediation-title"><span className={`badge badge-${selected.severity}`}>{selected.severity}</span><span>{selected.category}</span></div>
-              <h2>{selected.title}</h2>
-              <section><h3>Why this matters</h3><p>{selected.impact}</p></section>
-              <section><h3>Evidence</h3>{selected.evidence ? <code>{selected.evidence.path}:{selected.evidence.line}</code> : <p>Repository-level absence; no single source line applies.</p>}</section>
-              <section><h3>Recommended remediation</h3><p>{selected.remediation}</p></section>
+              <section className="remediation-summary"><div className="remediation-title"><span className={`badge badge-${selected.severity}`}>{selected.severity}</span><span>{selected.category}</span></div><h2>{selected.title}</h2><h3>Why this matters</h3><p>{selected.impact}</p></section>
+              <section className="remediation-recommendation"><h3>Recommended remediation</h3><p>{selected.remediation}</p>{selected.evidence && <code>{selected.evidence.path}:{selected.evidence.line}</code>}</section>
               {proposal && canApply ? (
-                <>
+                <section className="remediation-actions">
                   <div className="suggested-fix"><strong>Suggested fix is shown in code</strong><span>{proposal.path}:{proposal.line}</span></div>
-                  <div className="patch-rationale"><strong>Why this patch</strong><p>{proposal.rationale}</p></div>
                   <button className="show-patch-button" type="button" onClick={() => setShowPatch((value) => !value)}>{showPatch ? "Hide inline diff" : "Show inline diff"}<span>→</span></button>
                   <form action="/results" method="get" className="workspace-approval">
                     <input type="hidden" name="mode" value="after" />
@@ -132,11 +127,12 @@ export function ResultsWorkspace({ result, files, proposals, sample, canApply }:
                     <label><input type="checkbox" required /><span>I reviewed this patch and approve applying it to a disposable copy.</span></label>
                     <button className="approve-button" type="submit">Approve, apply, and rescan <span>→</span></button>
                   </form>
-                </>
+                </section>
               ) : !canApply ? <p className="workspace-resolved">This view shows the verified result. Reset the demo to review another remediation.</p> : <p className="workspace-no-patch">This finding has no supported deterministic patch.</p>}
             </div>
           )}
-        </aside>
+          </aside>
+        </div>
       </div>
     </section>
   );
