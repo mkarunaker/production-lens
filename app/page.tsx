@@ -101,21 +101,7 @@ export default function Home() {
           </div>
         </div>
 
-        <div className="sample-card secondary-sample">
-          <div className="sample-heading">
-            <div className="repo-icon" aria-hidden="true">{"PY"}</div>
-            <div>
-              <span className="overline">Sanitized ZIP fixture</span>
-              <h2>Chief of Staff</h2>
-            </div>
-            <span className="ready"><i /> Ready to scan</span>
-          </div>
-          <p>Python AI agent · FastAPI · LangChain · credentials and virtualenv excluded</p>
-          <Link className="scan-button" href="/results?sample=chief">
-            <span>Upload and scan demo ZIP</span><span aria-hidden="true">→</span>
-          </Link>
-          <div className="safety-note"><span aria-hidden="true">◇</span> Hosted demos are fixed sanitized fixtures; arbitrary uploads remain disabled.</div>
-        </div></div>
+        </div>
       </section>
 
     </main>
