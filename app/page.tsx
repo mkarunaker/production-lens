@@ -59,12 +59,14 @@ export default function Home() {
           governance risks in AI-agent repositories using five production-readiness principles.
         </p>
 
-        <section className="industry-signals" aria-labelledby="industry-signals-title">
-          <div className="industry-signals-heading"><span className="overline">Why this matters now</span><h2 id="industry-signals-title">Agent adoption is accelerating faster than production confidence.</h2></div>
-          <div className="industry-signal-grid">
-            {industrySignals.map((signal) => <a className="industry-signal" href={signal.href} key={signal.source} rel="noreferrer" target="_blank"><strong>{signal.stat}</strong><span>{signal.label}</span><small>{signal.source} ↗</small></a>)}
+        <details className="industry-signals">
+          <summary><span><span className="overline">Why it matters</span><strong>Agent adoption is accelerating faster than production confidence.</strong></span><span className="industry-expand">Explore the industry signals <i aria-hidden="true">↓</i></span></summary>
+          <div className="industry-signals-body">
+            <div className="industry-signal-grid">
+              {industrySignals.map((signal) => <a className="industry-signal" href={signal.href} key={signal.source} rel="noreferrer" target="_blank"><strong>{signal.stat}</strong><span>{signal.label}</span><small>{signal.source} ↗</small></a>)}
+            </div>
           </div>
-        </section>
+        </details>
 
         <DemoUpload destination={destination} selectedName={selectedName} onSelect={(name, nextDestination) => { setSelectedName(name); setDestination(nextDestination); }} />
         <div className="projects-heading"><span className="overline">Predefined demo projects</span><span>Pick a known-safe fixture</span></div>

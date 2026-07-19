@@ -65,10 +65,15 @@ button { font: inherit; }
 }
 .hero h1 em { color: var(--green); font-weight: 500; }
 .hero-copy { max-width: 670px; margin: 0 auto; color: var(--muted); font-size: 18px; line-height: 1.65; }
-.industry-signals { max-width: 1060px; margin: 34px auto 0; padding: 21px; border: 1px solid #d9dfda; border-radius: 15px; background: rgba(255,255,255,.72); text-align: left; }
-.industry-signals-heading { display: flex; justify-content: space-between; align-items: end; gap: 24px; margin-bottom: 16px; }
-.industry-signals-heading .overline { margin: 0; color: var(--green); }
-.industry-signals h2 { max-width: 550px; margin: 0; font: 600 20px/1.1 Georgia, serif; letter-spacing: -.025em; }
+.industry-signals { max-width: 1060px; margin: 26px auto 0; border: 1px solid #d9dfda; border-radius: 12px; background: rgba(255,255,255,.72); text-align: left; }
+.industry-signals summary { min-height: 60px; padding: 13px 18px; display: flex; align-items: center; justify-content: space-between; gap: 22px; cursor: pointer; list-style: none; }
+.industry-signals summary::-webkit-details-marker { display: none; }
+.industry-signals summary .overline { margin: 0 0 3px; color: var(--green); }
+.industry-signals summary strong { display: block; font: 600 15px/1.15 Georgia, serif; letter-spacing: -.015em; }
+.industry-expand { color: var(--green); font-size: 10px; font-weight: 800; white-space: nowrap; }
+.industry-expand i { display: inline-block; margin-left: 6px; font-style: normal; transition: transform .2s; }
+.industry-signals[open] .industry-expand i { transform: rotate(180deg); }
+.industry-signals-body { padding: 0 18px 18px; }
 .industry-signal-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; overflow: hidden; border: 1px solid var(--line); border-radius: 9px; background: var(--line); }
 .industry-signal { min-height: 119px; padding: 14px; display: grid; align-content: start; gap: 6px; background: #fbfcfa; color: var(--ink); text-decoration: none; }
 .industry-signal:hover { background: #f0f5eb; }
@@ -451,8 +456,8 @@ button { font: inherit; }
   .upload-scan-button { width: 100%; min-height: 42px; }
   .scan-run-result { grid-template-columns: 1fr; }
   .industry-signal-grid { grid-template-columns: 1fr; }
-  .industry-signals-heading { display: block; }
-  .industry-signals h2 { margin-top: 7px; }
+  .industry-signals summary { align-items: start; }
+  .industry-expand { white-space: normal; text-align: right; }
   .project-strip { grid-template-columns: 1fr; margin-top: 48px; }
   .sample-heading { grid-template-columns: auto 1fr; }
   .ready { grid-column: 2; }
