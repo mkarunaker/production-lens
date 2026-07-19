@@ -19,4 +19,8 @@ export const cleanSampleFiles: RepositoryFile[] = [
     path: "src/agent.test.ts",
     content: `import { strict as assert } from "node:assert";\nimport { answerQuestion } from "./agent";\nassert.equal(answerQuestion("hello"), "I can help with that.");\n`,
   },
+  {
+    path: "evals/golden-cases.json",
+    content: `{"name":"clean-agent-regression-evaluation","cases":[{"input":"hello","expected":"I can help with that."},{"input":"","expected":"Please ask a question."}],"scoring":"exact-match"}\n`,
+  },
 ];
