@@ -346,7 +346,7 @@ button { font: inherit; }
 .file-list button { width: 100%; padding: 6px; display: flex; align-items: center; gap: 5px; border: 0; border-radius: 4px; background: transparent; color: #d2dfd6; cursor: pointer; text-align: left; font: 9px/1.25 ui-monospace, monospace; }
 .file-list button:hover, .file-list .file-active { background: #426052; color: white; }
 .file-status { width: 11px; color: #b9d678; font: 800 10px/1 Inter, sans-serif; }
-.workspace-content { min-width: 0; min-height: 0; display: grid; grid-template-rows: minmax(0, 1fr) auto; }
+.workspace-content { min-width: 0; min-height: 0; display: grid; grid-template-columns: minmax(0, 1fr) minmax(300px, 350px); }
 .code-review { min-width: 0; min-height: 330px; display: flex; flex-direction: column; background: #1f2833; color: #d8e0eb; }
 .code-tab { min-height: 42px; padding: 0 15px; display: flex; align-items: center; justify-content: space-between; gap: 12px; border-bottom: 1px solid rgba(255,255,255,.1); background: #283542; color: #dce5ef; font: 10px/1 ui-monospace, monospace; }
 .code-tab small { padding: 4px 6px; border-radius: 4px; background: rgba(184,60,53,.2); color: #f2b1aa; font: 800 8px/1 Inter, sans-serif; text-transform: uppercase; letter-spacing: .05em; }
@@ -358,18 +358,18 @@ button { font: inherit; }
 .diff-removed { background: rgba(184,60,53,.2); color: #ffc5c0; }
 .diff-added { background: rgba(78,142,88,.22); color: #d2efbd; }
 .code-empty { padding: 28px; color: #9eafa4; font-size: 12px; }
-.remediation-panel { border-top: 1px solid #adc0b0; background: #f9faf7; color: var(--ink); }
+.remediation-panel { border-left: 1px solid #adc0b0; background: #f9faf7; color: var(--ink); overflow-y: auto; }
 .remediation-empty { min-height: 54px; padding: 10px 18px; display: flex; align-items: center; gap: 10px; background: #edf2e9; }
 .empty-lens { width: 38px; height: 38px; margin-bottom: 16px; display: grid; place-items: center; border: 1px solid #c5d6bc; border-radius: 50%; color: var(--green); font-size: 26px; }
 .remediation-empty h2, .remediation-detail h2 { margin: 4px 0 10px; font: 600 20px/1.08 Georgia, serif; letter-spacing: -.025em; }
 .remediation-empty p { margin: 0; color: var(--muted); font-size: 12px; line-height: 1.55; }
-.remediation-detail { padding: 14px 18px; display: grid; grid-template-columns: minmax(220px, 1.15fr) minmax(200px, 1fr) minmax(250px, .9fr); gap: 18px; align-items: start; }
+.remediation-detail { padding: 18px; }
 .remediation-title { display: flex; align-items: center; gap: 7px; color: #78847d; font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: .06em; }
 .remediation-detail > section { min-width: 0; }
 .remediation-detail h3 { margin: 0 0 6px; color: #6d7971; font-size: 8px; font-weight: 900; letter-spacing: .08em; text-transform: uppercase; }
 .remediation-detail p { margin: 0; color: #536159; font-size: 11px; line-height: 1.55; }
 .remediation-detail section code { color: var(--green-dark); font: 9px/1.4 ui-monospace, monospace; }
-.remediation-recommendation { padding-left: 18px; border-left: 1px solid var(--line); }
+.remediation-recommendation { margin-top: 17px; padding-top: 15px; border-top: 1px solid var(--line); }
 .remediation-recommendation code { display: block; margin-top: 9px; }
 .suggested-fix { padding: 8px; display: grid; gap: 3px; border: 1px solid #c7d9b5; border-radius: 7px; background: #eef6e6; }
 .suggested-fix strong { color: #315b42; font-size: 10px; }
@@ -383,6 +383,13 @@ button { font: inherit; }
 .workspace-approval input { margin: 1px 0 0; accent-color: var(--green); }
 .workspace-approval .approve-button { width: 100%; margin-top: 11px; border: 0; cursor: pointer; display: flex; justify-content: space-between; align-items: center; font-size: 10px; }
 .workspace-resolved, .workspace-no-patch { margin-top: 18px !important; padding: 10px; border-radius: 7px; background: #edf4e8; color: var(--green-dark) !important; }
+
+@media (max-width: 1250px) {
+  .workspace-content { grid-template-columns: 1fr; grid-template-rows: minmax(0, 1fr) auto; }
+  .remediation-panel { border-top: 1px solid #adc0b0; border-left: 0; overflow: visible; }
+  .remediation-detail { padding: 14px 18px; display: grid; grid-template-columns: minmax(220px, 1.15fr) minmax(200px, 1fr) minmax(250px, .9fr); gap: 18px; align-items: start; }
+  .remediation-recommendation { margin-top: 0; padding: 0 0 0 18px; border-top: 0; border-left: 1px solid var(--line); }
+}
 
 @media (max-width: 840px) {
   .scan-scope { grid-template-columns: repeat(2, 1fr); }
