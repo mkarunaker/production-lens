@@ -24,7 +24,7 @@ export default function Home() {
     <main>
       <header className="site-header">
         <Link className="brand" href="/" aria-label="Production Lens home">
-          <span className="brand-mark" aria-hidden="true" />
+          <span className="brand-mark" aria-hidden="true"><span className="brand-agent" /></span>
           <span>Production Lens</span>
         </Link>
         <span className="prototype-pill">OpenAI Build Week Hackathon</span>
