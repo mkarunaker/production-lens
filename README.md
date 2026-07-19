@@ -6,7 +6,14 @@ Production Lens is a developer tool that statically inspects an AI application r
 
 Organizations can build AI-agent pilots quickly, but moving those systems into production requires evidence that security, reliability, governance, and legal concerns have been addressed.
 
-Recent industry research from McKinsey, Darktrace, Stanford HAI, Deloitte, Gartner, and Forrester points to the same pattern: adoption of AI agents is accelerating, while confidence in security, accuracy, governance, and return on investment is lagging.
+Recent industry research points to the same pattern: agent adoption is accelerating while confidence in security, accuracy, governance, and return on investment is lagging.
+
+- **Nearly two-thirds** of respondents cite security and risk as the top barrier to fully scaling agentic AI. [McKinsey, *State of AI Trust in 2026*](https://www.mckinsey.com/capabilities/tech-and-ai/our-insights/tech-forward/state-of-ai-trust-in-2026-shifting-to-the-agentic-era)
+- **92%** of security professionals are concerned about AI agents’ impact on security. [Darktrace, *State of AI Cybersecurity 2026*](https://www.darktrace.com/resource/the-state-of-ai-cybersecurity-2026)
+- **74%** of respondents consider AI inaccuracy a relevant risk, up from 60% the preceding year. [Stanford HAI, *AI Index Report 2026*](https://hai.stanford.edu/assets/files/ai_index_report_2026_chapter_3_responsible_ai.pdf)
+- **Only one in five** companies has a mature model for governing autonomous AI agents. [Deloitte, *State of AI in the Enterprise 2026*](https://www.deloitte.com/us/en/what-we-do/capabilities/applied-artificial-intelligence/content/state-of-ai-in-the-enterprise.html)
+- **40%** of enterprise applications are forecast to feature task-specific AI agents by the end of 2026, up from less than 5% in 2025. [Gartner forecast](https://www.gartner.com/en/newsroom/press-releases/2025-08-26-gartner-predicts-40-percent-of-enterprise-apps-will-feature-task-specific-ai-agents-by-2026-up-from-less-than-5-percent-in-2025)
+- **25%** of planned AI spend is forecast to be deferred to 2027 as enterprises demand measurable returns. [Forrester, *Predictions 2026*](https://www.forrester.com/blogs/predictions-2026-ai-moves-from-hype-to-hard-hat-work/)
 
 Production Lens was created to help close that gap. It gives engineering, security, and legal teams a shared evidence base for identifying risks, reviewing concrete remediation options, and verifying whether a proposed fix actually removes the targeted issue.
 

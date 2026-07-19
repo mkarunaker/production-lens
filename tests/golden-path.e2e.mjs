@@ -51,6 +51,9 @@ try {
   const home = visibleText(await fetchText("/"));
   assert.match(home, /Load demo project/);
   assert.match(home, /Load security demo/);
+  assert.match(home, /Agent adoption is accelerating faster than production confidence/);
+  assert.match(home, /Nearly 2 in 3/);
+  assert.match(home, /92%/);
   assert.match(home, /Repository code is never executed/);
 
   const enterprise = visibleText(await fetchText("/results"));

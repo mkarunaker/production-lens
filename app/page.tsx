@@ -23,6 +23,15 @@ const securityChecks = [
   ["Dynamic execution", "Runtime evaluation"],
 ];
 
+const industrySignals = [
+  { stat: "Nearly 2 in 3", label: "say security and risk are the top barrier to scaling agentic AI.", source: "McKinsey, 2026", href: "https://www.mckinsey.com/capabilities/tech-and-ai/our-insights/tech-forward/state-of-ai-trust-in-2026-shifting-to-the-agentic-era" },
+  { stat: "92%", label: "of security professionals are concerned about AI agents’ security impact.", source: "Darktrace, 2026", href: "https://www.darktrace.com/resource/the-state-of-ai-cybersecurity-2026" },
+  { stat: "74%", label: "consider AI inaccuracy a relevant risk, up from 60% a year earlier.", source: "Stanford HAI, 2026", href: "https://hai.stanford.edu/assets/files/ai_index_report_2026_chapter_3_responsible_ai.pdf" },
+  { stat: "1 in 5", label: "companies has a mature model for governing autonomous AI agents.", source: "Deloitte, 2026", href: "https://www.deloitte.com/us/en/what-we-do/capabilities/applied-artificial-intelligence/content/state-of-ai-in-the-enterprise.html" },
+  { stat: "40%", label: "of enterprise apps are forecast to feature task-specific AI agents by end of 2026.", source: "Gartner", href: "https://www.gartner.com/en/newsroom/press-releases/2025-08-26-gartner-predicts-40-percent-of-enterprise-apps-will-feature-task-specific-ai-agents-by-2026-up-from-less-than-5-percent-in-2025" },
+  { stat: "25%", label: "of planned AI spend is forecast to be deferred to 2027 as proof of return matters.", source: "Forrester, 2026", href: "https://www.forrester.com/blogs/predictions-2026-ai-moves-from-hype-to-hard-hat-work/" },
+];
+
 export default function Home() {
   const [selectedName, setSelectedName] = useState<string>();
   const [destination, setDestination] = useState<string>();
@@ -49,6 +58,13 @@ export default function Home() {
           Production Lens identifies and helps remediate security, reliability, and
           governance risks in AI-agent repositories using five production-readiness principles.
         </p>
+
+        <section className="industry-signals" aria-labelledby="industry-signals-title">
+          <div className="industry-signals-heading"><span className="overline">Why this matters now</span><h2 id="industry-signals-title">Agent adoption is accelerating faster than production confidence.</h2></div>
+          <div className="industry-signal-grid">
+            {industrySignals.map((signal) => <a className="industry-signal" href={signal.href} key={signal.source} rel="noreferrer" target="_blank"><strong>{signal.stat}</strong><span>{signal.label}</span><small>{signal.source} ↗</small></a>)}
+          </div>
+        </section>
 
         <DemoUpload destination={destination} selectedName={selectedName} onSelect={(name, nextDestination) => { setSelectedName(name); setDestination(nextDestination); }} />
         <div className="projects-heading"><span className="overline">Predefined demo projects</span><span>Pick a known-safe fixture</span></div>

@@ -233,6 +233,7 @@ In progress.
 - Applicable principles: **Prove it** through explicit scan evidence and **Trace and reverse it** through a deliberate, reviewable transition before remediation. The UI does not add authority, execute source, or process arbitrary hosted archives.
 - Validation passed: `npm test` (49 tests), `npm audit --omit=dev --audit-level=high` (0 vulnerabilities), production build, and production-server golden-path E2E. Owner click-through testing remains the next demo gate.
 - The public-video narration and golden-path instructions in `docs/demo-script.md` now match the current **Load demo → File loaded → Run Lens → Review and remediate issues** sequence.
+- The home-page opening and README now surface six linked, source-attributed 2026 industry signals on agent scale, security, accuracy, governance, and ROI. The facts support the product context only; they do not change scanner findings or coverage claims.
 
 ## Recommended next step
 
