@@ -54,47 +54,49 @@ export function ResultsWorkspace({ result, files, proposals, sample, canApply }:
       </div>
 
       <div className="workspace-main">
-        <aside className="findings-rail" aria-label="Open findings by severity">
-          <div className="findings-rail-title"><span>Open issues</span><strong>{result.findings.length}</strong></div>
-          <div className="findings-scroll">
-            {severityOrder.map((severity) => {
-              const findings = result.findings.filter((finding) => finding.severity === severity);
-              if (!findings.length) return null;
-              return (
-                <section key={severity} className={`workspace-severity workspace-severity-${severity}`}>
-                  <div className="workspace-severity-heading"><span>{severity}</span><strong>{severity[0].toUpperCase() + severity.slice(1)} · {findings.length}</strong></div>
-                  <div className="workspace-finding-cards">
-                    {findings.map((finding) => (
-                      <button
-                        className={`workspace-finding-card ${selected?.id === finding.id ? "workspace-finding-card-active" : ""}`}
-                        key={finding.id}
-                        onClick={() => selectFinding(finding)}
-                        type="button"
-                      >
-                        <span>{finding.category}</span>
-                        <strong>{finding.title}</strong>
-                        {finding.evidence && <small>{finding.evidence.path}:{finding.evidence.line}</small>}
-                      </button>
-                    ))}
-                  </div>
-                </section>
-              );
-            })}
-          </div>
-        </aside>
-        <aside className="file-explorer" aria-label="Scanned files">
-          <div className="explorer-heading"><span>Explorer</span><strong>{visibleFiles.length}</strong></div>
-          <button className={`lens-filter ${showCaught ? "lens-filter-active" : ""}`} type="button" onClick={() => setShowCaught((value) => !value)}>
-            <span aria-hidden="true">◉</span> {showCaught ? "Showing caught files" : "Caught with Lens"}
-          </button>
-          <p className="explorer-note">{showCaught ? "Files with finding evidence" : "All approved scanned files"}</p>
-          <nav className="file-list">
-            {visibleFiles.map((file) => (
-              <button className={activeFile?.path === file.path ? "file-active" : ""} key={file.path} onClick={() => selectFile(file)} type="button">
-                <span className="file-status" aria-hidden="true">{caughtPaths.has(file.path) ? "!" : "·"}</span>{file.path}
-              </button>
-            ))}
-          </nav>
+        <aside className="workspace-sidebar">
+          <section className="findings-rail" aria-label="Open findings by severity">
+            <div className="findings-rail-title"><span>Open issues</span><strong>{result.findings.length}</strong></div>
+            <div className="findings-scroll">
+              {severityOrder.map((severity) => {
+                const findings = result.findings.filter((finding) => finding.severity === severity);
+                if (!findings.length) return null;
+                return (
+                  <section key={severity} className={`workspace-severity workspace-severity-${severity}`}>
+                    <div className="workspace-severity-heading"><span>{severity}</span><strong>{findings.length}</strong></div>
+                    <div className="workspace-finding-cards">
+                      {findings.map((finding) => (
+                        <button
+                          className={`workspace-finding-card ${selected?.id === finding.id ? "workspace-finding-card-active" : ""}`}
+                          key={finding.id}
+                          onClick={() => selectFinding(finding)}
+                          type="button"
+                        >
+                          <span>{finding.category}</span>
+                          <strong>{finding.title}</strong>
+                          {finding.evidence && <small>{finding.evidence.path}:{finding.evidence.line}</small>}
+                        </button>
+                      ))}
+                    </div>
+                  </section>
+                );
+              })}
+            </div>
+          </section>
+          <section className="file-explorer" aria-label="Scanned files">
+            <div className="explorer-heading"><span>Explorer</span><strong>{visibleFiles.length}</strong></div>
+            <button className={`lens-filter ${showCaught ? "lens-filter-active" : ""}`} type="button" onClick={() => setShowCaught((value) => !value)}>
+              <span aria-hidden="true">◉</span> {showCaught ? "Showing caught files" : "Caught with Lens"}
+            </button>
+            <p className="explorer-note">{showCaught ? "Files with finding evidence" : "All approved scanned files"}</p>
+            <nav className="file-list">
+              {visibleFiles.map((file) => (
+                <button className={activeFile?.path === file.path ? "file-active" : ""} key={file.path} onClick={() => selectFile(file)} type="button">
+                  <span className="file-status" aria-hidden="true">{caughtPaths.has(file.path) ? "!" : "·"}</span>{file.path}
+                </button>
+              ))}
+            </nav>
+          </section>
         </aside>
 
         <section className="code-review" aria-label="Source code">
