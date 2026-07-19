@@ -20,7 +20,7 @@ Production Lens treats repository code as hostile data, scans it without executi
 
 ## The complete demo workflow
 
-1. Select one of two bundled AI-agent repositories.
+1. Select one of three bundled AI-agent repositories.
 2. Run a deterministic static scan without importing, installing, building, or executing repository code.
 3. Review prioritized findings with severity, category, file, line, evidence, impact, readiness principles, and remediation.
 4. Inspect the technology inventory and the evidence state of every catalog check.
@@ -30,13 +30,13 @@ Production Lens treats repository code as hostile data, scans it without executi
 8. Rescan and compare resolved, remaining, and newly introduced findings.
 9. Reset to the exact canonical baseline.
 
-The Enterprise Analytics Agent demonstrates an **11 → 10** remediation. The Security Test Agent demonstrates a **7 → 6** injection remediation.
+The Enterprise Analytics Agent demonstrates an **11 → 10** remediation. The Security Test Agent demonstrates a **7 → 6** injection remediation. The Clean Agent Baseline demonstrates a zero-finding result against the current deterministic catalog.
 
 ## What is implemented
 
 - Eleven deterministic production-readiness findings for the enterprise sample
 - Seven evaluated injection findings for the security sample
-- Sanitized hosted Chief of Staff Python demo fixture (credentials, tokens, virtualenvs, caches, and Git data excluded)
+- Clean Agent Baseline with a locked dependency manifest and golden evaluation cases
 - Line-level evidence with suspected-secret redaction
 - Technology inventory and explicit applicability/evidence states
 - Prompt-injection, dynamic-execution, lockfile, SQL/ORM, OS-command, argument, NoSQL, and unsafe-HTML checks for declared evaluated patterns
@@ -49,7 +49,7 @@ The Enterprise Analytics Agent demonstrates an **11 → 10** remediation. The Se
 - A formal release-blocking adversarial corpus with stable fixture IDs
 - Security headers, threat model, evaluation gates, and dependency auditing
 
-Hosted arbitrary uploads and runtime GPT analysis are deliberately disabled until their isolation, authorization, operational, and adversarial gates are complete. The hosted UI includes a fixed sanitized Chief of Staff demo fixture; it is selected by an allowlisted demo ID, not an arbitrary user upload.
+Hosted arbitrary uploads and runtime GPT analysis are deliberately disabled until their isolation, authorization, operational, and adversarial gates are complete. Chief of Staff remains a separate sanitized ZIP test artifact rather than a preloaded card.
 
 ## Try it without rebuilding
 
@@ -63,6 +63,7 @@ Open the [private live demo](https://production-lens.karunaker-molugu.chatgpt.si
 6. Confirm the comparison shows 11 → 10, one resolved finding, and no new findings.
 7. Reset and confirm the baseline returns to 11.
 8. Repeat with **Scan security test project** to inspect seven injection findings.
+9. Choose **Clean Agent Baseline** to confirm the zero-finding result and its explicit catalog limitation.
 
 No credentials beyond the hosting platform’s normal ChatGPT sign-in are required.
 
@@ -76,7 +77,7 @@ No credentials beyond the hosting platform’s normal ChatGPT sign-in are requir
 
 The hosted build targets a Cloudflare Worker through Vinext. Local scanning and tests do not require Cloudflare credentials.
 
-The hosted demo provides three sanitized ZIP downloads under `public/demo-archives/`. Judges may download one, select it in the upload control, and click **Run Lens**. The hosted control accepts only those provided demo filenames; use `npm run demo:zip` for custom local ZIPs.
+The hosted demo provides three sanitized ZIP downloads under `public/demo-archives/`: Enterprise Analytics, Security Test Agent, and Clean Agent Baseline. Judges may download one, select it in the upload control, and click **Run Lens**. The hosted control accepts only those provided demo filenames; use `npm run demo:zip` for custom local ZIPs.
 
 ### Run locally
 
@@ -107,10 +108,12 @@ npm run security:check
 
 ## Sample data
 
-Both samples are bundled and inert:
+Bundled samples are inert:
 
 - `samples/enterprise-analytics-agent/` — intentionally incomplete analytics agent
 - `lib/scanner/security-sample-bundle.ts` — intentionally vulnerable injection test agent
+- `lib/scanner/clean-sample-bundle.ts` — minimal zero-finding baseline
+- `samples/clean-agent-baseline/` — downloadable clean baseline source
 
 Tests assert that bundled snapshots match their canonical source and expected finding manifests.
 
