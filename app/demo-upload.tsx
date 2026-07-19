@@ -29,7 +29,7 @@ export function DemoUpload() {
         setStep(current);
         if (current >= 3) { window.clearInterval(timer); window.setTimeout(() => router.push(destination!), 350); }
       }, 420);
-    }}>Run Lens <span aria-hidden="true">→</span></button></div>
+    }}>Run Lens</button></div>
     <input id="demo-zip" className="visually-hidden" type="file" accept=".zip,application/zip" onChange={(event) => {
       const file = event.target.files?.[0];
       if (!file) return;
