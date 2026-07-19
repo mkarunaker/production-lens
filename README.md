@@ -177,7 +177,6 @@ Production Lens was created during the submission period beginning July 13, 2026
 - `lib/security/` — headers, authorization, admission, audit, and alert policies
 - `samples/` — inert bundled sample repository
 - `tests/` — functional, security, adversarial, self-scan, and E2E tests
-- `docs/demo-script.md` — narrated demo and recovery runbook
 - `docs/evaluation-gates.md` — mandatory release evaluations
 - `docs/production-readiness-principles.md` — governing doctrine
 - `docs/threat-model.md` — trust boundaries and residual risks
