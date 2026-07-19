@@ -17,7 +17,7 @@ At the start of a new session:
 ## Current product state
 
 - Private deployment: https://production-lens.karunaker-molugu.chatgpt.site
-- Current checkpoint commit: `cfb829a` (latest local UI commit is `9bc3147`; hosted version 34 contains the proposal-diff contrast fix; version 33 contains the larger Run Lens button).
+- Current checkpoint commit: `5f87fe7` (hosted version 36 contains the visual identity, footer, hero copy, and Run Lens label updates).
 - Local ZIP test checkpoint: the latest `feat: add localhost zip scan demo` entry in `git log`.
 - Deterministic sample findings: 11
 - Automated tests: 49 passing
