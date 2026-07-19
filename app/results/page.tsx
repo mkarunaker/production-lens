@@ -11,7 +11,7 @@ import { ResultsWorkspace } from "@/app/results/workspace";
 
 export const metadata: Metadata = { title: "Scan results" };
 
-export default async function ResultsPage({ searchParams }: { searchParams: Promise<{ finding?: string; mode?: string; approved?: string; sample?: string; rule?: string }> }) {
+export default async function ResultsPage({ searchParams }: { searchParams: Promise<{ finding?: string; mode?: string; approved?: string; sample?: string; rule?: string; view?: string }> }) {
   const params = await searchParams;
   const isSecuritySample = params.sample === "security";
   const isChiefSample = params.sample === "chief";
@@ -49,7 +49,7 @@ function Results({
   result: ReturnType<typeof scanRepository>;
   files: typeof sampleFiles;
   proposals: ReturnType<typeof proposeRemediation>[];
-  params: { finding?: string; mode?: string; approved?: string; sample?: string; rule?: string };
+  params: { finding?: string; mode?: string; approved?: string; sample?: string; rule?: string; view?: string };
   comparison?: ReturnType<typeof validateRemediation>;
   proposal?: ReturnType<typeof proposeRemediation>;
   isSecuritySample: boolean;
@@ -83,6 +83,8 @@ function Results({
     ...result.inventory.dataStores,
     ...result.inventory.capabilities,
   ];
+  const workspaceHref = `/results?${sampleQuery}view=workspace`;
+  const showWorkspace = params.view === "workspace" || Boolean(comparison);
 
   return (
     <main>
@@ -151,7 +153,29 @@ function Results({
           </div>
         </details>
         {result.findings.length === 0 && <section className="clean-result" aria-label="Clean baseline result"><span className="clean-result-mark">✓</span><div><span className="overline">Catalog review complete</span><h2>No evaluated risks found</h2><p>This baseline matched none of Production Lens’s current deterministic rules. It is a positive signal, not a universal security guarantee.</p></div></section>}
-        <ResultsWorkspace result={result} files={files} proposals={proposals} sample={isSecuritySample ? "security" : isChiefSample ? "chief" : isCleanSample ? "clean" : undefined} canApply={!comparison} />
+        {showWorkspace ? (
+          <ResultsWorkspace result={result} files={files} proposals={proposals} sample={isSecuritySample ? "security" : isChiefSample ? "chief" : isCleanSample ? "clean" : undefined} canApply={!comparison} />
+        ) : (
+          <section className="scan-decision" aria-label="Scan next steps">
+            <div className="scan-complete-steps">
+              <span className="overline">Lens run complete</span>
+              <h2>Review is ready</h2>
+              <p>Production Lens completed a deterministic, code-inert review of the loaded archive.</p>
+              <ol>
+                <li><span>✓</span><div><strong>Archive boundaries validated</strong><small>Approved files only; repository code was not executed.</small></div></li>
+                <li><span>✓</span><div><strong>Technology inventory built</strong><small>Supported languages, data stores, and capabilities were identified.</small></div></li>
+                <li><span>✓</span><div><strong>Readiness risks evaluated</strong><small>Evidence and recommended remediations are ready for review.</small></div></li>
+              </ol>
+            </div>
+            <aside className="scan-issues-next">
+              <span className="overline">Open issues</span>
+              <h2>{result.findings.length} findings need review</h2>
+              <div className="scan-issue-counts"><span><strong>{counts.critical}</strong> Critical</span><span><strong>{counts.high}</strong> High</span><span><strong>{counts.medium}</strong> Medium</span></div>
+              {result.findings.length ? <Link className="scan-button review-issues-button" href={workspaceHref}><span>Review and remediate issues</span><span aria-hidden="true">→</span></Link> : <Link className="scan-button review-issues-button" href={workspaceHref}><span>Review scanned code</span><span aria-hidden="true">→</span></Link>}
+              <p>Continue only when you are ready to inspect code and suggested changes.</p>
+            </aside>
+          </section>
+        )}
       </div>
     </main>
   );

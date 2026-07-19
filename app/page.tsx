@@ -1,5 +1,8 @@
+"use client";
+
 import Link from "next/link";
-import { DemoUpload } from "./demo-upload";
+import { useState } from "react";
+import { DemoUpload, demos } from "./demo-upload";
 import { ProductionLensLogo } from "./logo";
 
 const checks = [
@@ -21,6 +24,14 @@ const securityChecks = [
 ];
 
 export default function Home() {
+  const [selectedName, setSelectedName] = useState<string>();
+  const [destination, setDestination] = useState<string>();
+
+  function loadDemo(name: string) {
+    setSelectedName(name);
+    setDestination(demos[name]);
+  }
+
   return (
     <main>
       <header className="site-header">
@@ -39,7 +50,7 @@ export default function Home() {
           governance risks in AI-agent repositories using five production-readiness principles.
         </p>
 
-        <DemoUpload />
+        <DemoUpload destination={destination} selectedName={selectedName} onSelect={(name, nextDestination) => { setSelectedName(name); setDestination(nextDestination); }} />
         <div className="projects-heading"><span className="overline">Predefined demo projects</span><span>Pick a known-safe fixture</span></div>
         <div className="project-strip"><div className="sample-card">
           <div className="sample-heading">
@@ -61,10 +72,10 @@ export default function Home() {
               </div>
             ))}
           </div>
-          <Link className="scan-button" href="/results">
-            <span>Scan sample project</span>
+          <button className="scan-button" type="button" onClick={() => loadDemo("enterprise-analytics-agent.zip")}>
+            <span>Load demo project</span>
             <span aria-hidden="true">→</span>
-          </Link>
+          </button>
           <div className="safety-note">
             <span aria-hidden="true">◇</span>
             Static analysis only. Repository code is never executed.
@@ -91,10 +102,10 @@ export default function Home() {
               </div>
             ))}
           </div>
-          <Link className="scan-button security-scan-button" href="/results?sample=security">
-            <span>Scan security test project</span>
+          <button className="scan-button security-scan-button" type="button" onClick={() => loadDemo("security-test-agent.zip")}>
+            <span>Load security demo</span>
             <span aria-hidden="true">→</span>
-          </Link>
+          </button>
           <div className="safety-note">
             <span aria-hidden="true">◇</span>
             Intentionally vulnerable source is treated only as untrusted text.
@@ -104,7 +115,7 @@ export default function Home() {
         <div className="sample-card secondary-sample clean-sample">
           <div className="sample-heading"><div className="repo-icon" aria-hidden="true">✓</div><div><span className="overline">Clean baseline</span><h2>Clean Agent Baseline</h2></div><span className="ready"><i /> Ready to scan</span></div>
           <p>Minimal typed agent · locked dependencies · no external integrations · no catalog risks detected</p>
-          <Link className="scan-button" href="/results?sample=clean"><span>Scan clean baseline</span><span aria-hidden="true">→</span></Link>
+          <button className="scan-button" type="button" onClick={() => loadDemo("clean-agent-baseline.zip")}><span>Load clean baseline</span><span aria-hidden="true">→</span></button>
           <div className="safety-note"><span aria-hidden="true">◇</span> Zero findings means no matches in the current deterministic catalog—not a universal security guarantee.</div>
         </div>
 

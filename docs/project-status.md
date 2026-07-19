@@ -223,6 +223,16 @@ In progress.
 - Validation passed: `npm test` (49 tests), `npm audit --omit=dev --audit-level=high` (0 vulnerabilities), production build, and production-server golden-path E2E.
 - Browser visual review could not run in the current session because no browser was available; owner click-through testing at the existing private Production Lens URL is the next gate before treating the draft as accepted.
 
+### Staged scan-to-remediation demo flow
+
+In progress.
+
+- Selecting either a provided ZIP or a predefined demo now loads the named fixture rather than starting a scan immediately. The home screen shows **File loaded — filename** with a checkmark as its first scan-status line and enables the shared **Run Lens** action.
+- After the bounded static scan animation, results open to a separate decision view: completed archive, inventory, and risk-evaluation steps appear alongside the severity totals and a deliberate **Review and remediate issues** action.
+- The code-first workspace is entered only through that action. Existing deterministic scanning, approval, disposable-copy remediation, rescan, and reset boundaries are unchanged.
+- Applicable principles: **Prove it** through explicit scan evidence and **Trace and reverse it** through a deliberate, reviewable transition before remediation. The UI does not add authority, execute source, or process arbitrary hosted archives.
+- Validation passed: `npm test` (49 tests), `npm audit --omit=dev --audit-level=high` (0 vulnerabilities), production build, and production-server golden-path E2E. Owner click-through testing remains the next demo gate.
+
 ## Recommended next step
 
 For the fastest safe hackathon path:

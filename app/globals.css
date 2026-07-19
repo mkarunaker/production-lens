@@ -66,6 +66,10 @@ button { font: inherit; }
 .hero h1 em { color: var(--green); font-weight: 500; }
 .hero-copy { max-width: 670px; margin: 0 auto; color: var(--muted); font-size: 18px; line-height: 1.65; }
 .upload-panel { max-width: 790px; margin: 36px auto 0; padding: 12px; background: #17251f; border-radius: 16px; box-shadow: 0 18px 50px rgba(31,54,42,.12); }
+.loaded-file { min-height: 34px; padding: 0 7px 10px; display: flex; align-items: center; gap: 7px; color: #dbecc1; font-size: 11px; }
+.loaded-file > span:first-child { width: 18px; height: 18px; display: grid; place-items: center; border-radius: 50%; background: #b9d678; color: #17251f; font-weight: 900; }
+.loaded-file strong { color: #ffffff; }
+.loaded-file code { overflow: hidden; color: #dbecc1; font: 10px/1.2 ui-monospace, monospace; text-overflow: ellipsis; white-space: nowrap; }
 .upload-row { display: flex; gap: 10px; align-items: stretch; }
 .upload-drop { flex: 1 1 auto; min-width: 0; min-height: 78px; padding: 15px 18px; display: flex; align-items: center; gap: 14px; border: 1px dashed rgba(185,214,120,.55); border-radius: 11px; color: white; cursor: pointer; }
 .upload-drop:hover { background: rgba(255,255,255,.05); }
@@ -130,6 +134,7 @@ button { font: inherit; }
   box-shadow: inset 0 0 0 1px rgba(255,255,255,.08);
   transition: transform .2s, background .2s;
 }
+.scan-button { width: 100%; border: 0; cursor: pointer; text-align: left; }
 .scan-button:hover { background: #173f2e; transform: translateY(-1px); }
 .scan-button:focus-visible, .back-link:focus-visible, .finding-card:focus-visible { outline: 3px solid var(--lime); outline-offset: 3px; }
 .safety-note { margin-top: 14px; color: #8a928e; text-align: center; font-size: 10px; display: flex; justify-content: center; gap: 7px; }
@@ -383,6 +388,23 @@ button { font: inherit; }
 .workspace-approval input { margin: 1px 0 0; accent-color: var(--green); }
 .workspace-approval .approve-button { width: 100%; margin-top: 11px; border: 0; cursor: pointer; display: flex; justify-content: space-between; align-items: center; font-size: 10px; }
 .workspace-resolved, .workspace-no-patch { margin-top: 18px !important; padding: 10px; border-radius: 7px; background: #edf4e8; color: var(--green-dark) !important; }
+.scan-decision { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(300px, .65fr); overflow: hidden; border: 1px solid var(--line); border-radius: 14px; background: #fff; }
+.scan-complete-steps { padding: 30px; }
+.scan-complete-steps h2, .scan-issues-next h2 { margin: 0; font: 600 28px/1.05 Georgia, serif; letter-spacing: -.03em; }
+.scan-complete-steps > p { max-width: 520px; margin: 10px 0 24px; color: var(--muted); font-size: 13px; line-height: 1.55; }
+.scan-complete-steps ol { margin: 0; padding: 0; display: grid; gap: 1px; list-style: none; border: 1px solid var(--line); border-radius: 9px; overflow: hidden; }
+.scan-complete-steps li { padding: 14px; display: flex; gap: 11px; align-items: center; background: #fbfcfa; }
+.scan-complete-steps li > span { width: 22px; height: 22px; flex: 0 0 22px; display: grid; place-items: center; border-radius: 50%; background: #e8f1db; color: #49784e; font-weight: 900; font-size: 11px; }
+.scan-complete-steps li strong, .scan-complete-steps li small { display: block; }
+.scan-complete-steps li strong { font-size: 12px; }
+.scan-complete-steps li small { margin-top: 3px; color: var(--muted); font-size: 10px; }
+.scan-issues-next { padding: 30px; display: flex; flex-direction: column; background: #edf2e9; border-left: 1px solid var(--line); }
+.scan-issues-next h2 { font-size: 24px; }
+.scan-issue-counts { margin-top: 18px; display: grid; gap: 7px; }
+.scan-issue-counts span { display: flex; justify-content: space-between; color: #67746c; font-size: 11px; }
+.scan-issue-counts strong { color: var(--critical); font: 600 18px/1 Georgia, serif; }
+.review-issues-button { min-height: 48px; margin-top: auto; font-size: 12px; }
+.scan-issues-next p { margin: 12px 0 0; color: var(--muted); font-size: 10px; line-height: 1.45; }
 
 @media (max-width: 840px) {
   .scan-scope { grid-template-columns: repeat(2, 1fr); }

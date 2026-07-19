@@ -49,16 +49,20 @@ try {
   await waitUntilReady();
 
   const home = visibleText(await fetchText("/"));
-  assert.match(home, /Scan sample project/);
-  assert.match(home, /Scan security test project/);
+  assert.match(home, /Load demo project/);
+  assert.match(home, /Load security demo/);
   assert.match(home, /Repository code is never executed/);
 
   const enterprise = visibleText(await fetchText("/results"));
   assert.match(enterprise, /11 open findings/);
   assert.match(enterprise, /What Production Lens evaluated/);
-  assert.match(enterprise, /Select a finding card or flagged file/);
-  assert.match(enterprise, /finding card or flagged file/);
-  assert.match(enterprise, /Caught with Lens/);
+  assert.match(enterprise, /Lens run complete/);
+  assert.match(enterprise, /Review and remediate issues/);
+
+  const workspace = visibleText(await fetchText("/results?view=workspace"));
+  assert.match(workspace, /Select a finding card or flagged file/);
+  assert.match(workspace, /finding card or flagged file/);
+  assert.match(workspace, /Caught with Lens/);
 
   const security = visibleText(await fetchText("/results?sample=security"));
   assert.match(security, /7 open findings/);

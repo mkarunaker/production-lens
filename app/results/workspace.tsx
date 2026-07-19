@@ -120,6 +120,7 @@ export function ResultsWorkspace({ result, files, proposals, sample, canApply }:
                   <div className="suggested-fix"><strong>Suggested fix is shown in code</strong><span>{proposal.path}:{proposal.line}</span></div>
                   <button className="show-patch-button" type="button" onClick={() => setShowPatch((value) => !value)}>{showPatch ? "Hide inline diff" : "Show inline diff"}<span>→</span></button>
                   <form action="/results" method="get" className="workspace-approval">
+                    <input type="hidden" name="view" value="workspace" />
                     <input type="hidden" name="mode" value="after" />
                     <input type="hidden" name="approved" value="yes" />
                     <input type="hidden" name="rule" value={selected.ruleId} />
