@@ -27,8 +27,9 @@ export function ResultsWorkspace({ result, files, proposals, sample, canApply }:
 
   function selectFinding(finding: Finding) {
     setSelected(finding);
-    setShowPatch(false);
-    if (finding.evidence) setActivePath(finding.evidence.path);
+    const remediation = proposals.find((candidate) => candidate.ruleId === finding.ruleId);
+    setShowPatch(Boolean(remediation));
+    setActivePath(remediation?.path ?? finding.evidence?.path ?? activePath);
   }
 
   return (
@@ -41,33 +42,35 @@ export function ResultsWorkspace({ result, files, proposals, sample, canApply }:
         <span>{result.scannedFiles} approved files · code remains inert</span>
       </div>
 
-      <div className="workspace-findings" aria-label="Open findings by severity">
-        {severityOrder.map((severity) => {
-          const findings = result.findings.filter((finding) => finding.severity === severity);
-          if (!findings.length) return null;
-          return (
-            <section key={severity} className={`workspace-severity workspace-severity-${severity}`}>
-              <div className="workspace-severity-heading"><span>{severity}</span><strong>{findings.length}</strong></div>
-              <div className="workspace-finding-cards">
-                {findings.map((finding) => (
-                  <button
-                    className={`workspace-finding-card ${selected?.id === finding.id ? "workspace-finding-card-active" : ""}`}
-                    key={finding.id}
-                    onClick={() => selectFinding(finding)}
-                    type="button"
-                  >
-                    <span>{finding.category}</span>
-                    <strong>{finding.title}</strong>
-                    {finding.evidence && <small>{finding.evidence.path}:{finding.evidence.line}</small>}
-                  </button>
-                ))}
-              </div>
-            </section>
-          );
-        })}
-      </div>
-
       <div className="workspace-main">
+        <aside className="findings-rail" aria-label="Open findings by severity">
+          <div className="findings-rail-title"><span>Open issues</span><strong>{result.findings.length}</strong></div>
+          <div className="findings-scroll">
+            {severityOrder.map((severity) => {
+              const findings = result.findings.filter((finding) => finding.severity === severity);
+              if (!findings.length) return null;
+              return (
+                <section key={severity} className={`workspace-severity workspace-severity-${severity}`}>
+                  <div className="workspace-severity-heading"><span>{severity}</span><strong>{severity[0].toUpperCase() + severity.slice(1)} · {findings.length}</strong></div>
+                  <div className="workspace-finding-cards">
+                    {findings.map((finding) => (
+                      <button
+                        className={`workspace-finding-card ${selected?.id === finding.id ? "workspace-finding-card-active" : ""}`}
+                        key={finding.id}
+                        onClick={() => selectFinding(finding)}
+                        type="button"
+                      >
+                        <span>{finding.category}</span>
+                        <strong>{finding.title}</strong>
+                        {finding.evidence && <small>{finding.evidence.path}:{finding.evidence.line}</small>}
+                      </button>
+                    ))}
+                  </div>
+                </section>
+              );
+            })}
+          </div>
+        </aside>
         <aside className="file-explorer" aria-label="Scanned files">
           <div className="explorer-heading"><span>Explorer</span><strong>{visibleFiles.length}</strong></div>
           <button className={`lens-filter ${showCaught ? "lens-filter-active" : ""}`} type="button" onClick={() => setShowCaught((value) => !value)}>
@@ -105,8 +108,9 @@ export function ResultsWorkspace({ result, files, proposals, sample, canApply }:
               <section><h3>Recommended remediation</h3><p>{selected.remediation}</p></section>
               {proposal && canApply ? (
                 <>
-                  <button className="show-patch-button" type="button" onClick={() => setShowPatch((value) => !value)}>{showPatch ? "Hide proposed fix" : "Show proposed fix in code"}<span>→</span></button>
-                  {showPatch && <div className="patch-rationale"><strong>Why this patch</strong><p>{proposal.rationale}</p></div>}
+                  <div className="suggested-fix"><strong>Suggested fix is shown in code</strong><span>{proposal.path}:{proposal.line}</span></div>
+                  <div className="patch-rationale"><strong>Why this patch</strong><p>{proposal.rationale}</p></div>
+                  <button className="show-patch-button" type="button" onClick={() => setShowPatch((value) => !value)}>{showPatch ? "Hide inline diff" : "Show inline diff"}<span>→</span></button>
                   <form action="/results" method="get" className="workspace-approval">
                     <input type="hidden" name="mode" value="after" />
                     <input type="hidden" name="approved" value="yes" />

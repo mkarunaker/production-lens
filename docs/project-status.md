@@ -217,7 +217,8 @@ Complete except for the final deployed-browser rehearsal.
 In progress.
 
 - Results now have a draft unified workspace: severity-grouped finding cards, a full scanned-file explorer, a **Caught with Lens** filter, a code-first review pane, and an initially empty remediation panel.
-- Selecting a finding keeps the user on the results page and shows the recommended fix as an inline before/after code diff; approval, disposable-copy application, rescan, comparison, and reset remain unchanged.
+- The workspace is now an intentional developer dark mode: a scrollable left finding rail groups cards under `Critical · count`, `High · count`, and `Medium · count`; the explorer and code surface use distinct developer-friendly hues.
+- Selecting a finding keeps the user on the results page, opens the proposed patch file, and shows the recommended fix as an inline before/after code diff immediately; approval, disposable-copy application, rescan, comparison, and reset remain unchanged.
 - Validation passed: `npm test` (49 tests), `npm audit --omit=dev --audit-level=high` (0 vulnerabilities), production build, and production-server golden-path E2E.
 - Deployed privately as hosted version 47 at the existing Production Lens URL. Browser visual review could not run in the current session because no browser was available; owner click-through testing is the next gate before treating the draft as accepted.
 
