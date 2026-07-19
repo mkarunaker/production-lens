@@ -1,0 +1,1 @@
+{"name":"clean-agent-regression-evaluation","cases":[{"input":"hello","expected":"I can help with that."},{"input":"","expected":"Please ask a question."}],"scoring":"exact-match"}
