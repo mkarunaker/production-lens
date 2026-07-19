@@ -32,6 +32,17 @@ export function ResultsWorkspace({ result, files, proposals, sample, canApply }:
     setActivePath(remediation?.path ?? finding.evidence?.path ?? activePath);
   }
 
+  function selectFile(file: RepositoryFile) {
+    const finding = result.findings.find((candidate) => candidate.evidence?.path === file.path);
+    if (finding) {
+      selectFinding(finding);
+      return;
+    }
+    setSelected(undefined);
+    setShowPatch(false);
+    setActivePath(file.path);
+  }
+
   return (
     <section className="review-workspace" aria-label="Repository review workspace">
       <div className="workspace-toolbar">
@@ -79,7 +90,7 @@ export function ResultsWorkspace({ result, files, proposals, sample, canApply }:
           <p className="explorer-note">{showCaught ? "Files with finding evidence" : "All approved scanned files"}</p>
           <nav className="file-list">
             {visibleFiles.map((file) => (
-              <button className={activeFile?.path === file.path ? "file-active" : ""} key={file.path} onClick={() => setActivePath(file.path)} type="button">
+              <button className={activeFile?.path === file.path ? "file-active" : ""} key={file.path} onClick={() => selectFile(file)} type="button">
                 <span className="file-status" aria-hidden="true">{caughtPaths.has(file.path) ? "!" : "·"}</span>{file.path}
               </button>
             ))}
@@ -97,7 +108,7 @@ export function ResultsWorkspace({ result, files, proposals, sample, canApply }:
               <span className="empty-lens" aria-hidden="true">⌕</span>
               <span className="overline">Remediation workspace</span>
               <h2>Select an issue to remediate</h2>
-              <p>Choose a finding card to inspect its code, evidence, impact, and recommended patch without leaving this review.</p>
+              <p>Choose a finding card or a flagged file to inspect its code, evidence, impact, and recommended patch without leaving this review.</p>
             </div>
           ) : (
             <div className="remediation-detail">
