@@ -233,7 +233,7 @@ In progress.
 - Applicable principles: **Prove it** through explicit scan evidence and **Trace and reverse it** through a deliberate, reviewable transition before remediation. The UI does not add authority, execute source, or process arbitrary hosted archives.
 - Validation passed: `npm test` (49 tests), `npm audit --omit=dev --audit-level=high` (0 vulnerabilities), production build, and production-server golden-path E2E. Owner click-through testing remains the next demo gate.
 - The public-video narration and golden-path instructions in `docs/demo-script.md` now match the current **Load demo → File loaded → Run Lens → Review and remediate issues** sequence.
-- The narrated portion of `docs/demo-script.md` has received the KK Spoken Voice pass: shorter spoken beats, varied pacing, direct product claims, and no invented experience or metrics.
+- The narrated portion of `docs/demo-script.md` has received the KK Spoken Voice pass: shorter spoken beats, varied pacing, direct product claims, and no invented experience or metrics. Its opening now matches the on-screen AI-code evidence from Sonar and Veracode.
 - The home-page opening provides a collapsed **Why it matters** panel with three linked, source-attributed 2026 signals about AI-generated code, security flaws in evaluated generation tasks, and code-governance readiness. It can be expanded during the demo without consuming scan-flow space. The facts support product context only and do not change scanner findings or coverage claims.
 
 ## Recommended next step
