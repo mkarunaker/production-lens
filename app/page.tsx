@@ -24,19 +24,18 @@ export default function Home() {
     <main>
       <header className="site-header">
         <Link className="brand" href="/" aria-label="Production Lens home">
-          <span className="brand-mark" aria-hidden="true">PL</span>
+          <span className="brand-mark" aria-hidden="true" />
           <span>Production Lens</span>
         </Link>
-        <span className="prototype-pill">Hackathon prototype</span>
+        <span className="prototype-pill">OpenAI Build Week Hackathon</span>
       </header>
 
       <section className="hero">
         <div className="eyebrow"><span className="pulse" /> Static production-readiness review</div>
         <h1>See what stands between<br />your AI agent and <em>production.</em></h1>
         <p className="hero-copy">
-          Production Lens inspects repository evidence—not promises—to surface
-          the security, reliability, and governance gaps that matter most,
-          using five production-readiness principles.
+          Production Lens turns repository evidence into clear security, reliability,
+          and governance risks—using five production-readiness principles.
         </p>
 
         <DemoUpload />
@@ -118,11 +117,6 @@ export default function Home() {
         </div></div>
       </section>
 
-      <footer className="home-footer">
-        <span>Deterministic rules</span><i />
-        <span>Evidence-backed findings</span><i />
-        <span>Local sample only</span>
-      </footer>
     </main>
   );
 }
