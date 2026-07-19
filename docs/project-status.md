@@ -219,7 +219,7 @@ In progress.
 - Results now have a draft unified workspace: severity-grouped finding cards, a full scanned-file explorer, a **Caught with Lens** filter, a code-first review pane, and an initially empty remediation panel.
 - Selecting a finding keeps the user on the results page and shows the recommended fix as an inline before/after code diff; approval, disposable-copy application, rescan, comparison, and reset remain unchanged.
 - Validation passed: `npm test` (49 tests), `npm audit --omit=dev --audit-level=high` (0 vulnerabilities), production build, and production-server golden-path E2E.
-- This is an un-deployed visual draft pending owner review. Browser visual review could not run in the current session because no browser was available; complete that review before publishing.
+- Deployed privately as hosted version 47 at the existing Production Lens URL. Browser visual review could not run in the current session because no browser was available; owner click-through testing is the next gate before treating the draft as accepted.
 
 ## Recommended next step
 
