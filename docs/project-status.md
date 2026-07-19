@@ -220,7 +220,7 @@ In progress.
 - The workspace is now an intentional developer dark mode: a shared left sidebar stacks scrollable **Open issues** above **Explorer** so the code pane remains wide. Severity headers show the label on the left and its count on the right; the explorer and code surface use distinct developer-friendly hues.
 - Selecting either a finding card or a flagged filename keeps the user on the results page, opens the proposed patch file, and shows the recommended fix as an inline before/after code diff immediately; unflagged filenames open source normally and clear the remediation panel. Approval, disposable-copy application, rescan, comparison, and reset remain unchanged.
 - Validation passed: `npm test` (49 tests), `npm audit --omit=dev --audit-level=high` (0 vulnerabilities), production build, and production-server golden-path E2E.
-- Deployed privately as hosted version 49 at the existing Production Lens URL. Browser visual review could not run in the current session because no browser was available; owner click-through testing is the next gate before treating the draft as accepted.
+- Deployed privately as hosted version 50 at the existing Production Lens URL. Browser visual review could not run in the current session because no browser was available; owner click-through testing is the next gate before treating the draft as accepted.
 
 ## Recommended next step
 
