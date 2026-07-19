@@ -17,7 +17,7 @@ At the start of a new session:
 ## Current product state
 
 - Private deployment: https://production-lens.karunaker-molugu.chatgpt.site
-- Current checkpoint commit: `5f87fe7` (hosted version 36 contains the visual identity, footer, hero copy, and Run Lens label updates).
+- Current checkpoint commit: `36d436f` (public GitHub repository and README are current; hosted version 46 contains the clean baseline and zero-finding results fix).
 - Local ZIP test checkpoint: the latest `feat: add localhost zip scan demo` entry in `git log`.
 - Deterministic sample findings: 11
 - Automated tests: 49 passing
@@ -26,6 +26,7 @@ At the start of a new session:
 - Known dependency vulnerabilities at last verification: 0
 - Production build: passing
 - Hosted demo: private deployment succeeded through version 34; latest contrast correction is publishing/available at the same URL.
+- Public repository: https://github.com/mkarunaker/production-lens
 - Remediation evidence: proposal page and verified-results banner show before/after code and offer a downloadable reviewable `.patch` file; proposal diff uses readable red/green contrast.
 - Codex development default: GPT-5.6 Terra with medium reasoning; Luna and Sol are explicit task-level overrides
 
@@ -216,8 +217,8 @@ Complete except for the final deployed-browser rehearsal.
 For the fastest safe hackathon path:
 
 1. Freeze broad feature development and preserve the complete bundled scan/remediate/rescan workflow.
-2. Run the final signed-in deployed-browser rehearsal using the under-three-minute path in `docs/demo-script.md`.
-3. Publish or share the repository, record the narrated public YouTube demo, and collect the `/feedback` Session ID.
+2. Record the narrated public YouTube demo tomorrow morning using the local `docs/demo-script.md`.
+3. Collect the `/feedback` Session ID and complete the final Devpost fields and submission.
 6. Complete and submit the Devpost draft before July 21, 2026 at 5:00 PM Pacific.
 7. Do not expose hosted arbitrary uploads or runtime GPT analysis for the hackathon demo.
 
