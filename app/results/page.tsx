@@ -7,6 +7,7 @@ import { securitySampleFiles, securitySampleRepositoryName } from "@/lib/scanner
 import { chiefSampleFiles, chiefSampleRepositoryName } from "@/lib/scanner/chief-sample-bundle";
 import { cleanSampleFiles, cleanSampleRepositoryName } from "@/lib/scanner/clean-sample-bundle";
 import { ProductionLensLogo } from "@/app/logo";
+import { ResultsWorkspace } from "@/app/results/workspace";
 
 export const metadata: Metadata = { title: "Scan results" };
 
@@ -26,14 +27,17 @@ export default async function ResultsPage({ searchParams }: { searchParams: Prom
   const result = scanRepository(repositoryName, files);
   const comparison = isAfter ? validateRemediation(baseline, result, remediationRuleId!) : undefined;
   const proposal = remediationRuleId ? proposeRemediation(remediationRuleId, repositoryFiles) : undefined;
+  const proposals = baseline.findings.filter((finding) => hasRemediation(finding.ruleId)).map((finding) => proposeRemediation(finding.ruleId, repositoryFiles));
   const resolvedTitle = remediationRuleId
     ? baseline.findings.find((finding) => finding.ruleId === remediationRuleId)?.title
     : undefined;
-  return <Results result={result} params={params} comparison={comparison} proposal={proposal} isSecuritySample={isSecuritySample} isChiefSample={isChiefSample} isCleanSample={isCleanSample} resolvedTitle={resolvedTitle} />;
+  return <Results result={result} files={files} proposals={proposals} params={params} comparison={comparison} proposal={proposal} isSecuritySample={isSecuritySample} isChiefSample={isChiefSample} isCleanSample={isCleanSample} resolvedTitle={resolvedTitle} />;
 }
 
 function Results({
   result,
+  files,
+  proposals,
   params,
   comparison,
   proposal,
@@ -43,6 +47,8 @@ function Results({
   resolvedTitle,
 }: {
   result: ReturnType<typeof scanRepository>;
+  files: typeof sampleFiles;
+  proposals: ReturnType<typeof proposeRemediation>[];
   params: { finding?: string; mode?: string; approved?: string; sample?: string; rule?: string };
   comparison?: ReturnType<typeof validateRemediation>;
   proposal?: ReturnType<typeof proposeRemediation>;
@@ -54,18 +60,7 @@ function Results({
   const patchText = proposal
     ? `--- a/${proposal.path}\n+++ b/${proposal.path}\n@@ -${proposal.line},1 +${proposal.line},1 @@\n-${proposal.before}\n+${proposal.after}\n`
     : "";
-  const principleLabels: Record<string, string> = {
-    "Own it": "Accountability & review",
-    "Prove it": "Tests & evidence",
-    "Contain it": "Limit the blast radius",
-    "Trace and reverse it": "Audit & rollback",
-    "Break the lethal trifecta": "Separate sensitive capabilities",
-  };
-  const selected = result.findings.find((finding) => finding.id === params.finding) ?? result.findings[0];
   const sampleQuery = isSecuritySample ? "sample=security&" : isChiefSample ? "sample=chief&" : isCleanSample ? "sample=clean&" : "";
-  const queryPrefix = comparison
-    ? `${sampleQuery}mode=after&approved=yes&rule=${params.rule}&`
-    : sampleQuery;
   const counts = {
     critical: result.findings.filter((finding) => finding.severity === "critical").length,
     high: result.findings.filter((finding) => finding.severity === "high").length,
@@ -88,10 +83,6 @@ function Results({
     ...result.inventory.dataStores,
     ...result.inventory.capabilities,
   ];
-  const severityGroups = (["critical", "high", "medium"] as const).map((severity) => ({
-    severity,
-    findings: result.findings.filter((finding) => finding.severity === severity),
-  })).filter((group) => group.findings.length > 0);
 
   return (
     <main>
@@ -160,55 +151,7 @@ function Results({
           </div>
         </details>
         {result.findings.length === 0 && <section className="clean-result" aria-label="Clean baseline result"><span className="clean-result-mark">✓</span><div><span className="overline">Catalog review complete</span><h2>No evaluated risks found</h2><p>This baseline matched none of Production Lens’s current deterministic rules. It is a positive signal, not a universal security guarantee.</p></div></section>}
-        <div className="findings-layout">
-          <section className="findings-list" aria-label="Findings">
-            {severityGroups.map((group) => <section className="severity-group" key={group.severity}>
-              <div className="severity-heading"><h2>{group.severity}</h2><span>{group.findings.length} {group.findings.length === 1 ? "finding" : "findings"}</span></div>
-              <div className="severity-grid">{group.findings.map((finding) => (
-                <Link className={`finding-card ${finding.id === selected.id ? "finding-card-selected" : ""}`} aria-current={finding.id === selected.id ? "true" : undefined} href={`/results?${queryPrefix}finding=${finding.id}#selected-finding`} key={finding.id}>
-                  <div className="badges"><span className={`badge badge-${finding.severity}`}>{finding.severity}</span><span className="category">{finding.category}</span></div>
-                  <h2>{finding.title}</h2>
-                  {finding.id === selected.id && <span className="selected-indicator">Selected</span>}
-                  {finding.evidence && <span className="evidence-chip">{finding.evidence.path}:{finding.evidence.line}</span>}
-                </Link>
-              ))}</div>
-            </section>)}
-          </section>
-          {selected && <aside id="selected-finding" className="detail-panel" aria-label="Selected finding details">
-            <div className="detail-header">
-              <span className={`badge badge-${selected.severity}`}>{selected.severity}</span>
-              <h2>{selected.title}</h2>
-            </div>
-            <div className="detail-body">
-              <details className="detail-section"><summary><h3>Why this matters</h3></summary><p>{selected.impact}</p></details>
-              <details className="detail-section"><summary><h3>Readiness lens</h3></summary>
-                <div className="detail-principles">
-                  {selected.principles.map((principle) => (
-                    <div key={principle.name}>
-                      <strong>{principleLabels[principle.name] ?? principle.name}</strong>
-                      <span className="principle-canonical">{principle.name}</span>
-                      <p>{principle.reason}</p>
-                    </div>
-                  ))}
-                </div>
-              </details>
-              <details className="detail-section"><summary><h3>Evidence</h3></summary>
-                {selected.evidence ? (
-                  <div className="code-block">
-                    <span className="code-location">{selected.evidence.path}:{selected.evidence.line}</span>
-                    <code>{selected.evidence.code}</code>
-                  </div>
-                ) : <p className="empty-evidence">Repository-level absence detected; no single source line applies.</p>}
-              </details>
-              <details className="detail-section" open><summary><h3>Recommended remediation</h3></summary><p>{selected.remediation}</p></details>
-              {!comparison && hasRemediation(selected.ruleId) && (
-                <Link className="remediate-button" href={`/remediation?${sampleQuery}finding=${selected.id}`}>
-                  Review remediation options <span>→</span>
-                </Link>
-              )}
-            </div>
-          </aside>}
-        </div>
+        <ResultsWorkspace result={result} files={files} proposals={proposals} sample={isSecuritySample ? "security" : isChiefSample ? "chief" : isCleanSample ? "clean" : undefined} canApply={!comparison} />
       </div>
     </main>
   );

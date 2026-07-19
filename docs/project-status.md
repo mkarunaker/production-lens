@@ -1,6 +1,6 @@
 # Production Lens project checkpoint
 
-Last updated: 2026-07-18
+Last updated: 2026-07-19
 
 ## Resume instructions
 
@@ -211,6 +211,15 @@ Complete except for the final deployed-browser rehearsal.
 - Production-server end-to-end route test: complete and included in `npm run security:check`
 - Presenter script and failure-recovery runbook: complete in `docs/demo-script.md`
 - Final signed-in deployed-browser click-through: pending
+
+### Unified code-review workspace draft
+
+In progress.
+
+- Results now have a draft unified workspace: severity-grouped finding cards, a full scanned-file explorer, a **Caught with Lens** filter, a code-first review pane, and an initially empty remediation panel.
+- Selecting a finding keeps the user on the results page and shows the recommended fix as an inline before/after code diff; approval, disposable-copy application, rescan, comparison, and reset remain unchanged.
+- Validation passed: `npm test` (49 tests), `npm audit --omit=dev --audit-level=high` (0 vulnerabilities), production build, and production-server golden-path E2E.
+- This is an un-deployed visual draft pending owner review. Browser visual review could not run in the current session because no browser was available; complete that review before publishing.
 
 ## Recommended next step
 
