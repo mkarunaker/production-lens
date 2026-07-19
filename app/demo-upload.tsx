@@ -43,6 +43,6 @@ export function DemoUpload() {
       {['Validate archive boundaries', 'Build technology inventory', 'Evaluate readiness risks', 'Prepare evidence report'].map((label, index) => <div key={label} className={index <= step ? 'lens-step lens-step-active' : 'lens-step'}><span>{index < step ? '✓' : index === step ? '·' : '○'}</span>{label}</div>)}
     </div>}
     <p className="upload-note">{selectedName ? `${selectedName} is ready to scan. ` : ""}{message}</p>
-    <div className="demo-downloads"><span>Download a provided demo ZIP:</span><a href="/demo-archives/chief-of-staff-v0-scan.zip" download>Chief of Staff</a><a href="/demo-archives/enterprise-analytics-agent.zip" download>Enterprise Analytics</a><a href="/demo-archives/security-test-agent.zip" download>Security Test Agent</a></div>
+    <div className="demo-downloads"><span>Download a provided demo ZIP:</span><a href="/demo-archives/enterprise-analytics-agent.zip" download>Enterprise Analytics</a><a href="/demo-archives/security-test-agent.zip" download>Security Test Agent</a></div>
   </div>;
 }
