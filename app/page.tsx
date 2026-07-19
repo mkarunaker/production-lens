@@ -24,12 +24,9 @@ const securityChecks = [
 ];
 
 const industrySignals = [
-  { stat: "Nearly 2 in 3", label: "say security and risk are the top barrier to scaling agentic AI.", source: "McKinsey, 2026", href: "https://www.mckinsey.com/capabilities/tech-and-ai/our-insights/tech-forward/state-of-ai-trust-in-2026-shifting-to-the-agentic-era" },
-  { stat: "92%", label: "of security professionals are concerned about AI agents’ security impact.", source: "Darktrace, 2026", href: "https://www.darktrace.com/resource/the-state-of-ai-cybersecurity-2026" },
-  { stat: "74%", label: "consider AI inaccuracy a relevant risk, up from 60% a year earlier.", source: "Stanford HAI, 2026", href: "https://hai.stanford.edu/assets/files/ai_index_report_2026_chapter_3_responsible_ai.pdf" },
-  { stat: "1 in 5", label: "companies has a mature model for governing autonomous AI agents.", source: "Deloitte, 2026", href: "https://www.deloitte.com/us/en/what-we-do/capabilities/applied-artificial-intelligence/content/state-of-ai-in-the-enterprise.html" },
-  { stat: "40%", label: "of enterprise apps are forecast to feature task-specific AI agents by end of 2026.", source: "Gartner", href: "https://www.gartner.com/en/newsroom/press-releases/2025-08-26-gartner-predicts-40-percent-of-enterprise-apps-will-feature-task-specific-ai-agents-by-2026-up-from-less-than-5-percent-in-2025" },
-  { stat: "25%", label: "of planned AI spend is forecast to be deferred to 2027 as proof of return matters.", source: "Forrester, 2026", href: "https://www.forrester.com/blogs/predictions-2026-ai-moves-from-hype-to-hard-hat-work/" },
+  { stat: "42%", label: "of committed code is now AI-generated, but 96% of developers do not fully trust it.", source: "Sonar, 2026", href: "https://www.sonarsource.com/blog/state-of-code-developer-survey-report-the-current-reality-of-ai-coding/" },
+  { stat: "45%", label: "of evaluated AI code-generation tasks introduced a known security flaw.", source: "Veracode, 2026", href: "https://www.veracode.com/blog/spring-2026-genai-code-security/" },
+  { stat: "80%", label: "adopted AI tools faster than they developed governance policies; 92% report code-governance challenges.", source: "GitLab, 2026", href: "https://about.gitlab.com/press/releases/2026-06-23-gitlab-research-reveals-organizations-are-generating-ai-code-faster-than-they-can-control-it/" },
 ];
 
 export default function Home() {
@@ -60,7 +57,7 @@ export default function Home() {
         </p>
 
         <details className="industry-signals">
-          <summary><span><span className="overline">Why it matters</span><strong>Agent adoption is accelerating faster than production confidence.</strong></span><span className="industry-expand">Explore the industry signals <i aria-hidden="true">↓</i></span></summary>
+          <summary><span><span className="overline">Why it matters</span><strong>AI writes more code. Verification has not caught up.</strong></span><span className="industry-expand">Explore the industry signals <i aria-hidden="true">↓</i></span></summary>
           <div className="industry-signals-body">
             <div className="industry-signal-grid">
               {industrySignals.map((signal) => <a className="industry-signal" href={signal.href} key={signal.source} rel="noreferrer" target="_blank"><strong>{signal.stat}</strong><span>{signal.label}</span><small>{signal.source} ↗</small></a>)}
