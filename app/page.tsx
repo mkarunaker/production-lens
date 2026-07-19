@@ -101,6 +101,13 @@ export default function Home() {
           </div>
         </div>
 
+        <div className="sample-card secondary-sample clean-sample">
+          <div className="sample-heading"><div className="repo-icon" aria-hidden="true">✓</div><div><span className="overline">Clean baseline</span><h2>Clean Agent Baseline</h2></div><span className="ready"><i /> Ready to scan</span></div>
+          <p>Minimal typed agent · locked dependencies · no external integrations · no catalog risks detected</p>
+          <Link className="scan-button" href="/results?sample=clean"><span>Scan clean baseline</span><span aria-hidden="true">→</span></Link>
+          <div className="safety-note"><span aria-hidden="true">◇</span> Zero findings means no matches in the current deterministic catalog—not a universal security guarantee.</div>
+        </div>
+
         </div>
       </section>
 

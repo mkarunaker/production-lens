@@ -5,6 +5,7 @@ import { scanRepository } from "@/lib/scanner";
 import { sampleFiles, sampleRepositoryName } from "@/lib/scanner/sample-bundle";
 import { securitySampleFiles, securitySampleRepositoryName } from "@/lib/scanner/security-sample-bundle";
 import { chiefSampleFiles, chiefSampleRepositoryName } from "@/lib/scanner/chief-sample-bundle";
+import { cleanSampleFiles, cleanSampleRepositoryName } from "@/lib/scanner/clean-sample-bundle";
 import { ProductionLensLogo } from "@/app/logo";
 
 export const metadata: Metadata = { title: "Scan results" };
@@ -13,8 +14,9 @@ export default async function ResultsPage({ searchParams }: { searchParams: Prom
   const params = await searchParams;
   const isSecuritySample = params.sample === "security";
   const isChiefSample = params.sample === "chief";
-  const repositoryName = isSecuritySample ? securitySampleRepositoryName : isChiefSample ? chiefSampleRepositoryName : sampleRepositoryName;
-  const repositoryFiles = isSecuritySample ? securitySampleFiles : isChiefSample ? chiefSampleFiles : sampleFiles;
+  const isCleanSample = params.sample === "clean";
+  const repositoryName = isSecuritySample ? securitySampleRepositoryName : isChiefSample ? chiefSampleRepositoryName : isCleanSample ? cleanSampleRepositoryName : sampleRepositoryName;
+  const repositoryFiles = isSecuritySample ? securitySampleFiles : isChiefSample ? chiefSampleFiles : isCleanSample ? cleanSampleFiles : sampleFiles;
   const baseline = scanRepository(repositoryName, repositoryFiles);
   const remediationRuleId = params.rule && baseline.findings.some((finding) => finding.ruleId === params.rule) && hasRemediation(params.rule)
     ? params.rule
@@ -27,7 +29,7 @@ export default async function ResultsPage({ searchParams }: { searchParams: Prom
   const resolvedTitle = remediationRuleId
     ? baseline.findings.find((finding) => finding.ruleId === remediationRuleId)?.title
     : undefined;
-  return <Results result={result} params={params} comparison={comparison} proposal={proposal} isSecuritySample={isSecuritySample} isChiefSample={isChiefSample} resolvedTitle={resolvedTitle} />;
+  return <Results result={result} params={params} comparison={comparison} proposal={proposal} isSecuritySample={isSecuritySample} isChiefSample={isChiefSample} isCleanSample={isCleanSample} resolvedTitle={resolvedTitle} />;
 }
 
 function Results({
@@ -37,6 +39,7 @@ function Results({
   proposal,
   isSecuritySample,
   isChiefSample,
+  isCleanSample,
   resolvedTitle,
 }: {
   result: ReturnType<typeof scanRepository>;
@@ -45,6 +48,7 @@ function Results({
   proposal?: ReturnType<typeof proposeRemediation>;
   isSecuritySample: boolean;
   isChiefSample: boolean;
+  isCleanSample: boolean;
   resolvedTitle?: string;
 }) {
   const patchText = proposal
@@ -58,7 +62,7 @@ function Results({
     "Break the lethal trifecta": "Separate sensitive capabilities",
   };
   const selected = result.findings.find((finding) => finding.id === params.finding) ?? result.findings[0];
-  const sampleQuery = isSecuritySample ? "sample=security&" : isChiefSample ? "sample=chief&" : "";
+  const sampleQuery = isSecuritySample ? "sample=security&" : isChiefSample ? "sample=chief&" : isCleanSample ? "sample=clean&" : "";
   const queryPrefix = comparison
     ? `${sampleQuery}mode=after&approved=yes&rule=${params.rule}&`
     : sampleQuery;
@@ -112,7 +116,7 @@ function Results({
         )}
         <div className="results-title-row">
           <div>
-            <span className="overline">Scan report · {isSecuritySample ? "security test project" : isChiefSample ? "Chief of Staff demo ZIP" : "bundled sample"}</span>
+          <span className="overline">Scan report · {isSecuritySample ? "security test project" : isChiefSample ? "Chief of Staff demo ZIP" : isCleanSample ? "clean baseline" : "bundled sample"}</span>
             <h1>{comparison ? "One risk resolved" : "Not ready for production"}</h1>
             <p>{result.repository} · {result.scannedFiles} approved files inspected · no code executed</p>
           </div>
