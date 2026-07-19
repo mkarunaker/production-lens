@@ -2,6 +2,14 @@
 
 Production Lens is a developer tool that statically inspects an AI application repository and explains why it is not ready for production. It turns vague launch concerns into prioritized, evidence-backed findings with concrete remediation and verification steps.
 
+## Why Production Lens exists
+
+Organizations can build AI-agent pilots quickly, but moving those systems into production requires evidence that security, reliability, governance, and legal concerns have been addressed.
+
+Recent industry research from McKinsey, Darktrace, Stanford HAI, Deloitte, Gartner, and Forrester points to the same pattern: adoption of AI agents is accelerating, while confidence in security, accuracy, governance, and return on investment is lagging.
+
+Production Lens was created to help close that gap. It gives engineering, security, and legal teams a shared evidence base for identifying risks, reviewing concrete remediation options, and verifying whether a proposed fix actually removes the targeted issue.
+
 **Hackathon category:** Developer Tools
 
 **Live demo:** https://production-lens.karunaker-molugu.chatgpt.site
