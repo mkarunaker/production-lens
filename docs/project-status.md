@@ -217,10 +217,11 @@ Complete except for the final deployed-browser rehearsal.
 In progress.
 
 - Results now have a draft unified workspace: severity-grouped finding cards, a full scanned-file explorer, a **Caught with Lens** filter, a code-first review pane, and an initially empty remediation panel.
-- The workspace is now an intentional developer dark mode: a shared left sidebar stacks scrollable **Open issues** above **Explorer** so the code pane remains wide. Severity headers show the label on the left and its count on the right; the explorer and code surface use distinct developer-friendly hues.
+- The workspace is now an intentional desktop-demo developer dark mode: a shared left sidebar divides its height equally between independently scrollable **Open issues** and collapsible **Explorer** panels. Severity headers show the label on the left and its same-size count on the right; the explorer and code surface use distinct developer-friendly hues.
+- The code review and remediation panels sit side by side. Remediation is a persistent, top-to-bottom reading pane on the right rather than a responsive bottom panel; responsive behavior is intentionally out of scope for this demo iteration.
 - Selecting either a finding card or a flagged filename keeps the user on the results page, opens the proposed patch file, and shows the recommended fix as an inline before/after code diff immediately; unflagged filenames open source normally and clear the remediation panel. Approval, disposable-copy application, rescan, comparison, and reset remain unchanged.
 - Validation passed: `npm test` (49 tests), `npm audit --omit=dev --audit-level=high` (0 vulnerabilities), production build, and production-server golden-path E2E.
-- Deployed privately as hosted version 50 at the existing Production Lens URL. Browser visual review could not run in the current session because no browser was available; owner click-through testing is the next gate before treating the draft as accepted.
+- Browser visual review could not run in the current session because no browser was available; owner click-through testing at the existing private Production Lens URL is the next gate before treating the draft as accepted.
 
 ## Recommended next step
 
