@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { DemoUpload } from "./demo-upload";
+import { ProductionLensLogo } from "./logo";
 
 const checks = [
   ["Authorization", "User identity & access"],
@@ -24,7 +25,7 @@ export default function Home() {
     <main>
       <header className="site-header">
         <Link className="brand" href="/" aria-label="Production Lens home">
-          <span className="brand-mark" aria-hidden="true"><span className="brand-agent" /></span>
+          <span className="brand-mark" aria-hidden="true"><ProductionLensLogo /></span>
           <span>Production Lens</span>
         </Link>
         <span className="prototype-pill">OpenAI Build Week Hackathon</span>

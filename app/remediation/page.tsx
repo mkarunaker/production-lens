@@ -4,6 +4,7 @@ import { proposeRemediation } from "@/lib/remediation";
 import { scanRepository } from "@/lib/scanner";
 import { sampleFiles, sampleRepositoryName } from "@/lib/scanner/sample-bundle";
 import { securitySampleFiles, securitySampleRepositoryName } from "@/lib/scanner/security-sample-bundle";
+import { ProductionLensLogo } from "@/app/logo";
 
 export const metadata: Metadata = { title: "Review remediation" };
 
@@ -34,7 +35,7 @@ export default async function RemediationPage({
   return (
     <main>
       <header className="site-header">
-        <Link className="brand" href="/"><span className="brand-mark" aria-hidden="true"><span className="brand-agent" /></span><span>Production Lens</span></Link>
+        <Link className="brand" href="/"><span className="brand-mark" aria-hidden="true"><ProductionLensLogo /></span><span>Production Lens</span></Link>
         <span className="prototype-pill">Disposable working copy</span>
       </header>
       <div className="remediation-shell">

@@ -5,6 +5,7 @@ import { scanRepository } from "@/lib/scanner";
 import { sampleFiles, sampleRepositoryName } from "@/lib/scanner/sample-bundle";
 import { securitySampleFiles, securitySampleRepositoryName } from "@/lib/scanner/security-sample-bundle";
 import { chiefSampleFiles, chiefSampleRepositoryName } from "@/lib/scanner/chief-sample-bundle";
+import { ProductionLensLogo } from "@/app/logo";
 
 export const metadata: Metadata = { title: "Scan results" };
 
@@ -91,7 +92,7 @@ function Results({
   return (
     <main>
       <header className="site-header">
-        <Link className="brand" href="/"><span className="brand-mark" aria-hidden="true"><span className="brand-agent" /></span><span>Production Lens</span></Link>
+        <Link className="brand" href="/"><span className="brand-mark" aria-hidden="true"><ProductionLensLogo /></span><span>Production Lens</span></Link>
         <span className="prototype-pill">Static scan complete</span>
       </header>
       <div className="results-shell">
