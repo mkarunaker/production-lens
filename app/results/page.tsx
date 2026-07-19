@@ -117,7 +117,7 @@ function Results({
         <div className="results-title-row">
           <div>
           <span className="overline">Scan report · {isSecuritySample ? "security test project" : isChiefSample ? "Chief of Staff demo ZIP" : isCleanSample ? "clean baseline" : "bundled sample"}</span>
-            <h1>{comparison ? "One risk resolved" : "Not ready for production"}</h1>
+            <h1>{comparison ? "One risk resolved" : result.findings.length === 0 ? "No catalog risks found" : "Not ready for production"}</h1>
             <p>{result.repository} · {result.scannedFiles} approved files inspected · no code executed</p>
           </div>
           <div className="risk-score"><strong>{result.findings.length}</strong><span>open findings</span></div>
