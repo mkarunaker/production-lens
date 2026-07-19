@@ -88,6 +88,16 @@ button { font: inherit; }
 .lens-step span { width: 15px; color: #8d9f94; text-align: center; }
 .lens-step-active { opacity: 1; color: white; }
 .lens-step-active span { color: var(--lime); font-weight: 800; }
+.scan-run-result { margin-top: 12px; padding: 18px; display: grid; grid-template-columns: minmax(0, 1fr) 250px; gap: 22px; border: 1px solid rgba(185,214,120,.45); border-radius: 10px; background: #243a31; color: #f5f8f2; text-align: left; }
+.scan-run-result .overline { color: #b9d678; }
+.scan-run-result h2 { margin: 0; font: 600 23px/1.05 Georgia, serif; letter-spacing: -.025em; }
+.scan-run-result p { max-width: 500px; margin: 8px 0 0; color: #c2d0c6; font-size: 11px; line-height: 1.5; }
+.scan-run-action { display: flex; flex-direction: column; justify-content: end; }
+.scan-run-result .scan-issue-counts { margin: 0 0 11px; grid-template-columns: repeat(3, 1fr); gap: 5px; }
+.scan-run-result .scan-issue-counts span { display: grid; gap: 2px; color: #b9c8bf; font-size: 9px; }
+.scan-run-result .scan-issue-counts strong { color: #ffffff; font: 600 17px/1 Georgia, serif; }
+.scan-run-result .review-issues-button { margin-top: 0; background: #b9d678; color: #17251f; }
+.scan-run-result .review-issues-button:hover { background: #cce694; }
 .visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 .projects-heading { max-width: 790px; margin: 34px auto -34px; display: flex; justify-content: space-between; align-items: end; color: var(--muted); font-size: 11px; }
 .projects-heading .overline { margin: 0; color: var(--green); }
@@ -429,6 +439,7 @@ button { font: inherit; }
   .sample-card { padding: 19px; }
   .upload-row { display: grid; grid-template-columns: 1fr; }
   .upload-scan-button { width: 100%; min-height: 42px; }
+  .scan-run-result { grid-template-columns: 1fr; }
   .project-strip { grid-template-columns: 1fr; margin-top: 48px; }
   .sample-heading { grid-template-columns: auto 1fr; }
   .ready { grid-column: 2; }
