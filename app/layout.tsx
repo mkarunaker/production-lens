@@ -6,7 +6,7 @@ export const metadata: Metadata = {
     default: "Production Lens",
     template: "%s · Production Lens",
   },
-  description: "Evidence-backed production-readiness scanning for AI applications.",
+  description: "Identify and help remediate security, reliability, and governance risks in AI-agent repositories.",
   icons: { icon: "/favicon.svg" },
   openGraph: {
     title: "Production Lens",

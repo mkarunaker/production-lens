@@ -35,8 +35,8 @@ export default function Home() {
         <div className="eyebrow"><span className="pulse" /> Static production-readiness review</div>
         <h1>See what stands between<br />your AI agent and <em>production.</em></h1>
         <p className="hero-copy">
-          Production Lens turns repository evidence into clear security, reliability,
-          and governance risks—using five production-readiness principles.
+          Production Lens identifies and helps remediate security, reliability, and
+          governance risks in AI-agent repositories using five production-readiness principles.
         </p>
 
         <DemoUpload />
