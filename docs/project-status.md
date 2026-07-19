@@ -17,7 +17,7 @@ At the start of a new session:
 ## Current product state
 
 - Private deployment: https://production-lens.karunaker-molugu.chatgpt.site
-- Current checkpoint commit: `36d436f` (public GitHub repository and README are current; hosted version 46 contains the clean baseline and zero-finding results fix).
+- Current checkpoint commit: `05f6e55` (the hosted private demo includes the AI-code evidence panel; the public GitHub repository is current through the preceding UI commit).
 - Local ZIP test checkpoint: the latest `feat: add localhost zip scan demo` entry in `git log`.
 - Deterministic sample findings: 11
 - Automated tests: 49 passing
@@ -25,7 +25,7 @@ At the start of a new session:
 - Principle mapping: implemented for all 11 deterministic findings
 - Known dependency vulnerabilities at last verification: 0
 - Production build: passing
-- Hosted demo: private deployment succeeded through version 34; latest contrast correction is publishing/available at the same URL.
+- Hosted demo: private deployment version 59 presents the AI-code evidence panel at the same URL.
 - Public repository: https://github.com/mkarunaker/production-lens
 - Remediation evidence: proposal page and verified-results banner show before/after code and offer a downloadable reviewable `.patch` file; proposal diff uses readable red/green contrast.
 - Codex development default: GPT-5.6 Terra with medium reasoning; Luna and Sol are explicit task-level overrides
