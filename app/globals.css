@@ -314,12 +314,12 @@ button { font: inherit; }
 .workspace-toolbar .overline { margin: 0 0 3px; color: #c2d0c5; font-size: 8px; }
 .workspace-toolbar strong { font: 600 15px/1.2 Georgia, serif; }
 .workspace-toolbar > span { color: #d1ddd3; font-size: 10px; }
-.workspace-main { min-height: 590px; display: grid; grid-template-columns: 285px minmax(0, 1fr); }
-.workspace-sidebar { min-width: 0; min-height: 0; display: grid; grid-template-rows: minmax(0, 3fr) minmax(205px, 2fr); border-right: 1px solid rgba(255,255,255,.13); background: #30483e; }
-.findings-rail { min-width: 0; min-height: 0; padding: 13px 10px; color: #eef5ef; }
+.workspace-main { height: min(720px, calc(100vh - 150px)); min-height: 590px; display: grid; grid-template-columns: 285px minmax(0, 1fr); }
+.workspace-sidebar { min-width: 0; min-height: 0; display: grid; grid-template-rows: minmax(0, 1fr) minmax(0, 1fr); border-right: 1px solid rgba(255,255,255,.13); background: #30483e; }
+.findings-rail { min-width: 0; min-height: 0; padding: 13px 10px; display: flex; flex-direction: column; color: #eef5ef; }
 .findings-rail-title { padding: 0 5px 11px; display: flex; justify-content: space-between; color: #cad8ce; font-size: 9px; font-weight: 900; text-transform: uppercase; letter-spacing: .09em; }
 .findings-rail-title strong { color: #ffffff; font: 500 19px/1 Georgia, serif; }
-.findings-scroll { min-height: 0; display: grid; gap: 16px; overflow-y: auto; padding: 0 2px 10px; }
+.findings-scroll { min-height: 0; flex: 1; display: grid; gap: 16px; overflow-y: auto; padding: 0 2px 10px; }
 .workspace-severity { display: grid; gap: 7px; }
 .workspace-severity-heading { display: flex; justify-content: space-between; align-items: baseline; text-transform: uppercase; letter-spacing: .08em; font-size: 8px; font-weight: 900; }
 .workspace-severity-heading strong { font-size: 14px; }
@@ -332,7 +332,7 @@ button { font: inherit; }
 .workspace-finding-card span { color: #d2e0d4; font-size: 8px; font-weight: 800; text-transform: uppercase; letter-spacing: .06em; }
 .workspace-finding-card strong { font: 600 11px/1.25 Georgia, serif; }
 .workspace-finding-card small { color: #d5ecac; font: 8px/1.2 ui-monospace, monospace; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.file-explorer { min-height: 0; padding: 14px 9px; border-top: 1px solid rgba(255,255,255,.13); background: #243832; color: #e2ece5; }
+.file-explorer { min-height: 0; padding: 14px 9px; display: flex; flex-direction: column; overflow: hidden; border-top: 1px solid rgba(255,255,255,.13); background: #243832; color: #e2ece5; }
 .explorer-heading { padding: 0 6px 10px; display: flex; justify-content: space-between; cursor: pointer; list-style: none; color: #c1d0c6; font-size: 9px; font-weight: 900; text-transform: uppercase; letter-spacing: .09em; }
 .explorer-heading::-webkit-details-marker { display: none; }
 .explorer-heading::after { content: "−"; }
@@ -342,7 +342,7 @@ button { font: inherit; }
 .lens-filter { width: 100%; padding: 8px; border: 1px solid rgba(205,228,166,.45); border-radius: 6px; background: rgba(205,228,166,.12); color: #e4f2cc; cursor: pointer; text-align: left; font-size: 10px; font-weight: 800; }
 .lens-filter-active { background: #b9d678; color: #17211d; }
 .explorer-note { margin: 10px 6px 7px; color: #b2c3b7; font-size: 9px; }
-.file-list { min-height: 0; display: grid; gap: 1px; overflow-y: auto; }
+.file-list { min-height: 0; flex: 1; display: grid; gap: 1px; overflow-y: auto; }
 .file-list button { width: 100%; padding: 6px; display: flex; align-items: center; gap: 5px; border: 0; border-radius: 4px; background: transparent; color: #d2dfd6; cursor: pointer; text-align: left; font: 9px/1.25 ui-monospace, monospace; }
 .file-list button:hover, .file-list .file-active { background: #426052; color: white; }
 .file-status { width: 11px; color: #b9d678; font: 800 10px/1 Inter, sans-serif; }
@@ -432,7 +432,7 @@ button { font: inherit; }
   .success-mark, .success-banner > a { margin-top: 12px; }
   .workspace-toolbar { display: block; }
   .workspace-toolbar > span { display: block; margin-top: 6px; }
-  .workspace-main { display: block; }
+  .workspace-main { height: auto; min-height: 0; display: block; }
   .workspace-sidebar { display: block; }
   .findings-scroll { max-height: 330px; }
   .file-explorer { border-top: 1px solid rgba(255,255,255,.11); border-bottom: 1px solid rgba(255,255,255,.11); }
