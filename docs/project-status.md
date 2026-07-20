@@ -240,6 +240,7 @@ In progress.
 - The home-page opening provides a collapsed **Why it matters** panel with six linked, source-attributed signals in two rows: AI-code volume, verification confidence, controlled security evaluations, enterprise security findings, ecosystem vulnerability growth, and governance readiness. It can be expanded during the demo without consuming scan-flow space. The facts support product context only and do not change scanner findings or coverage claims.
 - The homepage, README, and presenter script now state the framework boundary directly: Production Lens is a principles-based deterministic review with selected OWASP, CWE, and NIST-aligned checks, but not formal or complete framework coverage. The next framework milestone is a visible rule-level crosswalk with explicit scope and evidence limits.
 - Validation for the scope-copy update: `npm test` passed (49 tests) and the production build passed. The updated scope copy is deployed to the private demo.
+- The hero support copy now leads with the product method rather than repeating the headline: **Principles-based, evidence-backed review** across security, reliability, governance, and selected OWASP, CWE, and NIST-aligned checks.
 
 ## Recommended next step
 

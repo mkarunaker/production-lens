@@ -55,9 +55,8 @@ export default function Home() {
         <div className="eyebrow"><span className="pulse" /> Static production-readiness review</div>
         <h1>See what stands between<br />your AI agent and <em>production.</em></h1>
         <p className="hero-copy">
-          Production Lens identifies and helps remediate security, reliability, and
-          governance risks in AI-agent repositories using five production-readiness principles
-          and selected OWASP, CWE, and NIST-aligned concerns.
+          Principles-based, evidence-backed review across security, reliability, governance,
+          and selected OWASP, CWE, and NIST-aligned checks.
         </p>
 
         <details className="industry-signals">
