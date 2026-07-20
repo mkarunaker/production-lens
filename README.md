@@ -140,7 +140,7 @@ Production Lens does not claim universal language coverage or perfect security.
 
 ## Current scope and framework roadmap
 
-Production Lens is a principles-based deterministic review tool, not a certification product. Its current catalog covers declared high-signal patterns with file-and-line evidence, explicit applicability states, and tested remediation for bundled findings. It does **not** currently claim formal or complete coverage of OWASP, CWE, or NIST.
+Production Lens is a principles-based deterministic review tool, not a certification product. Its current catalog covers declared high-signal patterns with file-and-line evidence, explicit applicability states, and tested remediation for bundled findings. It partially covers selected OWASP, CWE, and NIST-aligned concerns, but does **not** claim formal or complete coverage of those frameworks.
 
 The next framework milestone is a published, rule-level crosswalk:
 

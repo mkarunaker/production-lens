@@ -1,6 +1,6 @@
 # Production Lens project checkpoint
 
-Last updated: 2026-07-19
+Last updated: 2026-07-20
 
 ## Resume instructions
 
@@ -238,7 +238,8 @@ In progress.
 - The public-video narration and golden-path instructions in `docs/demo-script.md` now match the current **Load demo → File loaded → Run Lens → Review and remediate issues** sequence, the six-card **Why it matters** panel, and the collapsed finding-specific principles disclosure below approval.
 - The narrated portion of `docs/demo-script.md` has received the KK Spoken Voice pass: shorter spoken beats, varied pacing, direct product claims, scoped industry context rather than invented product metrics, and a focused principles-based approval explanation.
 - The home-page opening provides a collapsed **Why it matters** panel with six linked, source-attributed signals in two rows: AI-code volume, verification confidence, controlled security evaluations, enterprise security findings, ecosystem vulnerability growth, and governance readiness. It can be expanded during the demo without consuming scan-flow space. The facts support product context only and do not change scanner findings or coverage claims.
-- The homepage, README, and presenter script now state the framework boundary directly: Production Lens is a principles-based deterministic review for declared patterns, not formal OWASP, CWE, or NIST coverage. The next framework milestone is a visible rule-level crosswalk with explicit scope and evidence limits.
+- The homepage, README, and presenter script now state the framework boundary directly: Production Lens is a principles-based deterministic review with selected OWASP, CWE, and NIST-aligned checks, but not formal or complete framework coverage. The next framework milestone is a visible rule-level crosswalk with explicit scope and evidence limits.
+- Validation for the scope-copy update: `npm test` passed (49 tests) and the production build passed. The hosted private demo remains on the preceding validated deployment until a new deploy is requested.
 
 ## Recommended next step
 

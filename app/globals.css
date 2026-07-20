@@ -65,7 +65,6 @@ button { font: inherit; }
 }
 .hero h1 em { color: var(--green); font-weight: 500; }
 .hero-copy { max-width: 670px; margin: 0 auto; color: var(--muted); font-size: 18px; line-height: 1.65; }
-.hero-scope { max-width: 690px; margin: 12px auto 0; color: #65736b; font-size: 11px; line-height: 1.5; }
 .industry-signals { max-width: 1060px; margin: 26px auto 0; border: 1px solid #d9dfda; border-radius: 12px; background: rgba(255,255,255,.72); text-align: left; }
 .industry-signals summary { min-height: 60px; padding: 13px 18px; display: flex; align-items: center; justify-content: space-between; gap: 22px; cursor: pointer; list-style: none; }
 .industry-signals summary::-webkit-details-marker { display: none; }
