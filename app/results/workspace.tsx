@@ -14,6 +14,14 @@ type WorkspaceProps = {
 
 const severityOrder = ["critical", "high", "medium"] as const;
 
+const principleLabels: Record<string, string> = {
+  "Own it": "Accountability & review",
+  "Prove it": "Tests & evidence",
+  "Contain it": "Limit the blast radius",
+  "Trace and reverse it": "Audit & rollback",
+  "Break the lethal trifecta": "Separate sensitive capabilities",
+};
+
 export function ResultsWorkspace({ result, files, proposals, sample, canApply }: WorkspaceProps) {
   const initialFile = files.find((file) => /(^|\/)(src|app|agent)\//.test(file.path)) ?? files[0];
   const [selected, setSelected] = useState<Finding>();
@@ -115,6 +123,24 @@ export function ResultsWorkspace({ result, files, proposals, sample, canApply }:
             <div className="remediation-detail">
               <section className="remediation-summary"><div className="remediation-title"><span className={`badge badge-${selected.severity}`}>{selected.severity}</span><span>{selected.category}</span></div><h2>{selected.title}</h2><h3>Why this matters</h3><p>{selected.impact}</p></section>
               <section className="remediation-recommendation"><h3>Recommended remediation</h3><p>{selected.remediation}</p>{selected.evidence && <code>{selected.evidence.path}:{selected.evidence.line}</code>}</section>
+              <details className="workspace-principles" open>
+                <summary>
+                  <span>
+                    <span className="overline">Principles-based readiness</span>
+                    <strong>Why this finding matters</strong>
+                  </span>
+                  <span>{selected.principles.length} principles</span>
+                </summary>
+                <div className="workspace-principle-list">
+                  {selected.principles.map((principle) => (
+                    <article key={principle.name}>
+                      <strong>{principleLabels[principle.name] ?? principle.name}</strong>
+                      <span>{principle.name}</span>
+                      <p>{principle.reason}</p>
+                    </article>
+                  ))}
+                </div>
+              </details>
               {proposal && canApply ? (
                 <section className="remediation-actions">
                   <div className="suggested-fix"><strong>Suggested fix is shown in code</strong><span>{proposal.path}:{proposal.line}</span></div>
