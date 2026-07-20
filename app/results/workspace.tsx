@@ -137,7 +137,22 @@ export function ResultsWorkspace({ result, files, proposals, sample, canApply }:
             <div className="remediation-detail">
               <section className="remediation-summary"><div className="remediation-title"><span className={`badge badge-${selected.severity}`}>{selected.severity}</span><span>{selected.category}</span></div><h2>{selected.title}</h2><h3>Why this matters</h3><p>{selected.impact}</p></section>
               <section className="remediation-recommendation"><h3>Recommended remediation</h3><p>{selected.remediation}</p>{selected.evidence && <code>{selected.evidence.path}:{selected.evidence.line}</code>}</section>
-              <details className="workspace-principles" open>
+              {proposal && canApply ? (
+                <section className="remediation-actions">
+                  <div className="suggested-fix"><strong>Suggested fix is shown in code</strong><span>{proposal.path}:{proposal.line}</span></div>
+                  <button className="show-patch-button" type="button" onClick={() => setShowPatch((value) => !value)}>{showPatch ? "Hide inline diff" : "Show inline diff"}<span>→</span></button>
+                  <form action="/results" method="get" className="workspace-approval">
+                    <input type="hidden" name="view" value="workspace" />
+                    <input type="hidden" name="mode" value="after" />
+                    <input type="hidden" name="approved" value="yes" />
+                    <input type="hidden" name="rule" value={selected.ruleId} />
+                    {sample && <input type="hidden" name="sample" value={sample} />}
+                    <label><input type="checkbox" required /><span>I reviewed this patch and approve applying it to a disposable copy.</span></label>
+                    <button className="approve-button" type="submit">Approve, apply, and rescan <span>→</span></button>
+                  </form>
+                </section>
+              ) : !canApply ? <p className="workspace-resolved">This view shows the verified result. Reset the demo to review another remediation.</p> : <p className="workspace-no-patch">This finding has no supported deterministic patch.</p>}
+              <details className="workspace-principles">
                 <summary>
                   <span>
                     <span className="overline">Principles-based readiness</span>
@@ -155,21 +170,6 @@ export function ResultsWorkspace({ result, files, proposals, sample, canApply }:
                   ))}
                 </div>
               </details>
-              {proposal && canApply ? (
-                <section className="remediation-actions">
-                  <div className="suggested-fix"><strong>Suggested fix is shown in code</strong><span>{proposal.path}:{proposal.line}</span></div>
-                  <button className="show-patch-button" type="button" onClick={() => setShowPatch((value) => !value)}>{showPatch ? "Hide inline diff" : "Show inline diff"}<span>→</span></button>
-                  <form action="/results" method="get" className="workspace-approval">
-                    <input type="hidden" name="view" value="workspace" />
-                    <input type="hidden" name="mode" value="after" />
-                    <input type="hidden" name="approved" value="yes" />
-                    <input type="hidden" name="rule" value={selected.ruleId} />
-                    {sample && <input type="hidden" name="sample" value={sample} />}
-                    <label><input type="checkbox" required /><span>I reviewed this patch and approve applying it to a disposable copy.</span></label>
-                    <button className="approve-button" type="submit">Approve, apply, and rescan <span>→</span></button>
-                  </form>
-                </section>
-              ) : !canApply ? <p className="workspace-resolved">This view shows the verified result. Reset the demo to review another remediation.</p> : <p className="workspace-no-patch">This finding has no supported deterministic patch.</p>}
             </div>
           )}
           </aside>
