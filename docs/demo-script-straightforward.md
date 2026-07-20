@@ -54,6 +54,8 @@ Return home. Load the Security Test Agent, run Lens, open the review workspace, 
 
 “Behind the scenes, every test run also self-scans Production Lens against its implemented injection checks. We use the same evidence discipline we ask teams to use.”
 
+“AI is here to help. If we build it responsibly, we can move it into production with confidence and create real business impact.”
+
 Return to the home page and stop recording.
 
 ## Before recording
