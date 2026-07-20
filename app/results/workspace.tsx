@@ -109,7 +109,21 @@ export function ResultsWorkspace({ result, files, proposals, sample, canApply }:
 
         <div className="workspace-content">
           <section className="code-review" aria-label="Source code">
-            <div className="code-tab"><span>{activeFile?.path ?? "No approved source file"}</span>{selected?.evidence?.path === activeFile?.path && <small>Finding evidence</small>}</div>
+            <div className="code-tab">
+              <span>{activeFile?.path ?? "No approved source file"}</span>
+              <span className="code-tab-actions">
+                {selected?.evidence?.path === activeFile?.path && <small>Finding evidence</small>}
+                {selected && (
+                  <details className="code-principles-menu">
+                    <summary>Principles · {selected.principles.length}</summary>
+                    <div>
+                      <strong>Why this finding matters</strong>
+                      {selected.principles.map((principle) => <span key={principle.name}>{principleLabels[principle.name] ?? principle.name}</span>)}
+                    </div>
+                  </details>
+                )}
+              </span>
+            </div>
             {activeFile ? <CodeView file={activeFile} proposal={showPatch && proposal?.path === activeFile.path ? proposal : undefined} /> : <div className="code-empty">No approved text files were available to show.</div>}
           </section>
 
