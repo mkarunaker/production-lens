@@ -26,6 +26,7 @@ At the start of a new session:
 - Known dependency vulnerabilities at last verification: 0
 - Production build: passing
 - Hosted demo: private deployment version 59 presents the AI-code evidence panel at the same URL.
+- Latest private deployment: version 61 successfully published the workspace principle-evidence panel and code-pane principles disclosure from commit `2e941f1`.
 - Public repository: https://github.com/mkarunaker/production-lens
 - Remediation evidence: proposal page and verified-results banner show before/after code and offer a downloadable reviewable `.patch` file; proposal diff uses readable red/green contrast.
 - Codex development default: GPT-5.6 Terra with medium reasoning; Luna and Sol are explicit task-level overrides
