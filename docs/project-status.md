@@ -241,6 +241,7 @@ In progress.
 - The homepage, README, and presenter script now state the framework boundary directly: Production Lens is a principles-based deterministic review with selected OWASP, CWE, and NIST-aligned checks, but not formal or complete framework coverage. The next framework milestone is a visible rule-level crosswalk with explicit scope and evidence limits.
 - Validation for the scope-copy update: `npm test` passed (49 tests) and the production build passed. The updated scope copy is deployed to the private demo.
 - The hero support copy now leads with the product method rather than repeating the headline: **Principles-based, evidence-backed review** across security, reliability, governance, and selected OWASP, CWE, and NIST-aligned checks.
+- The recorded-demo script now adds a brief behind-the-scenes dogfooding beat: every test run self-scans Production Lens against its implemented injection checks. It is presented as engineering practice, not a UI workflow.
 
 ## Recommended next step
 
