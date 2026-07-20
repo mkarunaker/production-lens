@@ -138,6 +138,25 @@ Tests assert that bundled snapshots match their canonical source and expected fi
 
 Production Lens does not claim universal language coverage or perfect security.
 
+## Current scope and framework roadmap
+
+Production Lens is a principles-based deterministic review tool, not a certification product. Its current catalog covers declared high-signal patterns with file-and-line evidence, explicit applicability states, and tested remediation for bundled findings. It does **not** currently claim formal or complete coverage of OWASP, CWE, or NIST.
+
+The next framework milestone is a published, rule-level crosswalk:
+
+- **CWE:** attach the applicable weakness identifiers to every implemented rule. A CWE mapping will describe the weakness addressed; it will not imply complete CWE coverage.
+- **OWASP:** map each supported rule to applicable OWASP Top 10, OWASP LLM Top 10, and ASVS topics, with a visible supported-language and evidence boundary.
+- **NIST:** map the governance and engineering checks to relevant AI RMF and Secure Software Development Framework outcomes, while retaining explicit “implemented but unverified” and “needs review” states.
+
+The planned implementation sequence is intentionally bounded:
+
+1. Publish the framework crosswalk for the current deterministic catalog before expanding claims.
+2. Expand the injection rule pack through its declared parser, template, protocol, identity, and advanced-AI waves, one evaluated language/framework scope at a time.
+3. Complete deployment-backed ingestion and operational controls before enabling hosted arbitrary uploads.
+4. Enable any runtime model analysis only after Milestone 4 isolation, validation, adversarial, budget, and capability-separation gates pass.
+
+Until then, the accurate product claim is: **Production Lens provides deterministic, principles-based checks that partially overlap with OWASP, CWE, and NIST concerns.**
+
 ## How Codex accelerated development
 
 Codex was the primary engineering collaborator throughout Build Week. It:

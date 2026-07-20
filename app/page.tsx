@@ -58,6 +58,7 @@ export default function Home() {
           Production Lens identifies and helps remediate security, reliability, and
           governance risks in AI-agent repositories using five production-readiness principles.
         </p>
+        <p className="hero-scope">Current scope: deterministic, evidence-backed review for declared patterns. It does not claim formal OWASP, CWE, or NIST coverage.</p>
 
         <details className="industry-signals">
           <summary><span><span className="overline">Why it matters</span><strong>AI writes more code. Verification has not caught up.</strong></span><span className="industry-expand">Explore the industry signals <i aria-hidden="true">↓</i></span></summary>
