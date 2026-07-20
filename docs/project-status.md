@@ -244,6 +244,7 @@ In progress.
 - The recorded-demo script now adds a brief behind-the-scenes dogfooding beat: every test run self-scans Production Lens against its implemented injection checks. It is presented as engineering practice, not a UI workflow.
 - The global footer now preserves the scan-focused home-page layout while exposing an optional **Guiding principles** disclosure. It opens the five governing principles and their plain-English release-readiness intent without competing with project loading or scanning.
 - The staged scan keeps the completed checklist visible for one second before revealing the review action, giving presenters time to register the completed checks and preserving the deliberate scan-to-review transition.
+- The scan checklist now uses plain language and starts with the static-review boundary: check the ZIP, understand the app, check readiness risks, and prepare the evidence report. It does not add detection logic or execute repository code.
 
 ## Recommended next step
 

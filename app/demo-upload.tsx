@@ -64,7 +64,8 @@ export function DemoUpload({ destination, selectedName, onSelect }: DemoUploadPr
       setMessage("Choose Run Lens when you are ready.");
     }} />
     {running && <div className="lens-progress" aria-live="polite">
-      {['Validate archive boundaries', 'Build technology inventory', 'Evaluate readiness risks', 'Prepare evidence report'].map((label, index) => <div key={label} className={index <= step ? 'lens-step lens-step-active' : 'lens-step'}><span>{index < step ? '✓' : index === step ? '·' : '○'}</span>{label}</div>)}
+      <p className="lens-progress-intro">Static review only. No repository code is executed.</p>
+      {['Check the ZIP is safe to inspect', 'Understand what the app is made of', 'Check for readiness risks', 'Prepare the evidence report'].map((label, index) => <div key={label} className={index <= step ? 'lens-step lens-step-active' : 'lens-step'}><span>{index < step ? '✓' : index === step ? '·' : '○'}</span>{label}</div>)}
     </div>}
     {complete && destination && <InPlaceScanResult destination={destination} />}
     <p className="upload-note">{message}</p>
