@@ -239,7 +239,7 @@ In progress.
 - The narrated portion of `docs/demo-script.md` has received the KK Spoken Voice pass: shorter spoken beats, varied pacing, direct product claims, scoped industry context rather than invented product metrics, and a focused principles-based approval explanation.
 - The home-page opening provides a collapsed **Why it matters** panel with six linked, source-attributed signals in two rows: AI-code volume, verification confidence, controlled security evaluations, enterprise security findings, ecosystem vulnerability growth, and governance readiness. It can be expanded during the demo without consuming scan-flow space. The facts support product context only and do not change scanner findings or coverage claims.
 - The homepage, README, and presenter script now state the framework boundary directly: Production Lens is a principles-based deterministic review with selected OWASP, CWE, and NIST-aligned checks, but not formal or complete framework coverage. The next framework milestone is a visible rule-level crosswalk with explicit scope and evidence limits.
-- Validation for the scope-copy update: `npm test` passed (49 tests) and the production build passed. The hosted private demo remains on the preceding validated deployment until a new deploy is requested.
+- Validation for the scope-copy update: `npm test` passed (49 tests) and the production build passed. The updated scope copy is deployed to the private demo.
 
 ## Recommended next step
 
