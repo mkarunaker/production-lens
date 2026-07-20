@@ -17,7 +17,7 @@ At the start of a new session:
 ## Current product state
 
 - Private deployment: https://production-lens.karunaker-molugu.chatgpt.site
-- Demo freeze: `v1.0.0` is the validated checkpoint for manual demo testing. Keep feature development frozen unless testing identifies a concrete issue.
+- Demo freeze: `v1.0.1` is the validated checkpoint for manual demo testing. `v1.0.0` is preserved as the original freeze; this patch adds the requested footer principles disclosure. Keep feature development frozen unless testing identifies a concrete issue.
 - Local ZIP test checkpoint: the latest `feat: add localhost zip scan demo` entry in `git log`.
 - Deterministic sample findings: 11
 - Automated tests: 50 passing
@@ -242,12 +242,13 @@ In progress.
 - Validation for the scope-copy update: `npm test` passed (49 tests) and the production build passed. The updated scope copy is deployed to the private demo.
 - The hero support copy now leads with the product method rather than repeating the headline: **Principles-based, evidence-backed review** across security, reliability, governance, and selected OWASP, CWE, and NIST-aligned checks.
 - The recorded-demo script now adds a brief behind-the-scenes dogfooding beat: every test run self-scans Production Lens against its implemented injection checks. It is presented as engineering practice, not a UI workflow.
+- The global footer now preserves the scan-focused home-page layout while exposing an optional **Guiding principles** disclosure. It opens the five governing principles and their plain-English release-readiness intent without competing with project loading or scanning.
 
 ## Recommended next step
 
 For the fastest safe hackathon path:
 
-1. Run manual demo testing against the `v1.0.0` freeze and record only concrete issues.
+1. Run manual demo testing against the `v1.0.1` freeze and record only concrete issues.
 2. Record the narrated public YouTube demo using the local `docs/demo-script.md`.
 3. Collect the `/feedback` Session ID and complete the final Devpost fields and submission.
 4. Complete and submit the Devpost draft before July 21, 2026 at 5:00 PM Pacific.

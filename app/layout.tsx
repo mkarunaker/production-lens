@@ -24,7 +24,21 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en">
-      <body>{children}<footer className="site-footer"><span>AI Helps. You Decide.</span><i /><span>Evidence-backed production readiness</span></footer></body>
+      <body>{children}<footer className="site-footer">
+        <div className="site-footer-line">
+          <span>AI Helps. You Decide.</span><i /><span>Evidence-backed production readiness</span><i />
+          <details className="footer-principles">
+            <summary>Guiding principles <b aria-hidden="true">↓</b></summary>
+            <div className="footer-principles-panel">
+              <p><strong>Own it</strong><span>Clear accountability and review.</span></p>
+              <p><strong>Prove it</strong><span>Tests and evidence before release.</span></p>
+              <p><strong>Contain it</strong><span>Limit the blast radius.</span></p>
+              <p><strong>Trace and reverse it</strong><span>Audit evidence and rollback.</span></p>
+              <p><strong>Break the lethal trifecta</strong><span>Separate private data, untrusted content, and consequential action.</span></p>
+            </div>
+          </details>
+        </div>
+      </footer></body>
     </html>
   );
 }
