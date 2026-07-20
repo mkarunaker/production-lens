@@ -385,6 +385,19 @@ test("rejects per-entry and overall compression bombs from metadata", async () =
   ])), (error) => error instanceof ZipInspectionError && error.code === "ZIP_LIMIT_EXCEEDED");
 });
 
+test("allows a bounded local-only compressed-size override without changing the default contract", async () => {
+  const { inspectZip, ZipInspectionError, ZIP_INGESTION_LIMITS } = await loadInspector();
+  const bytes = zip(Array.from({ length: 21 }, (_, index) => ({
+    path: `assets/${index}.bin`,
+    data: new Uint8Array(ZIP_INGESTION_LIMITS.maxFileBytes),
+  })));
+  assert.ok(bytes.byteLength > ZIP_INGESTION_LIMITS.maxCompressedBytes);
+  assert.throws(() => inspectZip("default-limit.zip", bytes), (error) =>
+    error instanceof ZipInspectionError && error.code === "ZIP_LIMIT_EXCEEDED");
+  const inspection = inspectZip("local-limit.zip", bytes, { maxCompressedBytes: 20 * 1024 * 1024 });
+  assert.equal(inspection.entryCount, 21);
+});
+
 test("rejects excessive path length, depth, file size, and entry count", async () => {
   const { inspectZip, ZipInspectionError, ZIP_INGESTION_LIMITS } = await loadInspector();
   const excessive = [

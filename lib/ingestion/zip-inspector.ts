@@ -52,6 +52,10 @@ export type ZipInspection = {
   entries: ZipEntryMetadata[];
 };
 
+export type ZipInspectionOptions = {
+  maxCompressedBytes?: number;
+};
+
 const NESTED_ARCHIVE_EXTENSIONS = new Set([
   ".zip", ".jar", ".war", ".ear", ".tar", ".tgz", ".gz", ".bz2", ".xz", ".7z", ".rar",
 ]);
@@ -228,14 +232,20 @@ function expandEntry(entry: ZipEntryMetadata, archiveBytes: Uint8Array) {
   return expanded;
 }
 
-export function inspectZip(archiveName: string, archiveBytes: Uint8Array): ZipInspection {
+export function inspectZip(
+  archiveName: string,
+  archiveBytes: Uint8Array,
+  options: ZipInspectionOptions = {},
+): ZipInspection {
+  const maxCompressedBytes = options.maxCompressedBytes ?? ZIP_INGESTION_LIMITS.maxCompressedBytes;
   if (
     !archiveName.toLowerCase().endsWith(".zip") ||
     archiveName.includes("/") ||
     archiveName.includes("\\") ||
     archiveName.includes("\0")
   ) reject("ZIP_SIGNATURE_INVALID");
-  if (archiveBytes.byteLength > ZIP_INGESTION_LIMITS.maxCompressedBytes) reject("ZIP_LIMIT_EXCEEDED");
+  if (!Number.isSafeInteger(maxCompressedBytes) || maxCompressedBytes < 1) reject("ZIP_LIMIT_EXCEEDED");
+  if (archiveBytes.byteLength > maxCompressedBytes) reject("ZIP_LIMIT_EXCEEDED");
   if (archiveBytes.byteLength < 22) reject("ZIP_SIGNATURE_INVALID");
   const view = new DataView(archiveBytes.buffer, archiveBytes.byteOffset, archiveBytes.byteLength);
   const firstSignature = u32(view, 0);
@@ -337,8 +347,12 @@ export function inspectZip(archiveName: string, archiveBytes: Uint8Array): ZipIn
   };
 }
 
-export function materializeZip(archiveName: string, archiveBytes: Uint8Array): RepositoryFile[] {
-  const inspection = inspectZip(archiveName, archiveBytes);
+export function materializeZip(
+  archiveName: string,
+  archiveBytes: Uint8Array,
+  options: ZipInspectionOptions = {},
+): RepositoryFile[] {
+  const inspection = inspectZip(archiveName, archiveBytes, options);
   const files: RepositoryFile[] = [];
   const decoder = new TextDecoder("utf-8", { fatal: true });
 

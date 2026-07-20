@@ -20,7 +20,7 @@ At the start of a new session:
 - Current checkpoint commit: `05f6e55` (the hosted private demo includes the AI-code evidence panel; the public GitHub repository is current through the preceding UI commit).
 - Local ZIP test checkpoint: the latest `feat: add localhost zip scan demo` entry in `git log`.
 - Deterministic sample findings: 11
-- Automated tests: 49 passing
+- Automated tests: 50 passing
 - Principles-based approval review: implemented for the bundled sensitive-logging remediation
 - Principle mapping: implemented for all 11 deterministic findings
 - Known dependency vulnerabilities at last verification: 0
@@ -278,10 +278,10 @@ For the fastest safe hackathon path:
 ## Latest validation — localhost ZIP test harness
 
 - Functional: passed for the local page and an inert AI-agent ZIP producing deterministic scanner output.
-- Security and adversarial: passed for production-mode refusal, strict localhost binding, 10 MiB request bounding, malformed archive rejection, no-store and browser isolation headers, and text-only result rendering.
+- Security and adversarial: passed for production-mode refusal, strict localhost binding, a 20 MiB request and materialization bound, malformed archive rejection, no-store and browser isolation headers, and text-only result rendering. The separate hosted-ingestion contract remains 10 MiB and hosted arbitrary uploads remain disabled.
 - Negative behavior: no disk extraction, persistence, repository execution, dependency installation, model access, or outbound network access was added.
 - Operational limitation: the harness has no authentication, quarantine, malware scanning, or distributed controls and is therefore intentionally excluded from the hosted application and deployment.
-- Regression: `npm run security:check` passes with 49 tests, 0 known dependency vulnerabilities, a production build, and the production-server golden-path E2E.
+- Regression: the local ZIP-limit update passes 50 tests and a production build; the most recent dependency audit found 0 vulnerabilities. The production-server golden-path E2E remains unchanged because this harness is localhost-only.
 - Lint: `npm run lint` remains blocked by two pre-existing `@next/next/no-assign-module-variable` findings in `tests/scanner.test.mjs` at lines 262 and 273.
 - Intentionally not evaluated: visual browser rehearsal because no browser was connected; hosted upload enablement remains out of scope.
 

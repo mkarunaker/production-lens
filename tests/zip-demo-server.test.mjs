@@ -116,6 +116,8 @@ test("local ZIP demo validates and scans an inert archive in memory", async () =
   const page = await invoke({});
   assert.equal(page.status, 200);
   assert.match(page.text, /Validate an AI agent ZIP without running it/);
+  assert.equal(LOCAL_ZIP_MAX_BYTES, 20 * 1024 * 1024);
+  assert.match(page.text, /20 MiB maximum/);
   assert.match(page.headers["content-security-policy"], /default-src 'none'/);
   const archive = storedZip([
     { path: "package.json", content: '{"dependencies":{"next":"1"}}' },

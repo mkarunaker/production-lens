@@ -3,7 +3,7 @@ import { readFile } from "node:fs/promises";
 import { pathToFileURL } from "node:url";
 import ts from "typescript";
 
-export const LOCAL_ZIP_MAX_BYTES = 10 * 1024 * 1024;
+export const LOCAL_ZIP_MAX_BYTES = 20 * 1024 * 1024;
 
 let runtimePromise;
 
@@ -109,7 +109,7 @@ async function scanUpload(request, response) {
     const name = archiveName(request);
     const bytes = await readBoundedBody(request);
     const { materializeZip, scanRepository } = await loadRuntime();
-    const files = materializeZip(name, bytes);
+    const files = materializeZip(name, bytes, { maxCompressedBytes: LOCAL_ZIP_MAX_BYTES });
     const repository = name.slice(0, -4);
     const result = scanRepository(repository, files);
     writeJson(response, 200, {
@@ -161,7 +161,7 @@ const PAGE = `<!doctype html>
   <div class="eyebrow">Local test harness</div>
   <h1>Validate an AI agent ZIP without running it.</h1>
   <p class="lede">Choose a ZIP from your machine. Production Lens validates the archive, materializes approved text in memory, and runs deterministic readiness checks.</p>
-  <div class="notice">Localhost only · 10 MiB maximum · no extraction to disk · no dependency installation · no repository execution · no model calls</div>
+  <div class="notice">Localhost only · 20 MiB maximum · no extraction to disk · no dependency installation · no repository execution · no model calls</div>
   <section class="panel">
     <label for="archive">AI agent project (.zip)</label>
     <input id="archive" type="file" accept=".zip,application/zip">
@@ -186,7 +186,7 @@ const PAGE = `<!doctype html>
     results.replaceChildren();
     if (!file) { status.textContent = "Choose a ZIP file first."; return; }
     if (!file.name.toLowerCase().endsWith(".zip")) { status.textContent = "Only ZIP files are accepted."; return; }
-    if (file.size > ${LOCAL_ZIP_MAX_BYTES}) { status.textContent = "ZIP exceeds the 10 MiB limit."; return; }
+    if (file.size > ${LOCAL_ZIP_MAX_BYTES}) { status.textContent = "ZIP exceeds the 20 MiB limit."; return; }
     button.disabled = true;
     status.textContent = "Validating archive and scanning approved text…";
     try {

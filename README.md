@@ -106,7 +106,7 @@ Open `http://localhost:3000`.
 npm run demo:zip
 ```
 
-Open `http://127.0.0.1:4317`, choose a `.zip`, and select **Validate and scan ZIP**. This standalone development harness accepts at most 10 MiB, materializes approved text in memory, and never extracts, imports, installs, builds, or executes repository code. It binds only to localhost, refuses `NODE_ENV=production`, makes no model or external network calls, and stores no archive or result. It is intentionally absent from the hosted demo.
+Open `http://127.0.0.1:4317`, choose a `.zip`, and select **Validate and scan ZIP**. This standalone development harness accepts at most 20 MiB, materializes approved text in memory, and never extracts, imports, installs, builds, or executes repository code. It binds only to localhost, refuses `NODE_ENV=production`, makes no model or external network calls, and stores no archive or result. It is intentionally absent from the hosted demo.
 
 ### Production-like verification
 
