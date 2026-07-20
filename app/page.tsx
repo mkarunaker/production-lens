@@ -24,9 +24,12 @@ const securityChecks = [
 ];
 
 const industrySignals = [
-  { stat: "42%", label: "of committed code is now AI-generated, but 96% of developers do not fully trust it.", source: "Sonar, 2026", href: "https://www.sonarsource.com/blog/state-of-code-developer-survey-report-the-current-reality-of-ai-coding/" },
-  { stat: "45%", label: "of evaluated AI code-generation tasks introduced a known security flaw.", source: "Veracode, 2026", href: "https://www.veracode.com/blog/spring-2026-genai-code-security/" },
-  { stat: "80%", label: "adopted AI tools faster than they developed governance policies; 92% report code-governance challenges.", source: "GitLab, 2026", href: "https://about.gitlab.com/press/releases/2026-06-23-gitlab-research-reveals-organizations-are-generating-ai-code-faster-than-they-can-control-it/" },
+  { stat: "42%", label: "of committed code is AI-generated or AI-assisted; Sonar projects 65% by 2027.", source: "Sonar survey, 2026", href: "https://www.sonarsource.com/blog/state-of-code-developer-survey-report-the-current-reality-of-ai-coding/" },
+  { stat: "96%", label: "of Sonar survey respondents do not fully trust AI-generated code; only 48% always verify before committing.", source: "Sonar survey, 2026", href: "https://www.sonarsource.com/blog/state-of-code-developer-survey-report-the-current-reality-of-ai-coding/" },
+  { stat: "45%", label: "of model-generation tasks introduced a known security flaw in Veracode’s Spring 2026 controlled evaluation.", source: "Veracode evaluation, 2026", href: "https://www.veracode.com/blog/spring-2026-genai-code-security/" },
+  { stat: "10×", label: "more security findings in Apiiro’s Fortune 50 enterprise sample; AI-assisted developers also produced 3–4× more commits.", source: "Apiiro study, 2025", href: "https://apiiro.com/blog/4x-velocity-10x-vulnerabilities-ai-coding-assistants-are-shipping-more-risks/" },
+  { stat: "107%", label: "increase in mean open-source vulnerabilities per audited codebase in Black Duck’s 2026 OSSRA data.", source: "Black Duck OSSRA, 2026", href: "https://www.blackduck.com/blog/open-source-trends-ossra-report.html" },
+  { stat: "92%", label: "report governance challenges with AI-generated code; 80% say adoption outpaced policy development.", source: "GitLab / Harris Poll, 2026", href: "https://about.gitlab.com/press/releases/2026-06-23-gitlab-research-reveals-organizations-are-generating-ai-code-faster-than-they-can-control-it/" },
 ];
 
 export default function Home() {

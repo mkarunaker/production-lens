@@ -75,7 +75,7 @@ button { font: inherit; }
 .industry-signals[open] .industry-expand i { transform: rotate(180deg); }
 .industry-signals-body { padding: 0 18px 18px; }
 .industry-signal-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; overflow: hidden; border: 1px solid var(--line); border-radius: 9px; background: var(--line); }
-.industry-signal { min-height: 119px; padding: 14px; display: grid; align-content: start; gap: 6px; background: #fbfcfa; color: var(--ink); text-decoration: none; }
+.industry-signal { min-height: 136px; padding: 14px; display: grid; align-content: start; gap: 6px; background: #fbfcfa; color: var(--ink); text-decoration: none; }
 .industry-signal:hover { background: #f0f5eb; }
 .industry-signal strong { color: var(--green-dark); font: 600 23px/1 Georgia, serif; letter-spacing: -.035em; }
 .industry-signal span { color: #58655e; font-size: 10px; line-height: 1.4; }
