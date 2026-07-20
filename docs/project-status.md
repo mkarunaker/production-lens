@@ -17,7 +17,7 @@ At the start of a new session:
 ## Current product state
 
 - Private deployment: https://production-lens.karunaker-molugu.chatgpt.site
-- Current checkpoint commit: `05f6e55` (the hosted private demo includes the AI-code evidence panel; the public GitHub repository is current through the preceding UI commit).
+- Demo freeze: `v1.0.0` is the validated checkpoint for manual demo testing. Keep feature development frozen unless testing identifies a concrete issue.
 - Local ZIP test checkpoint: the latest `feat: add localhost zip scan demo` entry in `git log`.
 - Deterministic sample findings: 11
 - Automated tests: 50 passing
@@ -247,11 +247,11 @@ In progress.
 
 For the fastest safe hackathon path:
 
-1. Freeze broad feature development and preserve the complete bundled scan/remediate/rescan workflow.
-2. Record the narrated public YouTube demo tomorrow morning using the local `docs/demo-script.md`.
+1. Run manual demo testing against the `v1.0.0` freeze and record only concrete issues.
+2. Record the narrated public YouTube demo using the local `docs/demo-script.md`.
 3. Collect the `/feedback` Session ID and complete the final Devpost fields and submission.
-6. Complete and submit the Devpost draft before July 21, 2026 at 5:00 PM Pacific.
-7. Do not expose hosted arbitrary uploads or runtime GPT analysis for the hackathon demo.
+4. Complete and submit the Devpost draft before July 21, 2026 at 5:00 PM Pacific.
+5. Do not expose hosted arbitrary uploads or runtime GPT analysis for the hackathon demo.
 
 ## Hackathon submission readiness
 
