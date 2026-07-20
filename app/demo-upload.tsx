@@ -4,6 +4,9 @@ import { useState } from "react";
 import { useEffect } from "react";
 import Link from "next/link";
 
+const CHECK_STEP_INTERVAL_MS = 420;
+const COMPLETED_CHECKS_PAUSE_MS = 1_000;
+
 export const demos: Record<string, string> = {
   "chief-of-staff-v0-scan.zip": "/results?sample=chief",
   "enterprise-analytics-agent.zip": "/results",
@@ -41,8 +44,16 @@ export function DemoUpload({ destination, selectedName, onSelect }: DemoUploadPr
       const timer = window.setInterval(() => {
         current += 1;
         setStep(current);
-        if (current >= 3) { window.clearInterval(timer); window.setTimeout(() => { setRunning(false); setComplete(true); setMessage("Lens run complete. Review the findings when you are ready."); }, 350); }
-      }, 420);
+        if (current >= 3) {
+          window.clearInterval(timer);
+          setStep(4);
+          window.setTimeout(() => {
+            setRunning(false);
+            setComplete(true);
+            setMessage("Lens run complete. Review the findings when you are ready.");
+          }, COMPLETED_CHECKS_PAUSE_MS);
+        }
+      }, CHECK_STEP_INTERVAL_MS);
     }}>Run Lens</button></div>
     <input id="demo-zip" className="visually-hidden" type="file" accept=".zip,application/zip" onChange={(event) => {
       const file = event.target.files?.[0];

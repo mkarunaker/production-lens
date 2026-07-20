@@ -243,6 +243,7 @@ In progress.
 - The hero support copy now leads with the product method rather than repeating the headline: **Principles-based, evidence-backed review** across security, reliability, governance, and selected OWASP, CWE, and NIST-aligned checks.
 - The recorded-demo script now adds a brief behind-the-scenes dogfooding beat: every test run self-scans Production Lens against its implemented injection checks. It is presented as engineering practice, not a UI workflow.
 - The global footer now preserves the scan-focused home-page layout while exposing an optional **Guiding principles** disclosure. It opens the five governing principles and their plain-English release-readiness intent without competing with project loading or scanning.
+- The staged scan keeps the completed checklist visible for one second before revealing the review action, giving presenters time to register the completed checks and preserving the deliberate scan-to-review transition.
 
 ## Recommended next step
 
