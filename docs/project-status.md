@@ -230,12 +230,13 @@ In progress.
 In progress.
 
 - Selecting either a provided ZIP or a predefined demo now loads the named fixture rather than starting a scan immediately. The home screen shows **File loaded — filename** with a checkmark as its first scan-status line and enables the shared **Run Lens** action.
+- The upload panel and predefined-demo heading now share the full home-content width with the surrounding industry-signals panel and demo cards.
 - After the bounded static scan animation, the home screen remains in place and expands beneath **Run Lens** with the completed archive, inventory, and risk-evaluation outcome, severity totals, and a deliberate **Review and remediate issues** action. There is no automatic navigation after scanning.
 - The code-first workspace is entered only through that action. Existing deterministic scanning, approval, disposable-copy remediation, rescan, and reset boundaries are unchanged.
 - Applicable principles: **Prove it** through explicit scan evidence and **Trace and reverse it** through a deliberate, reviewable transition before remediation. The UI does not add authority, execute source, or process arbitrary hosted archives.
 - Validation passed: `npm test` (49 tests), `npm audit --omit=dev --audit-level=high` (0 vulnerabilities), production build, and production-server golden-path E2E. Owner click-through testing remains the next demo gate.
-- The public-video narration and golden-path instructions in `docs/demo-script.md` now match the current **Load demo → File loaded → Run Lens → Review and remediate issues** sequence.
-- The narrated portion of `docs/demo-script.md` has received the KK Spoken Voice pass: shorter spoken beats, varied pacing, direct product claims, and no invented experience or metrics. Its opening now matches the on-screen AI-code evidence from Sonar and Veracode.
+- The public-video narration and golden-path instructions in `docs/demo-script.md` now match the current **Load demo → File loaded → Run Lens → Review and remediate issues** sequence, the six-card **Why it matters** panel, and the collapsed finding-specific principles disclosure below approval.
+- The narrated portion of `docs/demo-script.md` has received the KK Spoken Voice pass: shorter spoken beats, varied pacing, direct product claims, scoped industry context rather than invented product metrics, and a focused principles-based approval explanation.
 - The home-page opening provides a collapsed **Why it matters** panel with six linked, source-attributed signals in two rows: AI-code volume, verification confidence, controlled security evaluations, enterprise security findings, ecosystem vulnerability growth, and governance readiness. It can be expanded during the demo without consuming scan-flow space. The facts support product context only and do not change scanner findings or coverage claims.
 
 ## Recommended next step
